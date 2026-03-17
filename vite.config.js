@@ -1,7 +1,10 @@
-import { defineConfig } from 'vite'
+# 检查文件是否存在
+ls -la vite.config.js
+
+# 如果不存在，重新创建
+echo "import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
   server: {
@@ -10,4 +13,4 @@ export default defineConfig({
     host: '0.0.0.0'
   },
   base: './'
-})
+})" > vite.config.js
