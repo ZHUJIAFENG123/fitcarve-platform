@@ -22,12 +22,8 @@ export function useNewsList() {
 
   const categories = computed(() => CATEGORY_OPTIONS)
 
-  // Merge dynamic tags from store with predefined COMMON_TAGS
-  const allTags = computed(() => {
-    const tagSet = new Set<string>(COMMON_TAGS)
-    store.list.forEach(news => news.tags?.forEach(tag => tagSet.add(tag)))
-    return [...tagSet].sort()
-  })
+  // Tags always from COMMON_TAGS only (don't change with pagination)
+  const allTags = computed(() => [...COMMON_TAGS].sort())
 
   const query = computed<NewsQuery>(() => ({
     page: page.value,

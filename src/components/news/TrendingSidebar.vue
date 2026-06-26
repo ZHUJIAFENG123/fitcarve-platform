@@ -39,18 +39,6 @@
       </div>
     </div>
 
-    <!-- 热门标签 -->
-    <div class="sidebar-card">
-      <h3 class="sidebar-title">🏷 热门标签</h3>
-      <div class="tag-cloud">
-        <button
-          v-for="tag in tags"
-          :key="tag"
-          :class="['tag-chip', { active: activeTags.includes(tag) }]"
-          @click="$emit('toggle-tag', tag)"
-        >{{ tag }}</button>
-      </div>
-    </div>
   </aside>
 </template>
 
@@ -69,15 +57,12 @@ const CATEGORY_ICONS: Record<string, string> = {
 defineProps<{
   items: NewsCardData[]
   loading?: boolean
-  tags?: string[]
   activeCategory?: string
-  activeTags?: string[]
   categories?: typeof CATEGORY_OPTIONS
 }>()
 
 defineEmits<{
   'select-category': [value: string]
-  'toggle-tag': [tag: string]
 }>()
 
 function formatViews(v: number) {

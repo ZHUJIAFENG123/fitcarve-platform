@@ -1,22 +1,13 @@
 <template>
   <div class="news-list-page">
     <Navbar :menu-links="newsMenuLinks" />
-
-    <!-- Hero Banner -->
     <HeroBanner :items="heroItems" />
 
-    <!-- 筛选栏 — 吸顶 -->
+    <!-- 筛选栏 吸顶 -->
     <div class="filter-bar">
       <div class="filter-inner">
         <div class="search-box">
-          <el-input
-            v-model="searchKeyword"
-            placeholder="搜索文章标题、关键词..."
-            :prefix-icon="Search"
-            clearable
-            @input="onSearchInput"
-            @clear="search('')"
-          />
+          <el-input v-model="searchKeyword" placeholder="搜索文章标题、关键词..." :prefix-icon="Search" clearable @input="onSearchInput" @clear="search('')" />
         </div>
         <div class="filter-controls">
           <el-select v-model="selectedCategory" placeholder="全部分类" size="default" @change="onCategoryChange">
@@ -30,34 +21,24 @@
           <ViewToggle v-model="viewMode" />
         </div>
       </div>
-      <!-- 标签行 — 可折叠 -->
+      <!-- 🔥 标签行 — 仅一行，可展开 -->
       <div class="tag-row-wrap" v-if="allTags.length > 0">
+        <span class="tag-fire">🔥</span>
         <div :class="['tag-row', { expanded: tagExpanded }]">
-          <button
-            v-for="tag in allTags"
-            :key="tag"
-            :class="['tag-pill', { active: selectedTags.includes(tag) }]"
-            @click="toggleTag(tag)"
-          >{{ tag }}</button>
-          <button v-if="selectedTags.length > 0" class="tag-clear" @click="resetTags()">清空</button>
+          <button v-for="tag in allTags" :key="tag" :class="['tag-pill', { active: selectedTags.includes(tag) }]" @click="toggleTag(tag)">{{ tag }}</button>
+          <button v-if="selectedTags.length > 0" class="tag-clear" @click="resetTags()">✕</button>
         </div>
-        <button v-if="allTags.length > 12" class="tag-expand" @click="tagExpanded = !tagExpanded">
-          {{ tagExpanded ? '收起 ▲' : `展开全部 (${allTags.length})` }}
-        </button>
+        <button class="tag-expand" @click="tagExpanded = !tagExpanded">{{ tagExpanded ? '收起 ▲' : '更多 ▾' }}</button>
       </div>
     </div>
 
     <!-- 主体 -->
     <div class="news-main">
       <div class="news-layout">
-        <!-- 左侧列表 -->
         <div class="news-primary">
           <div class="results-header" v-if="!loading">
             <span v-if="!isFiltering" class="results-count">共 <strong>{{ total }}</strong> 篇资讯</span>
-            <span v-else class="results-count">
-              找到 <strong>{{ total }}</strong> 篇 · 
-              <button class="link-reset" @click="resetFilters()">清除筛选</button>
-            </span>
+            <span v-else class="results-count">找到 <strong>{{ total }}</strong> 篇 · <button class="link-reset" @click="resetFilters()">清除筛选</button></span>
           </div>
 
           <div v-if="loading" :class="viewMode === 'list' ? 'news-list-view' : 'news-grid'">
@@ -78,17 +59,7 @@
           </div>
         </div>
 
-        <!-- 右侧栏 -->
-        <TrendingSidebar
-          :items="popularNews"
-          :loading="popularLoading"
-          :tags="allTags.slice(0, 10)"
-          :active-category="selectedCategory"
-          :active-tags="selectedTags"
-          :categories="categories"
-          @select-category="onSidebarCategory"
-          @toggle-tag="toggleTag"
-        />
+        <TrendingSidebar :items="popularNews" :loading="popularLoading" :active-category="selectedCategory" :categories="categories" @select-category="onSidebarCategory" />
       </div>
     </div>
   </div>
@@ -114,12 +85,7 @@ const newsMenuLinks = [
 ]
 
 const store = useNewsStore()
-const {
-  list, total, loading, error, hasError,
-  searchKeyword, selectedCategory, selectedTags, sort, page, pageSize,
-  isFiltering, categories, allTags,
-  search, setCategory, setSort, setPage, toggleTag, resetTags, resetFilters
-} = useNewsList()
+const { list, total, loading, error, hasError, searchKeyword, selectedCategory, selectedTags, sort, page, pageSize, isFiltering, categories, allTags, search, setCategory, setSort, setPage, toggleTag, resetTags, resetFilters } = useNewsList()
 
 const viewMode = ref<'grid' | 'list'>((localStorage.getItem('newsViewMode') as 'grid' | 'list') || 'grid')
 const heroItems = ref<NewsCardData[]>([])
@@ -149,58 +115,46 @@ onMounted(async () => {
 .news-list-page { min-height: 100vh; background: var(--color-bg); }
 
 /* ── Filter Bar ── */
-.filter-bar {
-  background: var(--color-bg-card);
-  border-bottom: 1px solid var(--color-border-light);
-  padding: var(--space-3) var(--space-4);
-  position: sticky;
-  top: 64px;
-  z-index: 40;
-}
-.filter-inner {
-  max-width: 1200px; margin: 0 auto;
-  display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap;
-}
+.filter-bar { background: var(--color-bg-card); border-bottom: 1px solid var(--color-border); padding: 10px var(--space-4); position: sticky; top: 64px; z-index: 40; }
+.filter-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .search-box { flex: 1; min-width: 160px; }
 .filter-controls { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
 .filter-controls .el-select { width: 120px; }
 
-/* Tags */
-.tag-row-wrap { max-width: 1200px; margin: var(--space-2) auto 0; }
-.tag-row { display: flex; flex-wrap: wrap; gap: 6px; max-height: 72px; overflow: hidden; transition: max-height 0.3s; }
+/* Tags — 1 row + expand */
+.tag-row-wrap { max-width: 1200px; margin: 6px auto 0; display: flex; align-items: flex-start; gap: 4px; }
+.tag-fire { font-size: 14px; line-height: 28px; flex-shrink: 0; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; max-height: 30px; overflow: hidden; transition: max-height 0.3s; flex: 1; }
 .tag-row.expanded { max-height: 600px; }
-.tag-pill {
-  padding: 4px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 500;
-  cursor: pointer; border: 1px solid var(--color-border-light); background: var(--color-surface);
-  color: var(--color-text-secondary); transition: all 0.15s; font-family: var(--font-body); white-space: nowrap;
-}
+.tag-pill { padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--color-border-light); background: var(--color-surface); color: var(--color-text-secondary); transition: all 0.15s; font-family: var(--font-body); white-space: nowrap; line-height: 22px; }
 .tag-pill:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .tag-pill.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
-.tag-clear { font-size: 12px; color: var(--color-text-tertiary); cursor: pointer; background: none; border: none; padding: 4px 8px; }
+.tag-clear { font-size: 12px; color: var(--color-text-tertiary); cursor: pointer; background: none; border: none; padding: 3px 8px; line-height: 22px; }
 .tag-clear:hover { color: var(--state-error); }
-.tag-expand { font-size: 11px; color: var(--color-primary); cursor: pointer; background: none; border: none; padding: 2px 4px; margin-top: 2px; }
+.tag-expand { font-size: 11px; color: var(--color-primary); cursor: pointer; background: none; border: none; padding: 3px 6px; white-space: nowrap; line-height: 22px; flex-shrink: 0; }
 
 /* ── Layout ── */
-.news-main { max-width: 1200px; margin: 0 auto; padding: var(--space-5) var(--space-4) var(--space-16); }
-.news-layout { display: flex; gap: var(--space-6); align-items: flex-start; }
+.news-main { max-width: 1200px; margin: 0 auto; padding: 20px var(--space-4) 80px; }
+.news-layout { display: flex; gap: 24px; align-items: flex-start; }
 .news-primary { flex: 1; min-width: 0; }
 
-.results-header { margin-bottom: var(--space-4); display: flex; align-items: center; }
-.results-count { font-size: 14px; color: var(--color-text-tertiary); white-space: nowrap; }
+.results-header { margin-bottom: 16px; display: flex; align-items: center; }
+.results-count { font-size: 14px; color: var(--color-text-tertiary); }
 .results-count strong { color: var(--color-primary); font-weight: 700; }
-.link-reset { background: none; border: none; color: var(--color-primary); cursor: pointer; font-size: 14px; text-decoration: underline; }
+.link-reset { background: none; border: none; color: var(--color-primary); cursor: pointer; font-size: 14px; text-decoration: underline; margin-left: 4px; }
 
-.news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-5); margin-bottom: var(--space-8); }
-.news-list-view { display: flex; flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-8); }
+/* Grid — always multi-column */
+.news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 32px; }
+.news-list-view { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
 
-.state-box { display: flex; justify-content: center; padding: var(--space-16) 0; }
-.pagination-wrap { display: flex; justify-content: center; padding-top: var(--space-4); }
+.state-box { display: flex; justify-content: center; padding: 80px 0; }
+.pagination-wrap { display: flex; justify-content: center; }
 
 @media (max-width: 900px) { .news-layout { flex-direction: column; } }
 @media (max-width: 640px) {
   .filter-inner { flex-direction: column; }
   .filter-controls { width: 100%; }
   .filter-controls .el-select { flex: 1; }
-  .news-grid { grid-template-columns: 1fr; }
+  .news-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
 }
 </style>
