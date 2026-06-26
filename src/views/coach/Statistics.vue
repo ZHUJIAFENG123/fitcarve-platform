@@ -250,200 +250,31 @@ const logout = () => {
 </script>
 
 <style scoped>
-.statistics-container {
-  min-height: 100vh;
-  background-color: #f5f5f5;
+.statistics-container { min-height: 100vh; background-color: var(--color-bg); }
+.statistics-content { max-width: 1200px; margin: 0 auto; padding: 20px; }
+.overview-section { margin-bottom: 30px; }
+.overview-section h2, .charts-section h2, .courses-section h2 {
+  font-size: 20px; color: var(--color-text-primary); margin-bottom: 20px;
+  padding-bottom: 10px; border-bottom: 2px solid var(--color-primary);
+  font-family: var(--font-display); font-weight: 700;
 }
+.overview-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+.overview-card { transition: transform 0.3s ease; }
+.overview-card:hover { transform: translateY(-5px); }
+.card-content { text-align: center; }
+.card-title { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 10px; }
+.card-value { font-size: 24px; font-weight: bold; color: var(--color-primary); }
+.charts-section { margin-bottom: 30px; }
+.charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 20px; }
+.chart-card { transition: transform 0.3s ease; }
+.chart-card:hover { transform: translateY(-5px); }
+.chart-container { height: 300px; }
+.card-header { display: flex; justify-content: space-between; align-items: center; }
+.courses-section { margin-bottom: 30px; }
 
-/* 导航栏 */
-.navbar {
-  background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.nav-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
-}
-
-.logo h1 {
-  font-size: 20px;
-  color: #1890ff;
-  margin: 0;
-}
-
-.nav-menu {
-  display: flex;
-  gap: 30px;
-}
-
-.nav-menu a {
-  text-decoration: none;
-  color: #333;
-  font-size: 16px;
-  padding: 8px 0;
-  position: relative;
-}
-
-.nav-menu a.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #1890ff;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.username {
-  font-size: 14px;
-  color: #333;
-}
-
-/* 统计内容 */
-.statistics-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-/* 数据概览 */
-.overview-section {
-  margin-bottom: 30px;
-}
-
-.overview-section h2 {
-  font-size: 20px;
-  color: #333;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #1890ff;
-}
-
-.overview-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.overview-card {
-  transition: transform 0.3s ease;
-}
-
-.overview-card:hover {
-  transform: translateY(-5px);
-}
-
-.card-content {
-  text-align: center;
-}
-
-.card-title {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
-}
-
-.card-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #1890ff;
-}
-
-/* 图表统计 */
-.charts-section {
-  margin-bottom: 30px;
-}
-
-.charts-section h2 {
-  font-size: 20px;
-  color: #333;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #1890ff;
-}
-
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-  gap: 20px;
-}
-
-.chart-card {
-  transition: transform 0.3s ease;
-}
-
-.chart-card:hover {
-  transform: translateY(-5px);
-}
-
-.chart-container {
-  height: 300px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* 课程详情 */
-.courses-section {
-  margin-bottom: 30px;
-}
-
-.courses-section h2 {
-  font-size: 20px;
-  color: #333;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #1890ff;
-}
-
-/* 响应式设计 */
 @media (max-width: 768px) {
-  .nav-menu {
-    display: none;
-  }
-  
-  .overview-cards {
-    grid-template-columns: 1fr;
-  }
-  
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .chart-container {
-    height: 250px;
-  }
+  .overview-cards { grid-template-columns: 1fr; }
+  .charts-grid { grid-template-columns: 1fr; }
+  .chart-container { height: 250px; }
 }
-
-.notification-btn { position: relative; margin-right: 10px; }
-.unread-badge { position: absolute; top: -5px; right: -5px; background-color: #ff4d4f; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 12px; display: flex; align-items: center; justify-content: center; }
-.notification-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px 0; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
-.notification-item { padding: 12px 20px; cursor: pointer; transition: background-color 0.2s; }
-.notification-item:hover { background-color: #f5f7fa; }
-.unread-item { background-color: #f0f9ff; }
-.unread-item:hover { background-color: #e6f4ff; }
-.notification-content { min-width: 260px; }
-.notification-top { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-.notification-dot { width: 7px; height: 7px; border-radius: 50%; background-color: #ff4d4f; flex-shrink: 0; }
-.notification-title { font-size: 14px; font-weight: 500; color: #333; }
-.notification-desc { font-size: 13px; color: #666; margin-bottom: 4px; }
-.notification-time { font-size: 12px; color: #999; }
 </style>

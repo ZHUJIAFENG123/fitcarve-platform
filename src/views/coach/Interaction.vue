@@ -203,13 +203,13 @@ const openMessageReply = (msg) => {
 </script>
 
 <style scoped>
-.interaction-container { min-height: 100vh; background: #f5f5f5; }
-.interaction-content { max-width: 1200px; margin: 0 auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 20px; margin-bottom: 20px; }
+.interaction-container { min-height: 100vh; background: var(--color-bg); }
+.interaction-content { max-width: 1200px; margin: 0 auto; padding: 20px; background: var(--color-bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--color-border-light); margin-top: 20px; margin-bottom: 20px; }
 
 .reply-context { margin-bottom: 18px; }
-.context-label { font-size: 14px; color: #666; margin-bottom: 8px; }
-.context-box { background: #f5f7fa; padding: 12px 16px; border-radius: 8px; }
+.context-label { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 8px; }
+.context-box { background: var(--color-bg-warm); padding: 12px 16px; border-radius: var(--radius-md); }
 .context-user { font-weight: 600; margin-bottom: 4px; }
-.context-text { font-size: 14px; color: #333; }
+.context-text { font-size: 14px; color: var(--color-text-primary); }
 .reply-detail p { margin: 8px 0; font-size: 14px; }
 </style>

@@ -206,22 +206,22 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.publish-container { min-height: 100vh; background: #f5f5f5; }
+.publish-container { min-height: 100vh; background: var(--color-bg); }
 .admin-content { max-width: 1200px; margin: 0 auto; padding: 20px; }
 .page-header { margin-bottom: 24px; }
-.page-header h2 { font-size: 20px; color: #333; margin: 0; padding-bottom: 10px; border-bottom: 2px solid #1890ff; display: inline-block; }
+.page-header h2 { font-size: 20px; color: var(--color-text-primary); margin: 0; padding-bottom: 10px; border-bottom: 2px solid var(--color-primary); display: inline-block; font-family: var(--font-display); font-weight: 700; }
 
 .form-grid { display: grid; grid-template-columns: 1fr 280px; gap: 30px; margin-bottom: 10px; }
 
 .cover-upload { position: relative; }
-.cover-preview { position: relative; width: 240px; height: 160px; border-radius: 8px; overflow: hidden; }
+.cover-preview { position: relative; width: 240px; height: 160px; border-radius: var(--radius-md); overflow: hidden; }
 .cover-preview img { width: 100%; height: 100%; object-fit: cover; }
 .cover-remove { position: absolute; top: 6px; right: 6px; }
-.cover-placeholder { width: 240px; height: 160px; border: 2px dashed #d9d9d9; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: #999; gap: 8px; transition: all 0.2s; }
-.cover-placeholder:hover { border-color: #1890ff; color: #1890ff; }
+.cover-placeholder { width: 240px; height: 160px; border: 2px dashed var(--color-border); border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: var(--color-text-tertiary); gap: 8px; transition: all 0.2s; }
+.cover-placeholder:hover { border-color: var(--color-primary); color: var(--color-primary); }
 
 .lesson-item { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
-.lesson-num { min-width: 60px; font-size: 13px; color: #999; }
+.lesson-num { min-width: 60px; font-size: 13px; color: var(--color-text-tertiary); }
 .add-lesson-btn { margin-top: 8px; }
 .submit-btn { min-width: 140px; }
 

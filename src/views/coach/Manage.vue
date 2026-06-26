@@ -272,13 +272,13 @@ const logout = () => {
 </script>
 
 <style scoped>
-.manage-container { min-height: 100vh; background: #f5f5f5; }
+.manage-container { min-height: 100vh; background: var(--color-bg); }
 
-.manage-content { max-width: 1200px; margin: 0 auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 20px; margin-bottom: 20px; }
-.manage-content h2 { font-size: 20px; color: #333; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #1890ff; }
+.manage-content { max-width: 1200px; margin: 0 auto; padding: 20px; background: var(--color-bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--color-border-light); margin-top: 20px; margin-bottom: 20px; }
+.manage-content h2 { font-size: 20px; color: var(--color-text-primary); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--color-primary); font-family: var(--font-display); font-weight: 700; }
 .search-bar { margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .pagination { margin-top: 20px; display: flex; justify-content: flex-end; }
-.reject-reason { margin-top: 20px; padding: 15px; background: #f5f7fa; border-radius: 4px; }
+.reject-reason { margin-top: 20px; padding: 15px; background: var(--color-bg-warm); border-radius: var(--radius-md); }
 .reject-reason p { margin-bottom: 8px; }
 .dialog-footer { display: flex; justify-content: flex-end; }
 
