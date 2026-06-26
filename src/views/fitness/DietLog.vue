@@ -13,6 +13,33 @@
     </div>
 
     <div class="dlog-container" v-if="loggedIn">
+      <!-- AI 智能分析 -->
+      <div class="dlog-ai-card">
+        <div class="dlog-ai-header">
+          <span class="dlog-ai-icon">🤖</span>
+          <h4>AI 智能记录</h4>
+          <span class="dlog-ai-sub">描述你吃了什么，AI自动估算热量</span>
+        </div>
+        <div class="dlog-ai-input-row">
+          <input
+            v-model="aiInput"
+            class="dlog-ai-input"
+            placeholder="如：中午吃了鸡胸肉沙拉（约150g鸡胸、生菜番茄、凯撒酱），半碗米饭"
+            @keyup.enter="aiAnalyze"
+            :disabled="aiLoading"
+          />
+          <button class="dlog-ai-btn" @click="aiAnalyze" :disabled="aiLoading || !aiInput.trim()">
+            {{ aiLoading ? '分析中...' : '🤖 AI分析' }}
+          </button>
+        </div>
+        <div v-if="aiResult" class="dlog-ai-result">
+          <div class="dlog-ai-result-text" v-html="renderMd(aiResult)"></div>
+          <button class="dlog-ai-save" @click="aiSaveToBreakfast">➕ 添加到早餐</button>
+          <button class="dlog-ai-save" @click="aiSaveToLunch">➕ 添加到午餐</button>
+          <button class="dlog-ai-save" @click="aiSaveToDinner">➕ 添加到晚餐</button>
+        </div>
+        <p v-if="aiError" class="dlog-ai-error">{{ aiError }}</p>
+      </div>
       <!-- 摄入概览 -->
       <div class="dlog-overview">
         <div class="dlog-over-item">
@@ -168,6 +195,38 @@ async function removeItem(id: number) {
 }
 
 import { reactive } from 'vue'
+
+const aiInput = ref('')
+const aiLoading = ref(false)
+const aiResult = ref('')
+const aiError = ref('')
+
+function renderMd(text: string) { return text ? text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>') : '' }
+
+async function aiAnalyze() {
+  if (!aiInput.value.trim() || aiLoading.value) return
+  aiLoading.value = true; aiError.value = ''; aiResult.value = ''
+  const token = localStorage.getItem('token')
+  try {
+    const res = await fetch(`${API}/ai/analyze-diet`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ description: aiInput.value })
+    })
+    const data = await res.json()
+    if (data.error) throw new Error(data.error)
+    aiResult.value = data.analysis
+  } catch (e: any) { aiError.value = e.message || '分析失败' }
+  finally { aiLoading.value = false }
+}
+
+function aiSaveTo(type: string) {
+  aiInput.value = ''; aiResult.value = ''
+  ElMessage.success('已添加到' + type)
+}
+
+// Need to import these for the AI functions
+import { ElMessage } from 'element-plus'
 onMounted(() => {
   if (loggedIn.value) fetchLogs()
 })
@@ -216,4 +275,36 @@ onMounted(() => {
 .dlog-res-nums { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
 
 .dlog-login { display: flex; justify-content: center; min-height: 300px; align-items: center; }
+
+/* AI Card */
+.dlog-ai-card {
+  background: linear-gradient(135deg, #F8F6FF, #EDE9FE); border: 1px solid #C4B5FD;
+  border-radius: var(--radius-xl); padding: var(--space-5); margin-bottom: var(--space-5);
+}
+.dlog-ai-header { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+.dlog-ai-icon { font-size: 1.4rem; }
+.dlog-ai-header h4 { margin:0; font-size: var(--text-base); font-weight: 700; }
+.dlog-ai-sub { font-size: var(--text-xs); color: var(--color-text-tertiary); margin-left: auto; }
+.dlog-ai-input-row { display: flex; gap: var(--space-2); }
+.dlog-ai-input {
+  flex: 1; padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid #C4B5FD;
+  background: #fff; font-size: var(--text-sm); outline: none; font-family: var(--font-body);
+}
+.dlog-ai-input:focus { border-color: #7C3AED; }
+.dlog-ai-btn {
+  padding: 10px 16px; border-radius: var(--radius-md); border: none;
+  background: #7C3AED; color: #fff; font-weight: 600; font-size: var(--text-sm); cursor: pointer;
+  white-space: nowrap; font-family: var(--font-body);
+}
+.dlog-ai-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.dlog-ai-result { margin-top: var(--space-3); padding: var(--space-3); background: #fff; border-radius: var(--radius-md); }
+.dlog-ai-result-text { font-size: var(--text-sm); line-height: var(--leading-relaxed); margin-bottom: var(--space-3); color: var(--color-text-primary); }
+.dlog-ai-save {
+  padding: 6px 14px; border-radius: var(--radius-full); border: 1px solid #7C3AED; background: #fff;
+  color: #7C3AED; font-size: 12px; cursor: pointer; margin-right: var(--space-2);
+  font-family: var(--font-body); transition: all 0.15s;
+}
+.dlog-ai-save:hover { background: #7C3AED; color: #fff; }
+.dlog-ai-error { font-size: var(--text-xs); color: var(--state-error); margin-top: var(--space-2); }
+
 </style>

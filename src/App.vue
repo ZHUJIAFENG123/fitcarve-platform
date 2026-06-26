@@ -2,11 +2,13 @@
   <div id="app">
     <router-view />
     <AppFooter />
+    <AiChatFab />
   </div>
 </template>
 
 <script setup>
 import AppFooter from '@/components/AppFooter.vue'
+import AiChatFab from '@/components/ai/AiChatFab.vue'
 </script>
 
 <style>

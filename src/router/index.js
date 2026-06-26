@@ -26,6 +26,7 @@ const routes = [
   { path: '/fitness/diet/:id', component: () => import('../views/fitness/DietDetail.vue') },
   { path: '/fitness/diet-log', component: () => import('../views/fitness/DietLog.vue'), meta: { requiresAuth: true } },
   { path: '/fitness/calculator', component: () => import('../views/fitness/Calculator.vue') },
+  { path: '/fitness/ai-generator', component: () => import('../views/fitness/AiGenerator.vue') },
 
   // ============ 需登录的通用页面 ============
   { path: '/profile', component: () => import('../views/public/Profile.vue'), meta: { requiresAuth: true } },

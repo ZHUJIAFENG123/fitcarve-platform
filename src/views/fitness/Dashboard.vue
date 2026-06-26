@@ -38,6 +38,12 @@
           <p>TDEE计算 · 食物查询 · 摄入统计</p>
           <span class="fd-card-arrow">开始计算 →</span>
         </router-link>
+        <router-link to="/fitness/ai-generator" class="fd-card fd-card--ai">
+          <span class="fd-card-icon">🤖</span>
+          <h3>AI 训练生成器</h3>
+          <p>告诉AI你的需求，秒出训练计划</p>
+          <span class="fd-card-arrow">立即生成 →</span>
+        </router-link>
       </div>
     </div>
   </div>
@@ -87,6 +93,8 @@ const today = computed(() => {
   box-shadow: var(--shadow-md);
 }
 .fd-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--color-primary); }
+.fd-card--ai { border-color: #C4B5FD; background: linear-gradient(135deg, #fff 0%, #F8F6FF 100%); }
+.fd-card--ai:hover { border-color: #7C3AED; }
 .fd-card-icon { font-size: 2.2rem; }
 .fd-card h3 { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; color: var(--color-text-primary); }
 .fd-card p { font-size: var(--text-sm); color: var(--color-text-secondary); flex: 1; }

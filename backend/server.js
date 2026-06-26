@@ -42,6 +42,7 @@ const dietRoutes = require('./routes/diet');
 const foodsRoutes = require('./routes/foods');
 const exercisesRoutes = require('./routes/exercises');
 const dietLogRoutes = require('./routes/dietLog');
+const aiRoutes = require('./routes/ai');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -60,6 +61,7 @@ app.use('/api/diet', dietRoutes);
 app.use('/api/foods', foodsRoutes);
 app.use('/api/exercises', exercisesRoutes);
 app.use('/api/diet-log', dietLogRoutes);
+app.use('/api/ai', aiRoutes);
 
 app.get('/health', async (req, res) => {
   const dbConnected = await testConnection();
