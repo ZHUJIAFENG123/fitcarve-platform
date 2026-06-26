@@ -175,7 +175,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ROLE_DEFINITIONS, getAllApplications, reviewApplication } from '../../services/auth.js'
+import { ROLE_DEFINITIONS } from '@/services/auth.js'
 import Navbar from '@/components/Navbar.vue'
 import * as echarts from 'echarts'
 
@@ -264,9 +264,9 @@ const saveRoleAssignment = () => { const u=users.value.find(u=>u.id===roleForm.v
 const allApplications = ref([])
 const pendingCount = computed(() => allApplications.value.filter(a=>a.status==='pending').length)
 const filteredApplications = computed(() => appFilter.value==='all'?allApplications.value:allApplications.value.filter(a=>a.status===appFilter.value))
-const refreshApplications = () => { allApplications.value=getAllApplications() }
-const approveApp = async (a) => { try { await ElMessageBox.prompt('审核意见（可选）','通过申请',{confirmButtonText:'确认通过',inputPlaceholder:'输入审核意见...'}).then(({value})=>reviewApplication(a.username,a.id,'approved',value||'审核通过')); ElMessage.success('已通过'); refreshApplications() } catch {} }
-const rejectApp = async (a) => { try { const {value}=await ElMessageBox.prompt('请输入驳回原因','驳回申请',{confirmButtonText:'确认驳回',inputPlaceholder:'请填写驳回原因...',inputValidator:(v)=>v&&v.trim()?true:'驳回原因不能为空'}); await reviewApplication(a.username,a.id,'rejected',value); ElMessage.success('已驳回'); refreshApplications() } catch {} }
+const refreshApplications = () => { allApplications.value = [] }
+const approveApp = async () => { ElMessage.info('生产环境不支持此操作') }
+const rejectApp = async () => { ElMessage.info('生产环境不支持此操作') }
 
 // 图表
 const userRoleChart = ref(null)

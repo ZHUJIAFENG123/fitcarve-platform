@@ -176,8 +176,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ROLE_APPLICATION_RULES, applyForRole, getMyApplications } from '../../services/auth.js'
-import { ROLE_DEFINITIONS, getUserRoles } from '../../services/permission.js'
+import { ROLE_DEFINITIONS } from '@/services/auth.js'
 
 const router = useRouter()
 
@@ -199,12 +198,7 @@ const userInfo = ref(loadUserInfo())
 const allRoles = computed(() => userInfo.value.roles || [userInfo.value.role])
 const myApplications = ref([])
 
-// 可申请的角色
-const availableRoles = computed(() => {
-  const currentRole = localStorage.getItem('activeRole') || userInfo.value.role
-  const allowed = ROLE_APPLICATION_RULES[currentRole] || []
-  return allowed.filter(r => !allRoles.value.includes(r))
-})
+const availableRoles = computed(() => [])
 
 const userStats = ref({ favorites: 12, courses: 5, comments: 8 })
 const learningStats = ref({
@@ -271,26 +265,10 @@ const applyRules = {
 }
 
 const submitApplication = async () => {
-  if (!applyFormRef.value) return
-  const valid = await applyFormRef.value.validate().catch(() => false)
-  if (!valid) return
-  submitting.value = true
-  try {
-    await applyForRole(applyForm.value.targetRole, applyForm.value.reason)
-    ElMessage.success('申请已提交，请等待管理员审核')
-    applyDialogVisible.value = false
-    applyForm.value = { targetRole: '', reason: '' }
-    myApplications.value = getMyApplications()
-    userInfo.value = loadUserInfo()
-  } catch (e) {
-    ElMessage.error(e.message)
-  } finally {
-    submitting.value = false
-  }
+  ElMessage.warning('生产环境暂不支持角色申请，所有用户默认为健身爱好者')
 }
 
 onMounted(() => {
-  myApplications.value = getMyApplications()
   userInfo.value = loadUserInfo()
 })
 </script>
