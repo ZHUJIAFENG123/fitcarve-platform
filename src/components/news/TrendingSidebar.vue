@@ -96,10 +96,10 @@ function formatViews(v: number) {
 
 .sidebar-card {
   background: var(--color-bg-card);
-  border: 1px solid var(--color-border-light);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 .sidebar-title {
   font-size: var(--text-base);

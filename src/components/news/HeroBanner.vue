@@ -141,7 +141,7 @@ onUnmounted(stopAuto)
   position: relative;
   z-index: 2;
   max-width: 640px;
-  padding: var(--space-8) var(--space-6);
+  padding: var(--space-8) var(--space-8) var(--space-8) 60px;
   color: #fff;
 }
 .slide-category {
@@ -240,13 +240,13 @@ onUnmounted(stopAuto)
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: none;
-  background: rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.3);
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -255,7 +255,7 @@ onUnmounted(stopAuto)
   backdrop-filter: blur(4px);
 }
 .hero-arrow:hover {
-  background: rgba(255,255,255,0.3);
+  background: rgba(0,0,0,0.5);
 }
 .hero-arrow--left { left: 16px; }
 .hero-arrow--right { right: 16px; }
@@ -263,7 +263,7 @@ onUnmounted(stopAuto)
 @media (max-width: 768px) {
   .hero-banner { height: 320px; }
   .slide-title { font-size: var(--text-xl); }
-  .slide-content { padding: var(--space-4); }
-  .hero-arrow { width: 36px; height: 36px; font-size: 1rem; }
+  .slide-content { padding: var(--space-4) var(--space-12) var(--space-4) var(--space-12); }
+  .hero-arrow { width: 32px; height: 32px; font-size: 0.8rem; }
 }
 </style>

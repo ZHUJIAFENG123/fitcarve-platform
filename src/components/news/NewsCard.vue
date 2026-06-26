@@ -126,6 +126,7 @@ function handleClick() {
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
   flex-direction: column;
+  box-shadow: var(--shadow-sm);
   border-left: 3px solid transparent;
 }
 
@@ -133,6 +134,7 @@ function handleClick() {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
   border-left-color: var(--color-primary);
+  border-color: var(--color-border);
 }
 
 .news-card--loading {
