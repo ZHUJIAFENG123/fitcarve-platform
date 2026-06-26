@@ -2,10 +2,9 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const News = require('../models/News');
-const Course = require('../models/Course');
+const { pool } = require('../db');
 const Comment = require('../models/Comment');
 const Notification = require('../models/Notification');
-const { pool } = require('../db');
 const { authenticate, authorize } = require('../middleware/auth');
 
 router.get('/dashboard', authenticate, authorize('admin'), async (req, res) => {
@@ -129,7 +128,7 @@ router.get('/moderation', authenticate, authorize('admin'), async (req, res) => 
       results = await News.findAll();
       total = results.length;
     } else if (type === 'courses') {
-      results = await Course.findAll();
+      const [results] = await pool.query('SELECT * FROM courses');
       total = results.length;
     } else if (type === 'comments') {
       results = await Comment.findAll();
@@ -167,7 +166,8 @@ router.put('/moderation/:id', authenticate, authorize('admin'), async (req, res)
     if (type === 'news') {
       result = await News.findById(id);
     } else if (type === 'courses') {
-      result = await Course.findById(id);
+      const [resultRows] = await pool.query('SELECT * FROM courses WHERE id = ?', [id]);
+      result = resultRows[0];
     } else if (type === 'comments') {
       result = await Comment.findById(id);
     }

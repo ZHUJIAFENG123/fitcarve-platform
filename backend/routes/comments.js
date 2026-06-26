@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Comment = require('../models/Comment');
 const News = require('../models/News');
-const Course = require('../models/Course');
+const { pool } = require('../db');
 const { authenticate, optionalAuthenticate } = require('../middleware/auth');
 
 router.get('/', optionalAuthenticate, async (req, res) => {
@@ -50,7 +50,8 @@ router.post('/', authenticate, async (req, res) => {
       const news = await News.findById(parseInt(targetId));
       targetExists = !!news;
     } else if (targetType === 'course') {
-      const course = await Course.findById(parseInt(targetId));
+      const [rows] = await pool.query('SELECT * FROM courses WHERE id = ?', [parseInt(targetId)]);
+      const course = rows[0];
       targetExists = !!course;
     }
 

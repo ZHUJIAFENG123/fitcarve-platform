@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const News = require('../models/News');
-const Course = require('../models/Course');
+const { pool } = require('../db');
 
 router.get('/', async (req, res) => {
   try {
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
     }
 
     if (!type || type === 'course') {
-      const courses = await Course.findAll();
+      const [courses] = await pool.query('SELECT * FROM courses');
       const filteredCourses = courses.filter(c =>
         c.title.includes(keyword) ||
         c.description.includes(keyword) ||
