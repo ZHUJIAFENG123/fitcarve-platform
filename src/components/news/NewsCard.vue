@@ -9,7 +9,7 @@
       <div class="card-cover">
         <img
           v-if="news.image"
-          :data-src="news.image"
+          :src="news.image"
           :alt="news.title"
           class="card-image"
           loading="lazy"

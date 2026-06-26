@@ -22,6 +22,10 @@
       <div v-else-if="list.length === 0" class="dl-state"><el-empty description="暂无饮食方案" /></div>
       <div v-else class="dl-grid">
         <article v-for="item in list" :key="item.id" class="dl-card" @click="$router.push(`/fitness/diet/${item.id}`)">
+          <div class="dl-cover">
+            <img v-if="item.cover_image" :src="item.cover_image" :alt="item.title" />
+            <div v-else class="dl-cover-placeholder">🍽</div>
+          </div>
           <span class="dl-goal-badge">{{ GOAL_MAP[item.goal] }}</span>
           <h3>{{ item.title }}</h3>
           <p>{{ (item.description || '').slice(0, 70) }}{{ item.description?.length > 70 ? '...' : '' }}</p>
@@ -91,13 +95,16 @@ onMounted(fetchData)
 .dl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-5); }
 .dl-card {
   background: var(--color-bg-card); border: 1px solid var(--color-border-light); border-radius: var(--radius-xl);
-  padding: var(--space-5); cursor: pointer; transition: all 0.25s; border-left: 3px solid transparent;
-  display: flex; flex-direction: column; gap: var(--space-2);
+  cursor: pointer; transition: all 0.25s; border-left: 3px solid transparent;
+  display: flex; flex-direction: column; gap: 0; overflow: hidden;
 }
+.dl-cover { height: 160px; overflow: hidden; background: var(--color-accent-50); display: flex; align-items: center; justify-content: center; }
+.dl-cover img { width: 100%; height: 100%; object-fit: cover; }
+.dl-cover-placeholder { font-size: 2.5rem; opacity: 0.3; }
 .dl-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-left-color: var(--color-accent); }
-.dl-card h3 { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; color: var(--color-text-primary); }
-.dl-card p { font-size: var(--text-sm); color: var(--color-text-secondary); flex:1; }
-.dl-goal-badge { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: var(--radius-sm); background: var(--color-accent-50); color: var(--color-accent); display: inline-block; width: fit-content; }
+.dl-card h3 { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; color: var(--color-text-primary); padding: var(--space-2) var(--space-4) 0; }
+.dl-card p { font-size: var(--text-sm); color: var(--color-text-secondary); flex:1; padding: 0 var(--space-4); }
+.dl-goal-badge { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: var(--radius-sm); background: var(--color-accent-50); color: var(--color-accent); display: inline-block; width: fit-content; margin: var(--space-3) var(--space-4) 0; }
 .dl-nutrients { margin-top: var(--space-2); }
 .dl-cal { font-size: var(--text-base); font-weight: 700; color: var(--color-accent); }
 .dl-bars { display: flex; gap: 4px; margin-top: var(--space-1); height: 22px; }

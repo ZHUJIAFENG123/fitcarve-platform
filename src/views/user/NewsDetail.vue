@@ -50,7 +50,7 @@
 
         <!-- 封面图 -->
         <div class="article-cover" v-if="news.image">
-          <img :data-src="news.image" :alt="news.title" class="cover-img" />
+          <img :src="news.image" :alt="news.title" class="cover-img" />
         </div>
 
         <!-- 摘要 -->

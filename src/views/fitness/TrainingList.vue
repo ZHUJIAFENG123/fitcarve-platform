@@ -39,6 +39,10 @@
       <!-- Grid -->
       <div v-else class="tl-grid">
         <article v-for="item in list" :key="item.id" class="tl-card" @click="$router.push(`/fitness/training/${item.id}`)">
+          <div class="tl-cover">
+            <img v-if="item.cover_image" :src="item.cover_image" :alt="item.title" />
+            <div v-else class="tl-cover-placeholder">📋</div>
+          </div>
           <div class="tl-card-top">
             <span class="tl-goal">{{ GOAL_MAP[item.goal] }}</span>
             <span class="tl-level">{{ LEVEL_MAP[item.level] }}</span>
@@ -139,16 +143,20 @@ onMounted(fetchData)
 .tl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-5); }
 .tl-card {
   background: var(--color-bg-card); border: 1px solid var(--color-border-light); border-radius: var(--radius-xl);
-  padding: var(--space-5); cursor: pointer; transition: all 0.25s; border-left: 3px solid transparent;
-  display: flex; flex-direction: column; gap: var(--space-2);
+  cursor: pointer; transition: all 0.25s; border-left: 3px solid transparent;
+  display: flex; flex-direction: column; gap: 0; overflow: hidden;
 }
+.tl-cover { height: 160px; overflow: hidden; background: var(--color-primary-50); display: flex; align-items: center; justify-content: center; }
+.tl-cover img { width: 100%; height: 100%; object-fit: cover; }
+.tl-cover-placeholder { font-size: 2.5rem; opacity: 0.3; }
+.tl-card-top { display: flex; gap: var(--space-2); padding: var(--space-3) var(--space-4) 0; }
 .tl-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-left-color: var(--color-primary); }
 .tl-card-top { display: flex; gap: var(--space-2); }
 .tl-goal { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: var(--radius-sm); background: var(--color-primary-50); color: var(--color-primary); }
 .tl-level { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: var(--radius-sm); background: var(--color-accent-50); color: var(--color-accent); }
-.tl-title { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; color: var(--color-text-primary); }
-.tl-desc { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: var(--leading-normal); flex: 1; }
-.tl-meta { display: flex; gap: var(--space-4); font-size: var(--text-xs); color: var(--color-text-tertiary); }
+.tl-title { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 700; color: var(--color-text-primary); padding: 0 var(--space-4); }
+.tl-desc { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: var(--leading-normal); flex: 1; padding: 0 var(--space-4); }
+.tl-meta { display: flex; gap: var(--space-4); font-size: var(--text-xs); color: var(--color-text-tertiary); padding: 0 var(--space-4); }
 .tl-btn { margin-top: var(--space-2); padding: 10px 0; border: 1px solid var(--color-primary); border-radius: var(--radius-md); background: transparent; color: var(--color-primary); font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
 .tl-btn:hover { background: var(--color-primary); color: #fff; }
 
