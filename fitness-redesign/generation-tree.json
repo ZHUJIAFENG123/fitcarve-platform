@@ -1,0 +1,52 @@
+{
+  "root": {
+    "nodeId": "gen-project-shell",
+    "kind": "project-shell",
+    "output": "partials/project-shell.html",
+    "sharedRegions": ["navbar", "footer", "global-background", "brand-colors", "typography"],
+    "privateRegions": [],
+    "status": "planned",
+    "children": [
+      {
+        "nodeId": "gen-page-home",
+        "kind": "page-leaf",
+        "pageIds": ["page-home"],
+        "output": "pages/home.html",
+        "sharedRegions": ["navbar", "footer"],
+        "privateRegions": ["hero-section", "stats-bar", "hot-news-grid", "recommended-courses", "features-section"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-news",
+        "kind": "page-leaf",
+        "pageIds": ["page-news-list"],
+        "output": "pages/news-list.html",
+        "sharedRegions": ["navbar", "footer"],
+        "privateRegions": ["filter-bar", "news-grid", "pagination"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-courses",
+        "kind": "page-leaf",
+        "pageIds": ["page-course-list"],
+        "output": "pages/course-list.html",
+        "sharedRegions": ["navbar", "footer"],
+        "privateRegions": ["filter-bar", "continue-learning", "course-grid", "pagination"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-login",
+        "kind": "page-leaf",
+        "pageIds": ["page-login"],
+        "output": "pages/login.html",
+        "sharedRegions": [],
+        "privateRegions": ["login-banner", "login-form"],
+        "status": "planned",
+        "children": []
+      }
+    ]
+  }
+}

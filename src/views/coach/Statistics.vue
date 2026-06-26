@@ -1,34 +1,6 @@
 <template>
   <div class="statistics-container">
-    <!-- 顶部导航栏 -->
-    <header class="navbar">
-      <div class="nav-content">
-        <div class="logo">
-          <h1>健身资讯网站</h1>
-        </div>
-        <nav class="nav-menu">
-          <a href="/coach/publish">内容发布</a>
-          <a href="/coach/interaction">用户互动</a>
-          <a href="/coach/statistics" class="active">数据统计</a>
-        </nav>
-        <div class="user-info">
-          <el-avatar size="40" :src="userAvatar">{{ username.charAt(0) }}</el-avatar>
-          <span class="username">{{ username }}</span>
-          <el-dropdown>
-            <el-button type="text">
-              <el-icon><ArrowDown /></el-icon>
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="toProfile">个人中心</el-dropdown-item>
-                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </div>
-    </header>
-
+    <Navbar :menu-links="coachMenuLinks" />
     <!-- 统计内容 -->
     <div class="statistics-content">
       <!-- 数据概览 -->
@@ -139,10 +111,17 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ArrowDown } from '@element-plus/icons-vue'
+import Navbar from '@/components/Navbar.vue'
 import VChart from 'vue-echarts'
 
 const router = useRouter()
+
+const coachMenuLinks = [
+  { to: '/coach/publish', label: '内容发布', active: false },
+  { to: '/coach/interaction', label: '用户互动', active: false },
+  { to: '/coach/statistics', label: '数据统计', active: true },
+  { to: '/coach/manage', label: '课程管理', active: false }
+]
 
 // 模拟用户信息
 const username = ref('教练')
@@ -453,4 +432,18 @@ const logout = () => {
     height: 250px;
   }
 }
+
+.notification-btn { position: relative; margin-right: 10px; }
+.unread-badge { position: absolute; top: -5px; right: -5px; background-color: #ff4d4f; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+.notification-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px 0; margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+.notification-item { padding: 12px 20px; cursor: pointer; transition: background-color 0.2s; }
+.notification-item:hover { background-color: #f5f7fa; }
+.unread-item { background-color: #f0f9ff; }
+.unread-item:hover { background-color: #e6f4ff; }
+.notification-content { min-width: 260px; }
+.notification-top { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.notification-dot { width: 7px; height: 7px; border-radius: 50%; background-color: #ff4d4f; flex-shrink: 0; }
+.notification-title { font-size: 14px; font-weight: 500; color: #333; }
+.notification-desc { font-size: 13px; color: #666; margin-bottom: 4px; }
+.notification-time { font-size: 12px; color: #999; }
 </style>

@@ -1,458 +1,378 @@
 <template>
-  <div class="news-list-container">
-    <!-- 顶部导航栏 -->
-    <header class="navbar">
-      <div class="nav-content">
-        <div class="logo">
-          <h1>健身资讯网站</h1>
-        </div>
-        <nav class="nav-menu">
-          <a href="/home">首页</a>
-          <a href="/news/list" class="active">资讯</a>
-          <a href="/courses/list">课程</a>
-          <a href="/recommendation">推荐</a>
-        </nav>
-        <div class="user-info">
-          <el-avatar size="40" :src="userAvatar">{{ username.charAt(0) }}</el-avatar>
-          <span class="username">{{ username }}</span>
-          <el-dropdown>
-            <el-button type="text">
-              <el-icon><ArrowDown /></el-icon>
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="toProfile">个人中心</el-dropdown-item>
-                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </div>
-    </header>
+  <div class="news-list-page">
+    <Navbar :menu-links="newsMenuLinks" />
 
-    <!-- 搜索和筛选 -->
-    <div class="filter-section">
-      <div class="filter-content">
+    <!-- ===== Hero Banner ===== -->
+    <HeroBanner :items="heroItems" />
+
+    <!-- ===== 筛选栏 ===== -->
+    <div class="filter-bar">
+      <div class="filter-inner">
         <div class="search-box">
           <el-input
-            v-model="searchQuery"
-            placeholder="搜索资讯"
-            prefix-icon="el-icon-search"
-            @keyup.enter="search"
-          >
-            <template #append>
-              <el-button type="primary" @click="search">搜索</el-button>
-            </template>
-          </el-input>
+            v-model="searchKeyword"
+            placeholder="搜索文章标题、关键词..."
+            :prefix-icon="Search"
+            clearable
+            @input="onSearchInput"
+            @clear="search('')"
+          />
         </div>
-        <div class="category-filter">
-          <el-select v-model="selectedCategory" placeholder="选择分类" @change="filterNews">
-            <el-option label="全部" value="all"></el-option>
-            <el-option label="健身知识" value="knowledge"></el-option>
-            <el-option label="营养健康" value="nutrition"></el-option>
-            <el-option label="运动康复" value="recovery"></el-option>
-            <el-option label="健身器材" value="equipment"></el-option>
+        <div class="filter-right">
+          <el-select v-model="selectedCategory" placeholder="全部分类" @change="onCategoryChange">
+            <el-option label="全部分类" value="all" />
+            <el-option
+              v-for="cat in categories"
+              :key="cat.value"
+              :label="cat.label"
+              :value="cat.value"
+            />
           </el-select>
+          <el-select v-model="sort" placeholder="排序" @change="onSortChange">
+            <el-option label="最新发布" value="newest" />
+            <el-option label="最多浏览" value="popular" />
+          </el-select>
+          <ViewToggle v-model="viewMode" />
         </div>
-        <div class="tag-filter">
-          <el-tag
-            v-for="tag in tags"
-            :key="tag"
-            :type="selectedTags.includes(tag) ? 'primary' : ''"
-            @click="toggleTag(tag)"
-            class="tag-item"
-          >
-            {{ tag }}
-          </el-tag>
-        </div>
+      </div>
+      <!-- Tag 标签行 -->
+      <div class="tag-row" v-if="allTags.length > 0">
+        <button
+          v-for="tag in allTags"
+          :key="tag"
+          :class="['tag-pill', { active: selectedTags.includes(tag) }]"
+          @click="toggleTag(tag)"
+        >{{ tag }}</button>
+        <button v-if="selectedTags.length > 0" class="tag-clear" @click="resetTags()">
+          清空标签
+        </button>
       </div>
     </div>
 
-    <!-- 资讯列表 -->
-    <div class="news-container">
-      <div class="news-grid">
-        <el-card v-for="news in filteredNews" :key="news.id" class="news-card">
-          <img :src="news.image" :alt="news.title" class="news-image">
-          <div class="news-content">
-            <h3>{{ news.title }}</h3>
-            <p class="news-description">{{ news.description }}</p>
-            <div class="news-meta">
-              <span class="author">{{ news.author }}</span>
-              <span class="time">{{ news.time }}</span>
-              <span class="views">{{ news.views }} 浏览</span>
-            </div>
-            <div class="news-tags">
-              <el-tag size="small" v-for="tag in news.tags" :key="tag">{{ tag }}</el-tag>
-            </div>
-            <el-button type="primary" @click="toNewsDetail(news.id)" class="read-btn">阅读全文</el-button>
+    <!-- ===== 主体区 ===== -->
+    <div class="news-main">
+      <div class="news-layout">
+        <!-- 左侧：列表 -->
+        <div class="news-primary">
+          <!-- 结果计数 -->
+          <div class="results-header" v-if="!loading">
+            <span class="results-count">
+              找到 <strong>{{ total }}</strong> 篇资讯
+              <template v-if="isFiltering">
+                · <button class="link-reset" @click="resetFilters()">清除筛选</button>
+              </template>
+            </span>
           </div>
-        </el-card>
-      </div>
 
-      <!-- 分页 -->
-      <div class="pagination">
-        <el-pagination
-          v-model:current-page="currentPage"
-          :page-size="pageSize"
-          layout="total, prev, pager, next"
-          :total="totalNews"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+          <!-- Loading -->
+          <div v-if="loading" :class="viewMode === 'list' ? 'news-list-view' : 'news-grid'">
+            <NewsCard v-for="i in 6" :key="i" :news="{} as any" :loading="true" />
+          </div>
+
+          <!-- Error -->
+          <div v-else-if="hasError" class="state-box">
+            <el-result icon="error" title="加载失败" :sub-title="error">
+              <template #extra>
+                <el-button type="primary" @click="retry">重新加载</el-button>
+              </template>
+            </el-result>
+          </div>
+
+          <!-- Empty -->
+          <div v-else-if="list.length === 0" class="state-box">
+            <el-empty description="没有找到匹配的资讯">
+              <template #extra>
+                <el-button type="primary" @click="resetFilters()">重置筛选条件</el-button>
+              </template>
+            </el-empty>
+          </div>
+
+          <!-- Grid / List view -->
+          <div v-else :class="viewMode === 'list' ? 'news-list-view' : 'news-grid'">
+            <NewsCard
+              v-for="item in list"
+              :key="item.id"
+              :news="item"
+              :class="{ 'news-card--list': viewMode === 'list' }"
+            />
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-wrap" v-if="total > pageSize">
+            <el-pagination
+              v-model:current-page="page"
+              :page-size="pageSize"
+              :total="total"
+              layout="total, prev, pager, next"
+              @current-change="onPageChange"
+            />
+          </div>
+        </div>
+
+        <!-- 右侧：侧栏 -->
+        <TrendingSidebar
+          :items="popularNews"
+          :loading="popularLoading"
+          :tags="allTags"
+          :active-category="selectedCategory"
+          :active-tags="selectedTags"
+          :categories="categories"
+          @select-category="onSidebarCategory"
+          @toggle-tag="toggleTag"
         />
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { ArrowDown } from '@element-plus/icons-vue'
-import { loadUserInfo } from '../../services/user.js'
+<script setup lang="ts">
+import { onMounted, ref, computed } from 'vue'
+import { Search } from '@element-plus/icons-vue'
+import Navbar from '@/components/Navbar.vue'
+import NewsCard from '@/components/news/NewsCard.vue'
+import HeroBanner from '@/components/news/HeroBanner.vue'
+import TrendingSidebar from '@/components/news/TrendingSidebar.vue'
+import ViewToggle from '@/components/news/ViewToggle.vue'
+import { useNewsList } from '@/composables/useNewsList'
+import { useNewsStore } from '@/stores/news'
+import type { NewsCardData } from '@/types/news'
 
-const router = useRouter()
+const newsMenuLinks = [
+  { to: '/home', label: '首页', active: false },
+  { to: '/news/list', label: '资讯', active: true },
+  { to: '/fitness', label: '训练&饮食', active: false },
+  { to: '/recommendation', label: '发现', active: false }
+]
 
-// 用户信息
-const userInfo = ref(loadUserInfo())
-const username = computed(() => userInfo.value.username)
-const userAvatar = computed(() => userInfo.value.avatar)
+const store = useNewsStore()
 
-// 监听localStorage变化，实时更新用户信息
-const handleStorageChange = () => {
-  userInfo.value = loadUserInfo()
-}
+const {
+  list, total, loading, error, hasError,
+  searchKeyword, selectedCategory, selectedTags, sort, page, pageSize,
+  isFiltering, categories, allTags,
+  search, setCategory, setSort, setPage,
+  toggleTag, resetTags, resetFilters
+} = useNewsList()
 
-// 组件挂载时添加监听器
-onMounted(() => {
-  window.addEventListener('storage', handleStorageChange)
-})
-
-// 组件卸载时移除监听器
-onUnmounted(() => {
-  window.removeEventListener('storage', handleStorageChange)
-})
-
-// 搜索和筛选
-const searchQuery = ref('')
-const selectedCategory = ref('all')
-const selectedTags = ref([])
-const tags = ref(['减肥', '增肌', '瑜伽', '跑步', '力量训练', '营养', '康复'])
-
-// 分页
-const currentPage = ref(1)
-const pageSize = ref(10)
-
-// 模拟资讯数据
-const newsData = ref(
-  Array.from({ length: 300 }, (_, index) => ({
-    id: index + 1,
-    title: `健身资讯 ${index + 1}`,
-    description: '这是一条健身相关的资讯，包含了详细的健身知识和建议。',
-    image: `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=fitness%20news%20${index + 1}&image_size=square`,
-    author: `作者 ${(index % 10) + 1}`,
-    time: `2024-01-${String((index % 30) + 1).padStart(2, '0')}`,
-    views: 1000 + index * 10,
-    category: ['knowledge', 'nutrition', 'recovery', 'equipment'][index % 4],
-    tags: tags.value.filter((_, tagIndex) => tagIndex % (index % 3 + 1) === 0)
-  }))
+// View mode: grid | list (persisted in localStorage)
+const viewMode = ref<'grid' | 'list'>(
+  (localStorage.getItem('newsViewMode') as 'grid' | 'list') || 'grid'
 )
 
-// 计算筛选后的资讯
-const filteredNews = computed(() => {
-  let result = newsData.value
-  
-  // 分类筛选
-  if (selectedCategory.value !== 'all') {
-    result = result.filter(news => news.category === selectedCategory.value)
-  }
-  
-  // 标签筛选
-  if (selectedTags.value.length > 0) {
-    result = result.filter(news => 
-      selectedTags.value.every(tag => news.tags.includes(tag))
-    )
-  }
-  
-  // 搜索筛选
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    result = result.filter(news => 
-      news.title.toLowerCase().includes(query) ||
-      news.description.toLowerCase().includes(query)
-    )
-  }
-  
-  // 分页
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return result.slice(start, end)
+// Hero items: top 5 popular news
+const heroItems = ref<NewsCardData[]>([])
+const popularNews = computed(() => store.popularNews)
+const popularLoading = ref(false)
+
+let searchTimer: ReturnType<typeof setTimeout> | null = null
+
+function onSearchInput() {
+  if (searchTimer) clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => {
+    search(searchKeyword.value)
+  }, 350)
+}
+
+function onCategoryChange() {
+  setCategory(selectedCategory.value)
+}
+
+function onSortChange() {
+  setSort(sort.value)
+}
+
+function onPageChange(p: number) {
+  setPage(p)
+}
+
+function onSidebarCategory(val: string) {
+  setCategory(val as any)
+}
+
+function retry() {
+  search()
+}
+
+// Persist view mode preference
+import { watch } from 'vue'
+watch(viewMode, (val) => {
+  localStorage.setItem('newsViewMode', val)
 })
 
-// 总资讯数
-const totalNews = computed(() => {
-  let result = newsData.value
-  
-  // 分类筛选
-  if (selectedCategory.value !== 'all') {
-    result = result.filter(news => news.category === selectedCategory.value)
-  }
-  
-  // 标签筛选
-  if (selectedTags.value.length > 0) {
-    result = result.filter(news => 
-      selectedTags.value.every(tag => news.tags.includes(tag))
-    )
-  }
-  
-  // 搜索筛选
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    result = result.filter(news => 
-      news.title.toLowerCase().includes(query) ||
-      news.description.toLowerCase().includes(query)
-    )
-  }
-  
-  return result.length
+onMounted(async () => {
+  popularLoading.value = true
+  const popular = await store.fetchPopular(10)
+  heroItems.value = popular.slice(0, 5)
+  popularLoading.value = false
 })
-
-// 搜索
-const search = () => {
-  currentPage.value = 1
-}
-
-// 筛选
-const filterNews = () => {
-  currentPage.value = 1
-}
-
-// 切换标签
-const toggleTag = (tag) => {
-  const index = selectedTags.value.indexOf(tag)
-  if (index > -1) {
-    selectedTags.value.splice(index, 1)
-  } else {
-    selectedTags.value.push(tag)
-  }
-  currentPage.value = 1
-}
-
-// 分页处理
-const handleSizeChange = (size) => {
-  pageSize.value = size
-  currentPage.value = 1
-}
-
-const handleCurrentChange = (current) => {
-  currentPage.value = current
-}
-
-// 跳转到资讯详情
-const toNewsDetail = (id) => {
-  router.push(`/news/detail/${id}`)
-}
-
-// 跳转到个人中心
-const toProfile = () => {
-  router.push('/profile')
-}
-
-// 退出登录
-const logout = () => {
-  router.push('/login')
-}
 </script>
 
 <style scoped>
-.news-list-container {
+.news-list-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: var(--color-bg);
 }
 
-/* 导航栏 */
-.navbar {
-  background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* ── Filter Bar ── */
+.filter-bar {
+  background: var(--color-bg-card);
+  border-bottom: 1px solid var(--color-border-light);
+  padding: var(--space-4) var(--space-4);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 40;
 }
-
-.nav-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
-}
-
-.logo h1 {
-  font-size: 20px;
-  color: #1890ff;
-  margin: 0;
-}
-
-.nav-menu {
-  display: flex;
-  gap: 30px;
-}
-
-.nav-menu a {
-  text-decoration: none;
-  color: #333;
-  font-size: 16px;
-  padding: 8px 0;
-  position: relative;
-}
-
-.nav-menu a.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #1890ff;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.username {
-  font-size: 14px;
-  color: #333;
-}
-
-/* 筛选部分 */
-.filter-section {
-  background-color: white;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.filter-content {
+.filter-inner {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
+  gap: var(--space-3);
+  align-items: center;
   flex-wrap: wrap;
-  gap: 20px;
-  align-items: center;
 }
-
 .search-box {
   flex: 1;
-  min-width: 300px;
-}
-
-.category-filter {
   min-width: 200px;
 }
-
-.tag-filter {
+.filter-right {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-shrink: 0;
+}
+.tag-row {
+  max-width: 1200px;
+  margin: var(--space-3) auto 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-  width: 100%;
+  gap: var(--space-2);
+  align-items: center;
 }
-
-.tag-item {
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+  font-weight: 500;
   cursor: pointer;
-  user-select: none;
+  border: 1px solid var(--color-border-light);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  transition: all 0.2s ease;
+  font-family: var(--font-body);
 }
+.tag-pill:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.tag-pill.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+.tag-clear {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  transition: color 0.2s;
+}
+.tag-clear:hover { color: var(--state-error); }
 
-/* 资讯列表 */
-.news-container {
+/* ── Layout ── */
+.news-main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: var(--space-6) var(--space-4) var(--space-16);
+}
+.news-layout {
+  display: flex;
+  gap: var(--space-8);
+  align-items: flex-start;
+}
+.news-primary {
+  flex: 1;
+  min-width: 0;
 }
 
+/* ── Results ── */
+.results-header {
+  margin-bottom: var(--space-4);
+}
+.results-count {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}
+.results-count strong {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+.link-reset {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  text-decoration: underline;
+}
+
+/* ── Grid ── */
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-5);
+  margin-bottom: var(--space-8);
 }
 
-.news-card {
-  transition: transform 0.3s ease;
-}
-
-.news-card:hover {
-  transform: translateY(-5px);
-}
-
-.news-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
-.news-content h3 {
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.news-description {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.news-meta {
-  font-size: 12px;
-  color: #999;
-  margin-bottom: 10px;
+/* ── List ── */
+.news-list-view {
   display: flex;
-  gap: 15px;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+.news-list-view :deep(.news-card) {
+  flex-direction: row;
+}
+.news-list-view :deep(.card-cover) {
+  width: 240px;
+  min-height: 160px;
+  height: auto;
+  flex-shrink: 0;
+}
+.news-list-view :deep(.card-body) {
+  flex: 1;
 }
 
-.news-tags {
-  margin-bottom: 15px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.read-btn {
-  width: 100%;
-}
-
-/* 分页 */
-.pagination {
+/* ── States ── */
+.state-box {
   display: flex;
   justify-content: center;
-  margin-top: 30px;
+  align-items: center;
+  min-height: 400px;
+  padding: var(--space-12) 0;
+}
+.pagination-wrap {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--space-4);
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .nav-menu {
-    display: none;
-  }
-  
-  .filter-content {
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .news-layout {
     flex-direction: column;
-    align-items: stretch;
   }
-  
-  .news-grid {
-    grid-template-columns: 1fr;
-  }
+}
+@media (max-width: 640px) {
+  .filter-inner { flex-direction: column; }
+  .filter-right { width: 100%; }
+  .filter-right .el-select { flex: 1; }
+  .news-grid { grid-template-columns: 1fr; }
+  .news-list-view :deep(.news-card) { flex-direction: column; }
+  .news-list-view :deep(.card-cover) { width: 100%; height: 180px; }
 }
 </style>

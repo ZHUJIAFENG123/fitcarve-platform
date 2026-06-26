@@ -1,430 +1,360 @@
 <template>
-  <div class="home-container">
-    <!-- 顶部导航栏 -->
-    <header class="navbar">
-      <div class="nav-content">
-        <div class="logo">
-          <h1>健身资讯网站</h1>
-        </div>
-        <nav class="nav-menu">
-          <a href="/home" class="active">首页</a>
-          <a href="/news/list">资讯</a>
-          <a href="/courses/list">课程</a>
-          <a href="/recommendation">推荐</a>
-        </nav>
-        <div class="user-info">
-          <el-avatar size="40" :src="userAvatar">{{ username.charAt(0) }}</el-avatar>
-          <span class="username">{{ username }}</span>
-          <el-dropdown>
-            <el-button type="text">
-              <el-icon><ArrowDown /></el-icon>
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="toProfile">个人中心</el-dropdown-item>
-                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </div>
-    </header>
+  <div class="home-page">
+    <Navbar :menu-links="menuLinks" />
 
-    <!-- 轮播图 -->
-    <div class="banner">
-      <el-carousel :interval="5000" type="card" height="400px">
-        <el-carousel-item v-for="item in banners" :key="item.id">
-          <div class="banner-item" @click="goToBannerDetail(item.id)">
-            <img :src="item.image" :alt="item.title" class="banner-image">
-            <div class="banner-content">
-              <h3>{{ item.title }}</h3>
-              <p>{{ item.description }}</p>
-            </div>
+    <!-- Hero 区域 -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1>科学健身，<br/>从这里开始</h1>
+          <p class="hero-sub">专业 · 循证 · 个性化的健身资讯平台，<br/>为您提供权威的训练指导与健康知识</p>
+          <div class="hero-actions">
+            <el-button type="primary" size="large" round class="hero-btn-primary" @click="goNewsList">探索资讯</el-button>
+            <el-button size="large" round class="hero-btn-outline" @click="goFitness">训练&饮食</el-button>
           </div>
-        </el-carousel-item>
-      </el-carousel>
-    </div>
-
-    <!-- 资讯推荐 -->
-    <section class="news-section">
-      <div class="section-header">
-        <h2>热门资讯</h2>
-        <a href="/news/list" class="more">查看更多</a>
-      </div>
-      <div class="news-list">
-        <el-card v-for="news in hotNews" :key="news.id" class="news-card" @click="goToNewsDetail(news.id)">
-          <div class="news-item">
-            <img :src="news.image" :alt="news.title" class="news-image">
-            <div class="news-content">
-              <h3>{{ news.title }}</h3>
-              <p class="news-description">{{ news.description }}</p>
-              <div class="news-meta">
-                <span class="author">{{ news.author }}</span>
-                <span class="time">{{ news.time }}</span>
-                <span class="views">{{ news.views }} 浏览</span>
-              </div>
-            </div>
-          </div>
-        </el-card>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-card c1">💪 力量训练</div>
+          <div class="hero-card c2">🧘 瑜伽塑形</div>
+          <div class="hero-card c3">🏃 有氧燃脂</div>
+          <div class="hero-card c4">🥗 营养指导</div>
+        </div>
       </div>
     </section>
 
-    <!-- 课程推荐 -->
-    <section class="course-section">
-      <div class="section-header">
-        <h2>推荐课程</h2>
-        <a href="/courses/list" class="more">查看更多</a>
+    <!-- 数据统计条 -->
+    <section class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-num">{{ formatNum(320) }}</span>
+        <span class="stat-label">+ 篇资讯</span>
       </div>
-      <div class="course-list">
-        <el-card v-for="course in recommendedCourses" :key="course.id" class="course-card" @click="goToCourseDetail(course.id)">
-          <div class="course-item">
-            <img :src="course.image" :alt="course.title" class="course-image">
-            <div class="course-content">
-              <h3>{{ course.title }}</h3>
-              <p class="course-description">{{ course.description }}</p>
-              <div class="course-meta">
-                <span class="coach">{{ course.coach }}</span>
-                <span class="level">{{ course.level }}</span>
-                <span class="price">{{ course.price }}</span>
-              </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">{{ formatNum(85) }}</span>
+        <span class="stat-label">+ 门课程</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">{{ formatNum(2000) }}</span>
+        <span class="stat-label">+ 注册用户</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">{{ formatNum(30) }}</span>
+        <span class="stat-label">+ 认证教练</span>
+      </div>
+    </section>
+
+    <!-- 热门资讯 -->
+    <section class="content-section">
+      <div class="section-head">
+        <div class="section-title-group">
+          <h2>🔥 热门资讯</h2>
+          <span class="section-tag">每周精选</span>
+        </div>
+        <a href="/news/list" class="section-more">查看全部 →</a>
+      </div>
+      <div class="card-grid">
+        <div v-for="item in hotNews" :key="item.id" class="content-card" @click="goToNews(item.id)">
+          <div class="card-img-wrap">
+            <img :src="item.image" :alt="item.title">
+            <div class="card-badge">{{ item.categoryName }}</div>
+          </div>
+          <div class="card-body">
+            <h3>{{ item.title }}</h3>
+            <p class="card-desc">{{ item.description }}</p>
+            <div class="card-meta">
+              <span>✍ {{ item.author }}</span>
+              <span>👁 {{ formatNum(item.views) }}</span>
+              <span>{{ item.time }}</span>
             </div>
           </div>
-        </el-card>
+        </div>
+      </div>
+    </section>
+
+    <!-- 推荐课程 -->
+    <section class="content-section alt-bg">
+      <div class="section-head">
+        <div class="section-title-group">
+          <h2>📚 训练计划</h2>
+          <span class="section-tag">精选计划</span>
+        </div>
+        <a href="/fitness/training" class="section-more">查看全部 →</a>
+      </div>
+      <div class="card-grid">
+        <div v-for="course in recommendedCourses" :key="course.id" class="content-card" @click="goToCourse(course.id)">
+          <div class="card-img-wrap">
+            <img :src="course.image" :alt="course.title">
+            <div class="card-level" :class="course.level">{{ course.levelName }}</div>
+          </div>
+          <div class="card-body">
+            <h3>{{ course.title }}</h3>
+            <p class="card-desc">{{ course.description }}</p>
+            <div class="card-meta">
+              <span>👨‍🏫 {{ course.coach }}</span>
+              <span class="card-price">{{ course.price }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 特色介绍 -->
+    <section class="features-section">
+      <h2>为什么选择我们</h2>
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-icon">📖</div>
+          <h3>循证内容</h3>
+          <p>所有内容基于ACSM、NSCA、ISSN等国际权威机构的研究成果</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🎯</div>
+          <h3>个性化推荐</h3>
+          <p>基于您的浏览偏好和学习记录，精准匹配适合您的课程与资讯</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📊</div>
+          <h3>学习追踪</h3>
+          <p>记录学习进度，可视化学习统计，激励持续成长</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">👥</div>
+          <h3>社区互动</h3>
+          <p>与教练、创作者和其他健身爱好者交流心得，共同进步</p>
+        </div>
       </div>
     </section>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ArrowDown } from '@element-plus/icons-vue'
+import Navbar from '@/components/Navbar.vue'
 
 const router = useRouter()
 
-// 从localStorage读取用户信息
-const loadUserInfo = () => {
-  const savedUserInfo = localStorage.getItem('userInfo')
-  if (savedUserInfo) {
-    return JSON.parse(savedUserInfo)
-  }
-  return {
-    username: '健身爱好者',
-    avatar: ''
-  }
+const menuLinks = [
+  { to: '/home', label: '首页', active: true },
+  { to: '/news/list', label: '资讯', active: false },
+  { to: '/fitness', label: '训练&饮食', active: false },
+  { to: '/recommendation', label: '发现', active: false }
+]
+
+const formatNum = (n) => {
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'k'
+  return String(n)
 }
 
-const userInfo = ref(loadUserInfo())
-const username = computed(() => userInfo.value.username)
-const userAvatar = computed(() => userInfo.value.avatar)
+const API = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?image_size=square&prompt='
 
-// 监听localStorage变化，实时更新用户信息
-window.addEventListener('storage', () => {
-  userInfo.value = loadUserInfo()
-})
-
-// 模拟轮播图数据
-const banners = ref([
-  {
-    id: 1,
-    title: '2024年最新健身趋势',
-    description: '了解今年最流行的健身方式',
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=fitness%20trends%202024%20modern%20gym&image_size=landscape_16_9'
-  },
-  {
-    id: 2,
-    title: '科学健身，健康生活',
-    description: '专业教练为您定制健身计划',
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20fitness%20coach%20training&image_size=landscape_16_9'
-  },
-  {
-    id: 3,
-    title: '营养与健身的完美结合',
-    description: '合理饮食搭配科学训练',
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=healthy%20nutrition%20fitness%20meal&image_size=landscape_16_9'
-  }
-])
-
-// 模拟热门资讯数据
 const hotNews = ref([
-  {
-    id: 1,
-    title: '如何科学制定健身计划',
-    description: '根据个人情况定制适合自己的健身计划，提高训练效果',
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=fitness%20plan%20scientific&image_size=square',
-    author: '健身专家',
-    time: '2024-01-15',
-    views: 1234
-  },
-  {
-    id: 2,
-    title: '健身后如何正确恢复',
-    description: '有效的恢复方法，让你的训练效果事半功倍',
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=fitness%20recovery%20methods&image_size=square',
-    author: '运动康复师',
-    time: '2024-01-10',
-    views: 987
-  },
-  {
-    id: 3,
-    title: '不同年龄段的健身建议',
-    description: '根据年龄特点，选择适合的运动方式',
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=age%20specific%20fitness%20advice&image_size=square',
-    author: '健康顾问',
-    time: '2024-01-05',
-    views: 756
-  }
+  { id: 1, title: 'ACSM力量训练共识：渐进超负荷的3个核心细节', description: '渐进超负荷是增肌与力量提升的黄金法则，但90%的训练者都踩了这些坑', image: API + 'ACSM%20strength%20consensus', categoryName: '健身知识', author: 'NSCA专家', time: '2024-01-15', views: 2345 },
+  { id: 2, title: '肩峰下撞击综合征的4阶段居家康复方案', description: '肩部损伤占健身房就诊案例的44%-65%，这套方案经NSCA认证治疗师推荐', image: API + 'shoulder%20rehab%20protocol', categoryName: '运动康复', author: '物理治疗师', time: '2024-01-10', views: 1892 },
+  { id: 3, title: 'ISSN肌酸补充指南：5个颠覆性新结论', description: '肌酸是研究最充分的补剂，但大众认知仍停留在增肌提升力量层面', image: API + 'creatine%20ISSN%20guide', categoryName: '营养健康', author: '运动营养师', time: '2024-01-05', views: 3210 },
+  { id: 4, title: '45岁以上每周2次抗阻训练，全因死亡率降低37%', description: '柳叶刀最新研究：中老年健身的量化证据与零基础入门方案', image: API + 'lancet%20resistance%20training%20elderly', categoryName: '健身知识', author: '老年健康专家', time: '2023-12-28', views: 2156 },
+  { id: 5, title: '办公族圆肩驼背的循证矫正：4周见效的3步方案', description: '不是拉伸胸肌就够了——2025年最新的上交叉综合征矫正方案', image: API + 'posture%20correction%20office', categoryName: '运动康复', author: '体态矫正专家', time: '2023-12-20', views: 1789 },
+  { id: 6, title: 'HIIT vs 稳态有氧：减脂到底该怎么选？', description: '2025年最新荟萃分析，从减脂、心肺、长期健康三方面全面对比', image: API + 'HIIT%20vs%20steady%20cardio', categoryName: '健身知识', author: '心肺训练专家', time: '2023-12-15', views: 1456 }
 ])
 
-// 模拟推荐课程数据
 const recommendedCourses = ref([
-  {
-    id: 1,
-    title: '初级瑜伽入门',
-    description: '适合初学者的瑜伽课程，提高柔韧性和平衡感',
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=beginner%20yoga%20class&image_size=square',
-    coach: '瑜伽教练',
-    level: '初级',
-    price: '免费'
-  },
-  {
-    id: 2,
-    title: '力量训练基础',
-    description: '学习正确的力量训练方法，塑造完美身材',
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=strength%20training%20basics&image_size=square',
-    coach: '健身教练',
-    level: '中级',
-    price: '¥99'
-  },
-  {
-    id: 3,
-    title: '有氧运动减脂',
-    description: '高效有氧运动，帮助你快速减脂',
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=cardio%20fat%20loss%20workout&image_size=square',
-    coach: '减脂专家',
-    level: '高级',
-    price: '¥199'
-  }
+  { id: 1, title: '零基础全场景健身入门系统课', description: 'ACSM标准认证，覆盖居家+健身房双场景', image: API + 'beginner%20fitness%20system', coach: '张教练', level: 'beginner', levelName: '初级', price: '¥299' },
+  { id: 2, title: '办公族体态矫正与疼痛缓解课', description: 'IOPTA认证，针对性解决圆肩驼背、慢性腰痛', image: API + 'posture%20correction%20course', coach: '李治疗师', level: 'beginner', levelName: '初级', price: '¥199' },
+  { id: 3, title: '女性全生命周期健身方案', description: 'ACSM女性分会认证，覆盖各阶段专属方案', image: API + 'female%20fitness%20lifecycle', coach: '王教练', level: 'intermediate', levelName: '中级', price: '¥399' },
+  { id: 4, title: 'NSCA力量训练进阶认证课', description: '基于NSCA金字塔模型，逐步进阶', image: API + 'NSCA%20advanced%20strength', coach: '赵教练', level: 'advanced', levelName: '高级', price: '¥499' },
+  { id: 5, title: 'HIIT高效燃脂系统训练', description: '20分钟达传统有氧60分钟效果', image: API + 'HIIT%20fat%20burn%20system', coach: '刘教练', level: 'intermediate', levelName: '中级', price: '¥249' },
+  { id: 6, title: '从解剖学到瑜伽体式精进', description: '运动解剖学视角的瑜伽矫正', image: API + 'yoga%20anatomy%20course', coach: '陈导师', level: 'advanced', levelName: '高级', price: '¥349' }
 ])
 
-// 跳转到个人中心
-const toProfile = () => {
-  router.push('/profile')
-}
-
-// 退出登录
-const logout = () => {
-  router.push('/login')
-}
-
-// 跳转到资讯详情
-const goToNewsDetail = (id) => {
-  router.push(`/news/detail/${id}`)
-}
-
-// 跳转到课程详情
-const goToCourseDetail = (id) => {
-  router.push(`/courses/detail/${id}`)
-}
-
-// 轮播图点击跳转
-const goToBannerDetail = (id) => {
-  // 假设轮播图内容对应资讯
-  router.push(`/news/detail/${id}`)
-}
+const goToNews = (id) => router.push(`/news/detail/${id}`)
+const goToCourse = (id) => router.push(`/courses/detail/${id}`)
+const goNewsList = () => router.push('/news/list')
+const goFitness = () => router.push('/fitness')
 </script>
 
 <style scoped>
-.home-container {
-  min-height: 100vh;
-  background-color: #f5f5f5;
+/* ===== Hero ===== */
+.hero {
+  position: relative;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(160deg, #0a1628 0%, #112240 40%, #0d2137 70%, #0a1628 100%);
 }
-
-/* 导航栏 */
-.navbar {
-  background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(24,144,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 30%, rgba(24,144,255,0.06) 0%, transparent 50%);
 }
-
-.nav-content {
+.hero-content {
+  position: relative;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
-}
-
-.logo h1 {
-  font-size: 20px;
-  color: #1890ff;
-  margin: 0;
-}
-
-.nav-menu {
-  display: flex;
-  gap: 30px;
-}
-
-.nav-menu a {
-  text-decoration: none;
-  color: #333;
-  font-size: 16px;
-  padding: 8px 0;
-  position: relative;
-}
-
-.nav-menu a.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #1890ff;
-}
-
-.user-info {
+  padding: 80px 24px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 60px;
+  z-index: 1;
 }
-
-.username {
-  font-size: 14px;
-  color: #333;
+.hero-text h1 {
+  font-size: 48px;
+  font-weight: 800;
+  color: #e8edf2;
+  margin: 0 0 20px 0;
+  line-height: 1.15;
+  letter-spacing: 2px;
 }
-
-/* 轮播图 */
-.banner {
-  margin-bottom: 30px;
+.hero-sub {
+  font-size: 17px;
+  color: rgba(255,255,255,0.55);
+  margin: 0 0 36px 0;
+  line-height: 1.8;
 }
-
-.banner-item {
-  cursor: pointer;
-  width: 100%;
-  height: 100%;
+.hero-actions { display: flex; gap: 16px; }
+.hero-btn-primary {
+  padding: 14px 36px;
+  font-size: 15px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #1890ff, #096dd9);
+  border: none;
+  box-shadow: 0 4px 20px rgba(24,144,255,0.3);
 }
-
-.banner-image {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
+.hero-btn-outline {
+  padding: 14px 36px;
+  font-size: 15px;
+  font-weight: 600;
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.85);
 }
-
-.banner-content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-  color: white;
-  padding: 20px;
-}
-
-.banner-content h3 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-/* 资讯和课程部分 */
-.news-section,
-.course-section {
-  max-width: 1200px;
-  margin: 0 auto 30px;
-  padding: 0 20px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.section-header h2 {
-  font-size: 20px;
-  color: #333;
-  margin: 0;
-}
-
-.more {
-  text-decoration: none;
-  color: #1890ff;
-  font-size: 14px;
-}
-
-.news-list,
-.course-list {
+.hero-visual {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.hero-card {
+  padding: 18px 22px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  font-size: 15px;
+  color: rgba(255,255,255,0.75);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s;
+  cursor: default;
 }
 
-.news-card,
-.course-card {
-  transition: transform 0.3s ease;
-  cursor: pointer;
-}
-
-.news-card:hover,
-.course-card:hover {
-  transform: translateY(-5px);
-}
-
-.news-image,
-.course-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
-.news-content h3,
-.course-content h3 {
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.news-description,
-.course-description {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.news-meta,
-.course-meta {
-  font-size: 12px;
-  color: #999;
+/* ===== Stats Bar ===== */
+.stats-bar {
   display: flex;
-  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 20px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
 }
+.stat-item { text-align: center; padding: 0 40px; }
+.stat-num { font-size: 30px; font-weight: 800; color: #1890ff; display: block; }
+.stat-label { font-size: 14px; color: #909399; margin-top: 4px; }
+.stat-divider { width: 1px; height: 40px; background: #ebeef5; }
 
-/* 响应式设计 */
+/* ===== Content Sections ===== */
+.content-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 24px;
+}
+.content-section.alt-bg {
+  max-width: 100%;
+  background: #f8fafc;
+}
+.content-section.alt-bg .card-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+.section-title-group { display: flex; align-items: center; gap: 14px; }
+.section-head h2 { font-size: 22px; color: #1a1a2e; margin: 0; font-weight: 700; }
+.section-tag {
+  font-size: 12px; color: #1890ff; background: #e6f7ff;
+  padding: 3px 12px; border-radius: 12px; font-weight: 500;
+}
+.section-more { font-size: 14px; color: #1890ff; text-decoration: none; font-weight: 500; }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+.content-card {
+  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #ebeef5;
+  transition: all 0.3s ease;
+}
+.content-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+  border-color: transparent;
+}
+.card-img-wrap { position: relative; height: 200px; overflow: hidden; }
+.card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+.content-card:hover .card-img-wrap img { transform: scale(1.05); }
+.card-badge {
+  position: absolute; top: 12px; left: 12px;
+  background: rgba(24,144,255,0.9); color: #fff;
+  padding: 3px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+}
+.card-level {
+  position: absolute; top: 12px; left: 12px;
+  padding: 3px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #fff;
+}
+.card-level.beginner { background: #52c41a; }
+.card-level.intermediate { background: #fa8c16; }
+.card-level.advanced { background: #f5222d; }
+.card-body { padding: 16px 18px; }
+.card-body h3 { font-size: 15px; color: #1a1a2e; margin: 0 0 8px 0; line-height: 1.4; }
+.card-desc { font-size: 13px; color: #909399; margin: 0 0 12px 0; line-height: 1.5; }
+.card-meta { display: flex; gap: 14px; font-size: 12px; color: #b0b8c1; flex-wrap: wrap; }
+.card-price { color: #f5222d; font-weight: 700; margin-left: auto; }
+
+/* ===== Features ===== */
+.features-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px 50px;
+  text-align: center;
+}
+.features-section h2 { font-size: 26px; color: #1a1a2e; margin: 0 0 40px 0; font-weight: 700; }
+.features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+.feature-item { padding: 30px 20px; border-radius: 14px; background: #fafbfc; transition: all 0.3s; }
+.feature-item:hover { background: #fff; box-shadow: 0 8px 30px rgba(0,0,0,0.06); transform: translateY(-4px); }
+.feature-icon { font-size: 36px; margin-bottom: 16px; }
+.feature-item h3 { font-size: 17px; color: #1a1a2e; margin: 0 0 8px 0; }
+.feature-item p { font-size: 14px; color: #909399; margin: 0; line-height: 1.6; }
+
 @media (max-width: 768px) {
-  .nav-menu {
-    display: none;
-  }
-  
-  .news-list,
-  .course-list {
-    grid-template-columns: 1fr;
-  }
-  
-  .banner-image {
-    height: 200px;
-  }
+  .hero-content { flex-direction: column; padding: 60px 20px; gap: 30px; text-align: center; }
+  .hero-text h1 { font-size: 34px; }
+  .hero-actions { justify-content: center; flex-wrap: wrap; }
+  .hero-visual { grid-template-columns: 1fr 1fr; width: 100%; }
+  .card-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .stat-item { padding: 0 20px; }
+  .stat-num { font-size: 24px; }
 }
 </style>

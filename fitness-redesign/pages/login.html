@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - FitNews</title>
+    <style id="theme-vars">
+/* ===== FitNews Brand Design System — 活力运动风 ===== */
+
+:root {
+  /* --- Brand Colors --- */
+  --color-primary: #1B6B3A;
+  --color-primary-light: #238B4D;
+  --color-primary-dark: #145230;
+  --color-primary-50: #E8F5EC;
+  --color-primary-100: #C8E6D0;
+  --color-primary-200: #A3D4B0;
+  --color-primary-500: #1B6B3A;
+  --color-primary-600: #145230;
+  --color-primary-700: #0F3D24;
+
+  /* --- Accent --- */
+  --color-accent: #F97316;
+  --color-accent-light: #FB923C;
+  --color-accent-dark: #EA580C;
+  --color-accent-50: #FFF7ED;
+  --color-accent-100: #FFEDD5;
+
+  /* --- Neutral Palette --- */
+  --color-bg: #FAFAF8;
+  --color-bg-warm: #F5F3EF;
+  --color-bg-card: #FFFFFF;
+  --color-surface: #F0EFEB;
+  --color-border: #E5E3DD;
+  --color-border-light: #EDEBE6;
+
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #5A5A55;
+  --color-text-tertiary: #8A8A82;
+  --color-text-inverse: #FFFFFF;
+
+  /* --- State Colors --- */
+  --state-success: #16A34A;
+  --state-warning: #D97706;
+  --state-error: #DC2626;
+  --state-info: #2563EB;
+
+  /* --- Typography --- */
+  --font-display: 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-body: 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+
+  /* --- Spacing --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* --- Border Radius --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.05);
+  --shadow-xl: 0 8px 32px rgba(0,0,0,0.06);
+
+  /* --- Layout --- */
+  --container-max: 1200px;
+  --navbar-height: 64px;
+}
+
+/* Dark mode overrides */
+html.dark {
+  --color-bg: #0F1110;
+  --color-bg-warm: #161816;
+  --color-bg-card: #1C1E1C;
+  --color-surface: #242624;
+  --color-border: #2E302E;
+  --color-border-light: #252725;
+  --color-text-primary: #F0F0EC;
+  --color-text-secondary: #A0A098;
+  --color-text-tertiary: #6A6A62;
+  --color-primary-50: #0F2A18;
+  --color-primary-100: #163D22;
+  --color-accent-50: #2A1A08;
+  --color-accent-100: #3D2510;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.2);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.25);
+  --shadow-xl: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+    --color-accent: var(--color-accent);
+    --color-border: var(--color-border);
+  }
+  @layer base {
+    body { background: var(--color-surface); color: var(--color-text-primary); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main class="min-h-screen flex flex-col md:flex-row">
+      <!-- Left Panel — Brand Showcase (60%) -->
+      <section class="relative w-full md:w-[60%] min-h-[50vh] md:min-h-screen flex items-center justify-center overflow-hidden" style="background: linear-gradient(160deg, var(--color-primary-dark) 0%, var(--color-primary-700) 100%);">
+        <!-- Decorative organic shapes -->
+        <div class="absolute top-[-80px] left-[-60px] w-[280px] h-[280px] rounded-full opacity-20" style="background: radial-gradient(circle, var(--color-primary-light) 0%, transparent 70%);"></div>
+        <div class="absolute bottom-[-100px] right-[-80px] w-[320px] h-[320px] rounded-full opacity-15" style="background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);"></div>
+        <div class="absolute top-[40%] right-[15%] w-[160px] h-[160px] rounded-full opacity-10" style="background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);"></div>
+
+        <!-- Centered brand content -->
+        <div class="relative z-10 px-8 md:px-16 max-w-lg text-center">
+          <!-- Logo area -->
+          <div class="flex items-center justify-center gap-3 mb-8">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));">
+              <i data-lucide="leaf" class="w-5 h-5" style="color: var(--color-text-inverse);"></i>
+            </div>
+            <span class="text-2xl font-semibold tracking-tight" style="color: var(--color-text-inverse); font-family: var(--font-display);">FitNews</span>
+          </div>
+
+          <!-- Main heading -->
+          <h1 class="text-3xl md:text-4xl font-semibold mb-3 tracking-tight" style="color: var(--color-text-inverse); font-family: var(--font-display); text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">健身资讯网站</h1>
+
+          <!-- Subtitle -->
+          <p class="text-base mb-10" style="color: rgba(255,255,255,0.5); letter-spacing: 0.15em; font-family: var(--font-body);">专业 · 科学 · 前沿</p>
+
+          <!-- Feature items — glass-morphism cards -->
+          <div class="flex flex-col gap-3 mb-10">
+            <div class="flex items-center gap-3 px-5 py-3 rounded-lg" style="background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.12);">
+              <i data-lucide="newspaper" class="w-5 h-5 shrink-0" style="color: var(--color-accent-light);"></i>
+              <span class="text-sm" style="color: var(--color-text-inverse); font-family: var(--font-body);">权威健身资讯</span>
+            </div>
+            <div class="flex items-center gap-3 px-5 py-3 rounded-lg" style="background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.12);">
+              <i data-lucide="book-open" class="w-5 h-5 shrink-0" style="color: var(--color-accent-light);"></i>
+              <span class="text-sm" style="color: var(--color-text-inverse); font-family: var(--font-body);">专业训练课程</span>
+            </div>
+            <div class="flex items-center gap-3 px-5 py-3 rounded-lg" style="background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.12);">
+              <i data-lucide="dumbbell" class="w-5 h-5 shrink-0" style="color: var(--color-accent-light);"></i>
+              <span class="text-sm" style="color: var(--color-text-inverse); font-family: var(--font-body);">科学运动指导</span>
+            </div>
+          </div>
+
+          <!-- Quote -->
+          <div class="pl-4 text-left" style="border-left: 3px solid var(--color-primary-light);">
+            <p class="text-sm italic leading-relaxed" style="color: rgba(255,255,255,0.7); font-family: var(--font-body);">身体是灵魂的殿堂，健身是终身的修行。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Panel — Login Form (40%) -->
+      <section class="relative w-full md:w-[40%] min-h-[50vh] md:min-h-screen flex items-center justify-center overflow-hidden" style="background: var(--color-bg-card);">
+        <!-- Subtle leaf pattern watermark -->
+        <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 5 C20 15 10 25 15 35 C20 45 30 40 30 40 C30 40 40 45 45 35 C50 25 40 15 30 5Z' fill='%231B6B3A' fill-opacity='1'/%3E%3C/svg%3E&quot;); background-repeat: repeat; background-size: 60px 60px;"></div>
+
+        <!-- Form content -->
+        <div class="relative z-10 w-full max-w-sm px-6 py-12">
+          <!-- Heading -->
+          <h2 class="text-2xl font-semibold mb-2 tracking-tight" style="color: var(--color-text-primary); font-family: var(--font-display); text-wrap: balance;">欢迎回来</h2>
+          <p class="text-sm mb-8" style="color: var(--color-text-tertiary); font-family: var(--font-body);">登录您的账号以继续</p>
+
+          <!-- Form -->
+          <form class="flex flex-col gap-5" onsubmit="return false;">
+            <!-- Username input -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-medium" style="color: var(--color-text-secondary); font-family: var(--font-body);">用户名</label>
+              <div class="relative">
+                <i data-lucide="user" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color: var(--color-text-tertiary);"></i>
+                <input type="text" placeholder="请输入用户名" class="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg outline-none transition-colors duration-150" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-primary); font-family: var(--font-body);" onfocus="this.style.borderColor='var(--color-primary)'; this.style.boxShadow='0 0 0 2px var(--color-primary-50)';" onblur="this.style.borderColor='var(--color-border)'; this.style.boxShadow='none';">
+              </div>
+            </div>
+
+            <!-- Password input -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-medium" style="color: var(--color-text-secondary); font-family: var(--font-body);">密码</label>
+              <div class="relative">
+                <i data-lucide="lock" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color: var(--color-text-tertiary);"></i>
+                <input type="password" placeholder="请输入密码" class="w-full pl-10 pr-10 py-2.5 text-sm rounded-lg outline-none transition-colors duration-150" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-primary); font-family: var(--font-body);" onfocus="this.style.borderColor='var(--color-primary)'; this.style.boxShadow='0 0 0 2px var(--color-primary-50)';" onblur="this.style.borderColor='var(--color-border)'; this.style.boxShadow='none';">
+                <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2" style="color: var(--color-text-tertiary);" aria-label="切换密码可见性">
+                  <i data-lucide="eye-off" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Remember me + Forgot password -->
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="w-4 h-4 rounded" style="accent-color: var(--color-primary);">
+                <span class="text-xs" style="color: var(--color-text-secondary); font-family: var(--font-body);">记住我</span>
+              </label>
+              <a href="#" class="text-xs transition-colors duration-150" style="color: var(--color-primary); font-family: var(--font-body);" onmouseover="this.style.color='var(--color-primary-light)'" onmouseout="this.style.color='var(--color-primary)'">忘记密码？</a>
+            </div>
+
+            <!-- Login button -->
+            <button type="submit" class="w-full py-2.5 text-sm font-semibold rounded-lg text-center whitespace-nowrap transition-all duration-150" style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%); color: var(--color-text-inverse); font-family: var(--font-body);" onmouseover="this.style.opacity='0.9'; this.style.transform='translateY(-1px)';" onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)';" onmousedown="this.style.transform='translateY(0)';" onmouseup="this.style.transform='translateY(-1px)';">
+              登 录
+            </button>
+          </form>
+
+          <!-- Register link -->
+          <p class="text-center text-sm mt-6" style="color: var(--color-text-tertiary); font-family: var(--font-body);">
+            还没有账号？<a href="#" data-dom-id="login-to-register" class="font-medium transition-colors duration-150" style="color: var(--color-primary); font-family: var(--font-body);" onmouseover="this.style.color='var(--color-primary-light)'" onmouseout="this.style.color='var(--color-primary)'">立即注册</a>
+          </p>
+
+          <!-- Divider -->
+          <div class="flex items-center gap-3 my-6">
+            <div class="flex-1 h-px" style="background: var(--color-border-light);"></div>
+            <span class="text-xs whitespace-nowrap" style="color: var(--color-text-tertiary); font-family: var(--font-body);">测试账号快速登录</span>
+            <div class="flex-1 h-px" style="background: var(--color-border-light);"></div>
+          </div>
+
+          <!-- Quick login buttons -->
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" class="px-4 py-2 text-xs font-medium rounded-lg text-center whitespace-nowrap transition-all duration-150" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-secondary); font-family: var(--font-body);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.color='var(--color-primary)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.color='var(--color-text-secondary)';">
+              普通用户
+            </button>
+            <button type="button" class="px-4 py-2 text-xs font-medium rounded-lg text-center whitespace-nowrap transition-all duration-150" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-secondary); font-family: var(--font-body);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.color='var(--color-primary)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.color='var(--color-text-secondary)';">
+              教练
+            </button>
+            <button type="button" class="px-4 py-2 text-xs font-medium rounded-lg text-center whitespace-nowrap transition-all duration-150" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-secondary); font-family: var(--font-body);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.color='var(--color-primary)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.color='var(--color-text-secondary)';">
+              创作者
+            </button>
+            <button type="button" class="px-4 py-2 text-xs font-medium rounded-lg text-center whitespace-nowrap transition-all duration-150" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-secondary); font-family: var(--font-body);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.color='var(--color-primary)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.color='var(--color-text-secondary)';">
+              管理员
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

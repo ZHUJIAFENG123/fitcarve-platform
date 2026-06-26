@@ -1,410 +1,439 @@
 <template>
-  <div class="news-detail-container">
-    <!-- 顶部导航栏 -->
-    <header class="navbar">
-      <div class="nav-content">
-        <div class="logo">
-          <h1>健身资讯网站</h1>
-        </div>
-        <nav class="nav-menu">
-          <a href="/home">首页</a>
-          <a href="/news/list" class="active">资讯</a>
-          <a href="/courses/list">课程</a>
-          <a href="/recommendation">推荐</a>
-        </nav>
-        <div class="user-info">
-          <el-avatar size="40" :src="userAvatar">{{ username.charAt(0) }}</el-avatar>
-          <span class="username">{{ username }}</span>
-          <el-dropdown>
-            <el-button type="text">
-              <el-icon><ArrowDown /></el-icon>
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="toProfile">个人中心</el-dropdown-item>
-                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </div>
-    </header>
+  <div class="news-detail-page">
+    <ReadingProgress />
 
-    <!-- 资讯详情 -->
-    <div class="news-detail">
-      <div class="news-header">
-        <h1>{{ news.title }}</h1>
-        <div class="news-meta">
-          <span class="author">{{ news.author }}</span>
-          <span class="time">{{ news.time }}</span>
-          <span class="views">{{ news.views }} 浏览</span>
-        </div>
-        <div class="news-tags">
-          <el-tag v-for="tag in news.tags" :key="tag">{{ tag }}</el-tag>
-        </div>
-      </div>
+    <Navbar :menu-links="newsMenuLinks" />
 
-      <div class="news-content">
-        <img :src="news.image" :alt="news.title" class="news-image">
-        <div class="news-body">
-          <p>{{ news.content }}</p>
-          <p>这是资讯的详细内容，包含了丰富的健身知识和建议。通过科学的训练方法和合理的饮食搭配，你可以获得更好的健身效果。</p>
-          <p>健身是一个长期的过程，需要坚持和耐心。每天适量的运动，结合健康的生活方式，能够让你拥有更健康的身体和更积极的心态。</p>
-          <p>希望这篇资讯对你有所帮助，如果你有任何问题或建议，欢迎在下方评论区留言。</p>
-        </div>
+    <div v-if="loading" class="detail-container">
+      <div class="detail-main">
+        <el-skeleton :rows="3" animated />
+        <el-skeleton-item variant="image" style="width:100%;height:400px;margin:20px 0" />
+        <el-skeleton :count="8" animated />
       </div>
+    </div>
 
-      <!-- 操作按钮 -->
-      <div class="news-actions">
-        <el-button type="primary" @click="toggleFavorite" :icon="isFavorite ? 'el-icon-star-on' : 'el-icon-star-off'">
-          {{ isFavorite ? '已收藏' : '收藏' }}
-        </el-button>
-        <el-button @click="share" icon="el-icon-share">分享</el-button>
-        <el-button @click="comment" icon="el-icon-chat-dot-round">评论</el-button>
-      </div>
+    <div v-else-if="!news" class="detail-container empty-detail">
+      <el-empty description="资讯不存在或已被删除">
+        <template #extra>
+          <el-button type="primary" @click="$router.push('/news/list')">返回资讯列表</el-button>
+        </template>
+      </el-empty>
+    </div>
 
-      <!-- 评论区 -->
-      <div class="comment-section">
-        <h3>评论区</h3>
-        <div class="comment-input">
-          <el-input
-            v-model="commentContent"
-            type="textarea"
-            placeholder="写下你的评论..."
-            :rows="3"
-          ></el-input>
-          <el-button type="primary" @click="submitComment" class="submit-btn">提交评论</el-button>
+    <div v-else class="detail-layout">
+      <!-- 左侧 TOC -->
+      <aside class="detail-sidebar">
+        <div class="sidebar-sticky">
+          <TableOfContents :content="news.content" />
         </div>
-        <div class="comments">
-          <div class="comment-item" v-for="comment in comments" :key="comment.id">
-            <div class="comment-avatar">
-              <el-avatar>{{ comment.user.charAt(0) }}</el-avatar>
-            </div>
-            <div class="comment-content">
-              <div class="comment-header">
-                <span class="comment-user">{{ comment.user }}</span>
-                <span class="comment-time">{{ comment.time }}</span>
-              </div>
-              <div class="comment-body">{{ comment.content }}</div>
-              <div class="comment-actions">
-                <el-button type="text" size="small">回复</el-button>
-                <el-button type="text" size="small">点赞</el-button>
-              </div>
-            </div>
+      </aside>
+
+      <!-- 中间正文 -->
+      <article class="detail-main">
+        <!-- 分类 + 标题 -->
+        <div class="article-header">
+          <span class="article-category">{{ categoryLabel }}</span>
+          <h1 class="article-title">{{ news.title }}</h1>
+          <div class="article-meta">
+            <span class="meta-item"><span class="meta-icon">👤</span>{{ news.author }}</span>
+            <span class="meta-item"><span class="meta-icon">📅</span>{{ formatDate(news.publishDate) }}</span>
+            <span class="meta-item"><span class="meta-icon">👁</span>{{ formatViews(news.views) }} 浏览</span>
+            <span class="meta-item"><span class="meta-icon">💬</span>{{ news.commentCount }} 评论</span>
+            <span class="meta-item meta-reading">
+              <span class="meta-icon">📖</span>约 {{ readingTime }} 分钟
+            </span>
+          </div>
+          <div class="article-tags" v-if="news.tags && news.tags.length > 0">
+            <span v-for="tag in news.tags" :key="tag" class="article-tag">{{ tag }}</span>
           </div>
         </div>
-      </div>
+
+        <!-- 封面图 -->
+        <div class="article-cover" v-if="news.image">
+          <img :data-src="news.image" :alt="news.title" class="cover-img" />
+        </div>
+
+        <!-- 摘要 -->
+        <blockquote v-if="news.summary" class="article-summary">
+          <p>{{ news.summary }}</p>
+        </blockquote>
+
+        <!-- 正文 -->
+        <div
+          class="article-body"
+          v-html="news.content"
+        />
+
+        <!-- 文章底部工具栏 -->
+        <div class="article-toolbar">
+          <div class="toolbar-actions">
+            <NewsActions
+              :liked="isLiked(news.id)"
+              :favorited="isFavorited(news.id)"
+              :like-count="news.views"
+              :comment-count="news.commentCount"
+              @like="toggleLike(news.id)"
+              @favorite="toggleFavorite(news.id)"
+              @share="shareNews"
+              @comment="scrollToComment"
+            />
+          </div>
+          <div class="toolbar-right">
+            <FontSizeAdjust v-model="fontSize" />
+          </div>
+        </div>
+
+        <SharePanel
+          v-model:visible="shareDialogVisible"
+          :link-copied="shareLinkCopied"
+          :share-url="shareUrl"
+          @copy-link="copyShareLink"
+        />
+
+        <!-- 作者卡片 -->
+        <AuthorCard :author="news.author" />
+
+        <!-- 上一篇 / 下一篇 -->
+        <ArticleNav
+          :prev="prevArticle"
+          :next="nextArticle"
+          @prev="goToPrev"
+          @next="goToNext"
+        />
+
+        <!-- 评论区 -->
+        <div id="comment-section" class="comment-section">
+          <CommentSection
+            :comments="comments"
+            :loading="commentsLoading"
+            :submitting="submitting"
+            v-model:text="commentText"
+            :reply-target="replyTarget"
+            :reply-text="replyText"
+            :comment-likes="commentLikes"
+            @submit="submitComment(news.id)"
+            @like-comment="toggleCommentLike"
+            @start-reply="startReply"
+            @submit-reply="(cid: number) => {
+              const parent = comments.find(c => c.id === cid)
+              if (parent) submitReply(news!.id, parent)
+            }"
+            @update:reply-text="replyText = $event"
+            @cancel-reply="replyTarget = null; replyText = ''"
+            @remove-comment="removeComment"
+          />
+        </div>
+
+        <!-- 相关推荐 -->
+        <RelatedNews :news-list="relatedList" />
+      </article>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { ArrowDown } from '@element-plus/icons-vue'
+<script setup lang="ts">
+import { onMounted, ref, computed } from 'vue'
+import Navbar from '@/components/Navbar.vue'
+import ReadingProgress from '@/components/news/ReadingProgress.vue'
+import TableOfContents from '@/components/news/TableOfContents.vue'
+import AuthorCard from '@/components/news/AuthorCard.vue'
+import FontSizeAdjust from '@/components/news/FontSizeAdjust.vue'
+import NewsActions from '@/components/news/NewsActions.vue'
+import SharePanel from '@/components/news/SharePanel.vue'
+import CommentSection from '@/components/news/CommentSection.vue'
+import ArticleNav from '@/components/news/ArticleNav.vue'
+import RelatedNews from '@/components/news/RelatedNews.vue'
+import { useNewsStore } from '@/stores/news'
+import { useNewsDetail } from '@/composables/useNewsDetail'
+import { useInteraction } from '@/composables/useInteraction'
+import { useComment } from '@/composables/useComment'
+import { addToHistory } from '@/composables/useReadingHistory'
+import { CATEGORY_MAP } from '@/utils/constants'
+import type { NewsCardData } from '@/types/news'
+import { watch } from 'vue'
 
-const router = useRouter()
-const route = useRoute()
+const store = useNewsStore()
 
-// 模拟用户信息
-const username = ref('健身爱好者')
-const userAvatar = ref('')
+const {
+  news, loading, relatedList, readingTime,
+  hasPrev, hasNext, goToPrev, goToNext, loadDetail
+} = useNewsDetail()
 
-// 模拟资讯数据
-const news = ref({
-  id: 1,
-  title: '如何科学制定健身计划',
-  content: '这是一篇关于如何科学制定健身计划的详细资讯。',
-  image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=fitness%20plan%20scientific&image_size=landscape_16_9',
-  author: '健身专家',
-  time: '2024-01-15',
-  views: 1234,
-  tags: ['健身计划', '科学训练', '减肥'],
-  isFavorite: false
+const {
+  isLiked, isFavorited, toggleLike, toggleFavorite,
+  shareNews, copyShareLink, shareDialogVisible, shareLinkCopied, shareUrl
+} = useInteraction()
+
+const {
+  comments, loading: commentsLoading,
+  commentText, replyTarget, replyText, submitting, commentLikes,
+  submitComment, submitReply, startReply, toggleCommentLike, removeComment
+} = useComment()
+
+const fontSize = ref<'small' | 'normal' | 'large'>(
+  (localStorage.getItem('newsFontSize') as 'small' | 'normal' | 'large') || 'normal'
+)
+
+const newsMenuLinks = [
+  { to: '/home', label: '首页', active: false },
+  { to: '/news/list', label: '资讯', active: true },
+  { to: '/fitness', label: '训练&饮食', active: false },
+  { to: '/recommendation', label: '发现', active: false }
+]
+
+const categoryLabel = computed(() => {
+  if (!news.value) return ''
+  return (CATEGORY_MAP as Record<string, string>)[news.value.category] || news.value.category
 })
 
-// 收藏状态
-const isFavorite = ref(false)
+const prevArticle = computed<NewsCardData | null>(() =>
+  store.prevArticleId ? { id: store.prevArticleId, title: '上一篇', summary: '', tags: [], image: '', category: 'knowledge', author: '', views: 0, publishDate: '' } : null
+)
 
-// 评论相关
-const commentContent = ref('')
-const comments = ref([
-  {
-    id: 1,
-    user: '用户1',
-    time: '2024-01-16',
-    content: '这篇文章写得很详细，对我很有帮助！'
-  },
-  {
-    id: 2,
-    user: '用户2',
-    time: '2024-01-17',
-    content: '感谢分享，我会按照这个计划开始训练。'
-  }
-])
+const nextArticle = computed<NewsCardData | null>(() =>
+  store.nextArticleId ? { id: store.nextArticleId, title: '下一篇', summary: '', tags: [], image: '', category: 'knowledge', author: '', views: 0, publishDate: '' } : null
+)
 
-// 生命周期
+function formatDate(dateStr: string): string {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  if (isNaN(d.getTime())) return dateStr.slice(0, 10)
+  return d.toISOString().slice(0, 10)
+}
+
+function formatViews(v: number): string {
+  if (v >= 10000) return (v / 10000).toFixed(1) + 'w'
+  if (v >= 1000) return (v / 1000).toFixed(1) + 'k'
+  return String(v)
+}
+
+function scrollToComment() {
+  document.querySelector('#comment-section')?.scrollIntoView({ behavior: 'smooth' })
+}
+
 onMounted(() => {
-  // 获取路由参数中的资讯ID
-  const id = route.params.id
-  console.log('资讯ID:', id)
-  // 实际项目中需要根据ID从后端获取资讯详情
+  loadDetail()
 })
 
-// 切换收藏状态
-const toggleFavorite = () => {
-  isFavorite.value = !isFavorite.value
-  console.log('收藏状态:', isFavorite.value)
-}
-
-// 分享功能
-const share = () => {
-  // 实际项目中可以实现分享到社交媒体的功能
-  console.log('分享资讯:', news.value.title)
-  alert('分享成功！')
-}
-
-// 评论功能
-const comment = () => {
-  // 滚动到评论输入框
-  document.querySelector('.comment-input').scrollIntoView({ behavior: 'smooth' })
-}
-
-// 提交评论
-const submitComment = () => {
-  if (commentContent.value.trim()) {
-    comments.value.push({
-      id: comments.value.length + 1,
-      user: username.value,
-      time: new Date().toISOString().split('T')[0],
-      content: commentContent.value
+// Record reading history when news loads
+watch(() => news.value, (n) => {
+  if (n && n.id && n.title) {
+    addToHistory({
+      id: n.id,
+      title: n.title,
+      category: n.category,
+      image: n.image
     })
-    commentContent.value = ''
-    console.log('评论提交成功')
   }
-}
-
-// 跳转到个人中心
-const toProfile = () => {
-  router.push('/profile')
-}
-
-// 退出登录
-const logout = () => {
-  router.push('/login')
-}
+})
 </script>
 
 <style scoped>
-.news-detail-container {
+.news-detail-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: var(--color-bg);
 }
 
-/* 导航栏 */
-.navbar {
-  background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.nav-content {
+/* ── Layout ── */
+.detail-layout {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: var(--space-6) var(--space-4) var(--space-16);
   display: flex;
-  justify-content: space-between;
+  gap: var(--space-8);
+  align-items: flex-start;
+}
+.detail-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+}
+.sidebar-sticky {
+  position: sticky;
+  top: 80px;
+}
+.detail-main {
+  flex: 1;
+  min-width: 0;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+.empty-detail {
+  display: flex;
+  justify-content: center;
   align-items: center;
-  height: 60px;
+  min-height: 400px;
 }
 
-.logo h1 {
-  font-size: 20px;
-  color: #1890ff;
+/* ── Article Header ── */
+.article-header {
+  margin-bottom: var(--space-6);
+}
+.article-category {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  background: var(--color-primary);
+  color: #fff;
+  margin-bottom: var(--space-4);
+}
+.article-title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-3);
+}
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.meta-icon { font-size: 14px; }
+.meta-reading {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.article-tag {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+}
+
+/* ── Cover ── */
+.article-cover {
+  margin-bottom: var(--space-6);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+.cover-img {
+  width: 100%;
+  max-height: 480px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Summary ── */
+.article-summary {
+  margin-bottom: var(--space-6);
+  padding: var(--space-5);
+  background: var(--color-primary-50);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+.article-summary p {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
   margin: 0;
 }
 
-.nav-menu {
-  display: flex;
-  gap: 30px;
+/* ── Body ── */
+.article-body {
+  font-size: var(--reading-font-size, 17px);
+  line-height: var(--reading-line-height, 1.8);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-8);
+}
+.article-body :deep(p) {
+  margin-bottom: 1.2em;
+}
+.article-body :deep(h2) {
+  font-family: var(--font-display);
+  font-size: 1.4em;
+  font-weight: 700;
+  margin: 2em 0 0.8em;
+  color: var(--color-text-primary);
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--color-border-light);
+}
+.article-body :deep(h3) {
+  font-family: var(--font-display);
+  font-size: 1.15em;
+  font-weight: 600;
+  margin: 1.5em 0 0.6em;
+  color: var(--color-text-primary);
+}
+.article-body :deep(img) {
+  max-width: 100%;
+  border-radius: var(--radius-lg);
+  margin: 1.5em 0;
+}
+.article-body :deep(blockquote) {
+  border-left: 3px solid var(--color-primary);
+  padding: 0.5em 1em;
+  margin: 1.2em 0;
+  background: var(--color-primary-50);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--color-text-secondary);
+}
+.article-body :deep(ul), .article-body :deep(ol) {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+.article-body :deep(li) {
+  margin-bottom: 0.4em;
+}
+.article-body :deep(a) {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+.article-body :deep(code) {
+  background: var(--color-surface);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
+  font-family: var(--font-mono);
 }
 
-.nav-menu a {
-  text-decoration: none;
-  color: #333;
-  font-size: 16px;
-  padding: 8px 0;
-  position: relative;
-}
-
-.nav-menu a.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #1890ff;
-}
-
-.user-info {
+/* ── Toolbar ── */
+.article-toolbar {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.username {
-  font-size: 14px;
-  color: #333;
-}
-
-/* 资讯详情 */
-.news-detail {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.news-header {
-  margin-bottom: 20px;
-}
-
-.news-header h1 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.news-meta {
-  font-size: 14px;
-  color: #999;
-  margin-bottom: 10px;
-  display: flex;
-  gap: 15px;
-}
-
-.news-tags {
-  margin-bottom: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.news-image {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.news-body {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #333;
-}
-
-.news-body p {
-  margin-bottom: 15px;
-}
-
-/* 操作按钮 */
-.news-actions {
-  margin: 30px 0;
-  display: flex;
-  gap: 10px;
-}
-
-/* 评论区 */
-.comment-section {
-  margin-top: 40px;
-}
-
-.comment-section h3 {
-  font-size: 18px;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.comment-input {
-  margin-bottom: 30px;
-}
-
-.submit-btn {
-  margin-top: 10px;
-  float: right;
-}
-
-.comments {
-  clear: both;
-}
-
-.comment-item {
-  display: flex;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #eee;
-}
-
-.comment-avatar {
-  margin-right: 15px;
-}
-
-.comment-content {
-  flex: 1;
-}
-
-.comment-header {
-  display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-5) 0;
+  margin-bottom: var(--space-6);
+  border-top: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
-.comment-user {
-  font-weight: bold;
-  color: #333;
+/* ── Comment ── */
+.comment-section {
+  margin-top: var(--space-8);
 }
 
-.comment-time {
-  font-size: 12px;
-  color: #999;
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .detail-sidebar { display: none; }
 }
-
-.comment-body {
-  font-size: 14px;
-  line-height: 1.4;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.comment-actions {
-  display: flex;
-  gap: 15px;
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .nav-menu {
-    display: none;
-  }
-  
-  .news-image {
-    height: 200px;
-  }
-  
-  .news-actions {
-    flex-direction: column;
-  }
-  
-  .news-actions button {
-    width: 100%;
-  }
+@media (max-width: 640px) {
+  .article-title { font-size: var(--text-xl); }
+  .article-body { font-size: 15px; }
 }
 </style>

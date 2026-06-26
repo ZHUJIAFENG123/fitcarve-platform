@@ -46,76 +46,22 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useNotifications } from '@/composables/useNotifications'
+
+const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
 
 const showNotification = ref(false)
 const activeTab = ref('all')
 
-const notifications = ref([
-  {
-    id: 1,
-    title: '系统通知',
-    content: '您的账号已成功注册',
-    time: '2024-01-01 10:00',
-    read: false,
-    type: 'system'
-  },
-  {
-    id: 2,
-    title: '邮件通知',
-    content: '请验证您的邮箱地址',
-    time: '2024-01-01 09:30',
-    read: false,
-    type: 'email'
-  },
-  {
-    id: 3,
-    title: '站内信',
-    content: '教练给您发送了一条消息',
-    time: '2024-01-01 08:00',
-    read: true,
-    type: 'message'
-  },
-  {
-    id: 4,
-    title: '系统通知',
-    content: '您的课程已更新',
-    time: '2023-12-31 18:00',
-    read: true,
-    type: 'system'
-  }
-])
-
-// 计算未读消息数量
-const unreadCount = computed(() => {
-  return notifications.value.filter(n => !n.read).length
-})
-
 // 过滤通知
 const filteredNotifications = computed(() => {
-  if (activeTab.value === 'all') {
-    return notifications.value
-  }
+  if (activeTab.value === 'all') return notifications.value
   return notifications.value.filter(n => n.type === activeTab.value)
 })
 
 // 切换通知面板
 const toggleNotification = () => {
   showNotification.value = !showNotification.value
-}
-
-// 标记为已读
-const markAsRead = (id) => {
-  const notification = notifications.value.find(n => n.id === id)
-  if (notification) {
-    notification.read = true
-  }
-}
-
-// 标记全部为已读
-const markAllAsRead = () => {
-  notifications.value.forEach(n => {
-    n.read = true
-  })
 }
 
 // 点击外部关闭通知面板

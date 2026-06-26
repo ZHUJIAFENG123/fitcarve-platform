@@ -1,0 +1,156 @@
+{
+  "project": {
+    "name": "健身资讯网站",
+    "operation": "create",
+    "deviceType": "desktop",
+    "designRead": "fitness platform / fitness enthusiasts & beginners / energetic sporty professional / medium density / avoid cold tech neon",
+    "designDials": { "layoutVariance": 3, "motionIntensity": 2, "visualDensity": 3 },
+    "styleDefinitionBrief": "Fitness info platform, deep forest green primary + warm orange accent, DM Sans + PingFang SC, organic rounded cards, warm neutral backgrounds, sporty vitality feel.",
+    "generationTree": {
+      "root": {
+        "nodeId": "gen-project-shell",
+        "kind": "project-shell",
+        "output": "partials/project-shell.html",
+        "sharedRegions": ["navbar", "footer", "global-background", "brand-colors", "typography"],
+        "privateRegions": [],
+        "status": "planned",
+        "children": [
+          {
+            "nodeId": "gen-page-home",
+            "kind": "page-leaf",
+            "pageIds": ["page-home"],
+            "output": "pages/home.html",
+            "sharedRegions": ["navbar", "footer"],
+            "privateRegions": ["hero-section", "stats-bar", "hot-news-grid", "recommended-courses", "features-section"],
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-news",
+            "kind": "page-leaf",
+            "pageIds": ["page-news-list"],
+            "output": "pages/news-list.html",
+            "sharedRegions": ["navbar", "footer"],
+            "privateRegions": ["filter-bar", "news-grid", "pagination"],
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-courses",
+            "kind": "page-leaf",
+            "pageIds": ["page-course-list"],
+            "output": "pages/course-list.html",
+            "sharedRegions": ["navbar", "footer"],
+            "privateRegions": ["filter-bar", "continue-learning", "course-grid", "pagination"],
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-login",
+            "kind": "page-leaf",
+            "pageIds": ["page-login"],
+            "output": "pages/login.html",
+            "sharedRegions": [],
+            "privateRegions": ["login-banner", "login-form"],
+            "status": "planned",
+            "children": []
+          }
+        ]
+      }
+    }
+  },
+  "designSource": {
+    "styleConstraints": {
+      "radiusMax": 16,
+      "staticShadowAlphaMax": 0.05
+    }
+  },
+  "pages": [
+    {
+      "nodeId": "page-home",
+      "title": "首页",
+      "htmlSrc": "pages/home.html",
+      "pageIndex": 1,
+      "pageType": "showcase",
+      "visualNorthStar": "Energetic hero with organic shapes and warm green tones, showcasing fitness vitality",
+      "compositionPattern": "hero-stats-news-courses-features",
+      "continuityAnchors": {
+        "navbar": "Sticky glass-morphism navbar with green logo, warm white background",
+        "footer": "Dark forest green footer with organic layout",
+        "cardStyle": "Rounded 12px cards with subtle border, warm white background",
+        "ctaStyle": "Green primary CTA with orange accent hover"
+      },
+      "imagePlan": [
+        { "role": "critical-hero", "section": "hero", "filename": "hero-fitness.jpg", "status": "planned" }
+      ]
+    },
+    {
+      "nodeId": "page-news-list",
+      "title": "资讯列表",
+      "htmlSrc": "pages/news-list.html",
+      "pageIndex": 2,
+      "pageType": "information-dense",
+      "visualNorthStar": "Clean grid layout with filter bar, card-based news items with green accent badges",
+      "compositionPattern": "filter-bar-news-grid-pagination",
+      "continuityAnchors": {
+        "navbar": "Sticky glass-morphism navbar with green logo, warm white background",
+        "footer": "Dark forest green footer with organic layout",
+        "cardStyle": "Rounded 12px cards with subtle border, warm white background"
+      },
+      "imagePlan": []
+    },
+    {
+      "nodeId": "page-course-list",
+      "title": "课程列表",
+      "htmlSrc": "pages/course-list.html",
+      "pageIndex": 3,
+      "pageType": "information-dense",
+      "visualNorthStar": "Course cards with progress indicators, level badges in green/orange/red, filter bar",
+      "compositionPattern": "filter-bar-continue-learning-course-grid-pagination",
+      "continuityAnchors": {
+        "navbar": "Sticky glass-morphism navbar with green logo, warm white background",
+        "footer": "Dark forest green footer with organic layout",
+        "cardStyle": "Rounded 12px cards with subtle border, warm white background"
+      },
+      "imagePlan": []
+    },
+    {
+      "nodeId": "page-login",
+      "title": "登录",
+      "htmlSrc": "pages/login.html",
+      "pageIndex": 4,
+      "pageType": "task-driven",
+      "visualNorthStar": "Split layout: left brand panel with dark green + organic shapes, right clean form",
+      "compositionPattern": "split-brand-form",
+      "continuityAnchors": {
+        "formStyle": "Rounded 10px inputs with green focus ring, green primary button"
+      },
+      "imagePlan": []
+    }
+  ],
+  "assets": [],
+  "wiringPlan": [
+    { "from": "page-home", "domId": "nav-news", "to": "page-news-list", "hideEdge": false },
+    { "from": "page-home", "domId": "nav-courses", "to": "page-course-list", "hideEdge": false },
+    { "from": "page-home", "domId": "cta-news", "to": "page-news-list", "hideEdge": false },
+    { "from": "page-home", "domId": "cta-courses", "to": "page-course-list", "hideEdge": false },
+    { "from": "page-home", "domId": "nav-login", "to": "page-login", "hideEdge": true },
+    { "from": "page-news-list", "domId": "nav-home", "to": "page-home", "hideEdge": true },
+    { "from": "page-news-list", "domId": "nav-courses", "to": "page-course-list", "hideEdge": true },
+    { "from": "page-news-list", "domId": "nav-login", "to": "page-login", "hideEdge": true },
+    { "from": "page-course-list", "domId": "nav-home", "to": "page-home", "hideEdge": true },
+    { "from": "page-course-list", "domId": "nav-news", "to": "page-news-list", "hideEdge": true },
+    { "from": "page-course-list", "domId": "nav-login", "to": "page-login", "hideEdge": true },
+    { "from": "page-login", "domId": "login-to-register", "to": "page-home", "hideEdge": true }
+  ],
+  "hiddenInteractionPlan": [
+    { "from": "page-home", "domId": "nav-login", "to": "page-login" },
+    { "from": "page-news-list", "domId": "nav-home", "to": "page-home" },
+    { "from": "page-news-list", "domId": "nav-courses", "to": "page-course-list" },
+    { "from": "page-news-list", "domId": "nav-login", "to": "page-login" },
+    { "from": "page-course-list", "domId": "nav-home", "to": "page-home" },
+    { "from": "page-course-list", "domId": "nav-news", "to": "page-news-list" },
+    { "from": "page-course-list", "domId": "nav-login", "to": "page-login" },
+    { "from": "page-login", "domId": "login-to-register", "to": "page-home" }
+  ]
+}

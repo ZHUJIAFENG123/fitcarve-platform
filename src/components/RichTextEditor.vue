@@ -22,6 +22,7 @@
 import { ref, watch } from 'vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
+import { sanitizeHtml } from '../utils/security.js'
 
 const props = defineProps({
   modelValue: {
@@ -37,7 +38,9 @@ const quillEditor = ref(null)
 
 // 监听内容变化
 watch(content, (newValue) => {
-  emit('update:modelValue', newValue)
+  // 对内容进行XSS过滤
+  const sanitizedContent = sanitizeHtml(newValue)
+  emit('update:modelValue', sanitizedContent)
 })
 
 // 监听外部值变化
@@ -72,17 +75,27 @@ const editorOptions = {
 
 // 处理图片上传
 const handleImageUpload = (file) => {
-  // 模拟图片上传，实际项目中需要调用后端API
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    const imageUrl = e.target.result
-    // 在编辑器中插入图片
-    const quill = quillEditor.value.getQuill()
-    const range = quill.getSelection()
-    quill.insertEmbed(range.index, 'image', imageUrl)
-    quill.setSelection(range.index + 1)
-  }
-  reader.readAsDataURL(file.raw)
+  import('../utils/upload.js').then(({ validateFile, handleFileUpload }) => {
+    // 验证文件
+    const validation = validateFile(file.raw, 'image')
+    if (!validation.valid) {
+      alert(validation.message)
+      return
+    }
+    
+    // 处理文件上传
+    handleFileUpload(file.raw, 'image')
+      .then((result) => {
+        // 在编辑器中插入图片
+        const quill = quillEditor.value.getQuill()
+        const range = quill.getSelection()
+        quill.insertEmbed(range.index, 'image', result.url)
+        quill.setSelection(range.index + 1)
+      })
+      .catch((error) => {
+        alert(error.message)
+      })
+  })
 }
 </script>
 

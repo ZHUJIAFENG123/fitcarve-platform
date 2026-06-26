@@ -8,9 +8,23 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+backend/node_modules
 dist
 dist-ssr
 *.local
+
+# Environment
+.env
+.env.development
+.env.production
+
+# Reasonix
+.reasonix/
+
+# Misc
+node.msi
+*.msi
+*.txt
 
 # Editor directories and files
 .vscode/*
