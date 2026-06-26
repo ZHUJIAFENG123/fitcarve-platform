@@ -1,215 +1,81 @@
 <template>
-  <div class="favorites-container">
+  <div class="fav-page">
     <Navbar :menu-links="menuLinks" />
-    <div class="favorites-content">
-      <div class="page-header">
-        <h2>我的收藏</h2>
-        <el-tabs v-model="activeTab">
-          <el-tab-pane label="资讯" name="news"></el-tab-pane>
-          <el-tab-pane label="课程" name="courses"></el-tab-pane>
-        </el-tabs>
+
+    <div class="fav-hero"><h1>⭐ 我的收藏</h1></div>
+
+    <div class="fav-container">
+      <el-tabs v-model="activeTab" class="fav-tabs">
+        <el-tab-pane label="资讯收藏" name="news" />
+        <el-tab-pane label="训练计划" name="training" />
+      </el-tabs>
+
+      <div v-if="activeTab === 'news'">
+        <el-empty v-if="newsItems.length === 0" description="暂无收藏的资讯" />
+        <div v-else class="fav-grid">
+          <article v-for="item in newsItems" :key="item.id" class="fav-card" @click="$router.push(`/news/detail/${item.id}`)">
+            <div class="fav-card-img"><span class="fav-card-cat">{{ item.categoryName || '资讯' }}</span></div>
+            <div class="fav-card-body">
+              <h3>{{ item.title }}</h3>
+              <p>{{ (item.summary || '').slice(0, 60) }}</p>
+              <span class="fav-card-meta">👁 {{ item.views || 0 }} 浏览</span>
+            </div>
+          </article>
+        </div>
       </div>
 
-      <div v-if="activeTab === 'news'" class="news-list">
-        <el-empty v-if="favoriteNews.length === 0" description="暂无收藏的资讯" />
-        <el-card v-for="item in favoriteNews" :key="item.id" class="favorite-card" shadow="hover">
-          <div class="favorite-item">
-            <img :src="item.image" :alt="item.title" class="favorite-image" />
-            <div class="favorite-info">
-              <h3 @click="goToNewsDetail(item.id)">{{ item.title }}</h3>
-              <p class="favorite-desc">{{ item.summary || item.description }}</p>
-              <div class="favorite-meta">
-                <span class="meta-author">{{ item.author }}</span>
-                <span class="meta-views">{{ item.views }} 浏览</span>
-              </div>
-            </div>
-            <div class="favorite-actions">
-              <el-button type="danger" size="small" @click="removeFromFavorites(item.id)">
-                <el-icon><Remove /></el-icon>
-                取消收藏
-              </el-button>
-            </div>
-          </div>
-        </el-card>
-      </div>
-
-      <div v-if="activeTab === 'courses'" class="courses-list">
-        <el-empty v-if="favoriteCourses.length === 0" description="暂无收藏的课程" />
-        <el-card v-for="item in favoriteCourses" :key="item.id" class="favorite-card" shadow="hover">
-          <div class="favorite-item">
-            <img :src="item.image" :alt="item.title" class="favorite-image" />
-            <div class="favorite-info">
-              <h3 @click="goToCourseDetail(item.id)">{{ item.title }}</h3>
-              <p class="favorite-desc">{{ item.description }}</p>
-              <div class="favorite-meta">
-                <span class="meta-coach">{{ item.coach }}</span>
-                <span class="meta-level">{{ item.level }}</span>
-                <span class="meta-price">{{ item.price }}</span>
-              </div>
-            </div>
-            <div class="favorite-actions">
-              <el-button type="danger" size="small" @click="removeCourseFavorite(item.id)">
-                <el-icon><Remove /></el-icon>
-                取消收藏
-              </el-button>
-            </div>
-          </div>
-        </el-card>
+      <div v-if="activeTab === 'training'">
+        <el-empty description="暂无收藏的训练计划" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { Remove } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, onMounted } from 'vue'
 import Navbar from '@/components/Navbar.vue'
-import { useNewsStore } from '@/stores/news'
-
-const router = useRouter()
-const store = useNewsStore()
+import { getCollections } from '@/composables/useCollections'
 
 const menuLinks = [
-  { to: '/home', label: '首页', active: false },
-  { to: '/news/list', label: '资讯', active: false },
-  { to: '/fitness', label: '训练&饮食', active: false },
-  { to: '/recommendation', label: '发现', active: false }
+  { to: '/home', label: '首页' },
+  { to: '/news/list', label: '资讯' },
+  { to: '/fitness', label: '训练&饮食' },
+  { to: '/recommendation', label: '发现' }
 ]
 
 const activeTab = ref('news')
+const newsItems = ref([])
 
-const favoriteNews = ref([
-  { id: 1, title: '如何科学制定健身计划', summary: '根据个人情况定制适合自己的健身计划', image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=fitness%20plan%20scientific&image_size=square', author: '健身专家', views: 1234 },
-  { id: 2, title: '健身后如何正确恢复', summary: '有效的恢复方法，让你的训练效果事半功倍', image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=fitness%20recovery%20methods&image_size=square', author: '运动康复师', views: 987 },
-  { id: 3, title: '不同年龄段的健身建议', summary: '根据年龄特点，选择适合的运动方式', image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=age%20specific%20fitness%20advice&image_size=square', author: '健康顾问', views: 756 }
-])
-
-const favoriteCourses = ref([
-  { id: 1, title: '初级瑜伽入门', description: '适合初学者的瑜伽课程', image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=beginner%20yoga%20class&image_size=square', coach: '瑜伽教练', level: '初级', price: '免费' },
-  { id: 2, title: '力量训练基础', description: '学习正确的力量训练方法', image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=strength%20training%20basics&image_size=square', coach: '健身教练', level: '中级', price: '¥99' }
-])
-
-function removeFromFavorites(id) {
-  ElMessageBox.confirm('确定要取消收藏吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(() => {
-    store.toggleFavorite(id)
-    const index = favoriteNews.value.findIndex(item => item.id === id)
-    if (index > -1) favoriteNews.value.splice(index, 1)
-    ElMessage.success('已取消收藏')
-  }).catch(() => {})
-}
-
-function removeCourseFavorite(id) {
-  ElMessageBox.confirm('确定要取消收藏吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(() => {
-    const index = favoriteCourses.value.findIndex(item => item.id === id)
-    if (index > -1) favoriteCourses.value.splice(index, 1)
-    ElMessage.success('已取消收藏')
-  }).catch(() => {})
-}
-
-const goToNewsDetail = (id) => router.push(`/news/detail/${id}`)
-const goToCourseDetail = (id) => router.push(`/courses/detail/${id}`)
+onMounted(() => {
+  // Get favorited news IDs from localStorage
+  try {
+    const raw = localStorage.getItem('favoritedNews')
+    const ids = raw ? JSON.parse(raw) : []
+    // Mock: show placeholder cards for favorited IDs
+    newsItems.value = ids.map((id, i) => ({
+      id, title: `收藏的资讯 #${id}`, summary: '点击查看详情', views: 0, categoryName: '资讯'
+    }))
+  } catch { newsItems.value = [] }
+})
 </script>
 
 <style scoped>
-.favorites-container {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-}
+.fav-page { min-height: 100vh; background: var(--color-bg); }
+.fav-hero { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); padding: var(--space-6) var(--space-4); }
+.fav-hero h1 { font-family: var(--font-display); font-size: var(--text-2xl); color: #fff; max-width: 700px; margin: 0 auto; }
 
-.favorites-content {
-  max-width: 1200px;
-  margin: 30px auto;
-  padding: 0 20px;
-}
+.fav-container { max-width: 800px; margin: 0 auto; padding: var(--space-6) var(--space-4); }
 
-.page-header {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+.fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4); }
+.fav-card {
+  cursor: pointer; background: var(--color-bg-card); border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: all 0.2s;
 }
-
-.page-header h2 {
-  margin: 0 0 15px;
-  font-size: 24px;
-  color: #333;
-}
-
-.news-list, .courses-list {
-  display: grid;
-  gap: 20px;
-}
-
-.favorite-card {
-  cursor: pointer;
-}
-
-.favorite-item {
-  display: flex;
-  gap: 20px;
-}
-
-.favorite-image {
-  width: 200px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
-.favorite-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.favorite-info h3 {
-  margin: 0;
-  font-size: 18px;
-  color: #333;
-  cursor: pointer;
-}
-
-.favorite-info h3:hover {
-  color: #1890ff;
-}
-
-.favorite-desc {
-  color: #666;
-  margin: 10px 0;
-}
-
-.favorite-meta {
-  display: flex;
-  gap: 15px;
-  color: #999;
-  font-size: 14px;
-}
-
-.favorite-actions {
-  display: flex;
-  align-items: center;
-}
-
-@media (max-width: 768px) {
-  .favorite-item {
-    flex-direction: column;
-  }
-
-  .favorite-image {
-    width: 100%;
-    height: 200px;
-  }
-}
+.fav-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-left: 3px solid var(--color-primary); }
+.fav-card-img { height: 100px; background: var(--color-primary-50); display: flex; align-items: flex-start; padding: 10px; }
+.fav-card-cat { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: var(--radius-sm); background: var(--color-primary); color: #fff; }
+.fav-card-body { padding: var(--space-3); }
+.fav-card-body h3 { font-family: var(--font-display); font-size: var(--text-sm); font-weight: 700; margin: 0 0 4px; color: var(--color-text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.fav-card-body p { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 6px; }
+.fav-card-meta { font-size: 11px; color: var(--color-text-tertiary); }
 </style>
