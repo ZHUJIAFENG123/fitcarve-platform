@@ -46,9 +46,11 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useNotifications } from '@/composables/useNotifications'
 
-const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
+const notifications = ref([])
+const unreadCount = ref(0)
+function markAsRead() {}
+function markAllAsRead() {}
 
 const showNotification = ref(false)
 const activeTab = ref('all')

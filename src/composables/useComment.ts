@@ -2,7 +2,10 @@ import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useNewsStore } from '@/stores/news'
 import { useAuthGuard } from './useAuthGuard.js'
-import { loadUserInfo } from '@/services/user'
+function loadUserInfo() {
+  try { return JSON.parse(localStorage.getItem('userInfo') || '{}') }
+  catch { return {} }
+}
 import type { Comment, CommentInput } from '@/types/news'
 
 export function useComment() {

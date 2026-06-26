@@ -19,7 +19,6 @@
           clearable
         />
       </div>
-      <RoleSwitcher />
       <ThemeToggle />
       <slot name="actions"></slot>
       <!-- 已登录：显示用户区域 -->
@@ -89,8 +88,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Bell, ArrowDown, Search } from '@element-plus/icons-vue'
-import { useNotifications } from '@/composables/useNotifications'
-import RoleSwitcher from '@/components/RoleSwitcher.vue'
 import ThemeToggle from '@/components/news/ThemeToggle.vue'
 
 defineProps({
@@ -98,7 +95,10 @@ defineProps({
   menuLinks: { type: Array, default: () => [] }
 })
 
-const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
+const notifications = ref([])
+const unreadCount = ref(0)
+function markAsRead() {}
+function markAllAsRead() {}
 
 const username = ref('用户')
 const userAvatar = ref('')

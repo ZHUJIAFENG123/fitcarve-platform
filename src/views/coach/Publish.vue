@@ -90,7 +90,20 @@ import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import Navbar from '@/components/Navbar.vue'
 import RichTextEditor from '@/components/RichTextEditor.vue'
-import { courseApi } from '@/services/api.js'
+const API = import.meta.env.VITE_API_BASE_URL || '/api'
+
+async function saveCourse(payload) {
+  const token = localStorage.getItem('token')
+  const method = editId.value ? 'PUT' : 'POST'
+  const url = editId.value ? `${API}/courses/${editId.value}` : `${API}/courses`
+  const res = await fetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(payload)
+  })
+  if (!res.ok) throw new Error((await res.json()).message || '保存失败')
+  return res.json()
+}
 
 const router = useRouter()
 const route = useRoute()
@@ -153,10 +166,10 @@ const submitForm = async () => {
     payload.syllabus = payload.syllabus.filter(l => l.title)
 
     if (isEdit.value) {
-      await courseApi.update(editId.value, payload)
+      await saveCourse(payload)
       ElMessage.success('课程修改成功')
     } else {
-      await courseApi.create(payload)
+      await saveCourse(payload)
       ElMessage.success('课程发布成功，已提交审核')
     }
     localStorage.removeItem('courseDraft')
