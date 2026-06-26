@@ -3,7 +3,7 @@
     <div class="nav-content">
       <div class="logo">
         <img src="/logo.png" alt="Logo" class="logo-img" />
-        <h1>{{ logoSuffix ? `健身资讯网站 - ${logoSuffix}` : '健身资讯网站' }}</h1>
+        <h1>{{ logoSuffix ? `菜头健身 - ${logoSuffix}` : '菜头健身' }}</h1>
       </div>
       <nav class="nav-menu">
         <a v-for="link in menuLinks" :key="link.to" :href="link.to" :class="{ active: link.active }">{{ link.label }}</a>

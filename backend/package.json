@@ -1,7 +1,7 @@
 {
   "name": "fitness-backend",
   "version": "1.0.0",
-  "description": "健身资讯网站后端服务",
+  "description": "菜头健身后端服务",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

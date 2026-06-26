@@ -6,7 +6,7 @@
         <div class="brand-content">
           <router-link to="/home" class="brand-logo">
             <img src="/logo.png" alt="Logo" />
-            <span>FitNews</span>
+            <span>菜头健身</span>
           </router-link>
           <h1>加入健身社区</h1>
           <p class="brand-desc">获取专业训练计划 · 记录饮食数据 · AI智能指导</p>
@@ -16,7 +16,7 @@
       <div class="auth-form">
         <div class="form-inner">
           <h2>创建账号</h2>
-          <p class="form-sub">注册成为 FitNews 会员</p>
+          <p class="form-sub">注册成为 菜头健身 会员</p>
 
           <el-form ref="formRef" :model="form" :rules="rules" @keyup.enter="handleRegister">
             <el-form-item prop="username">

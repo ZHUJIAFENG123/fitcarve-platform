@@ -77,11 +77,11 @@ const configFormRef = ref(null)
 const uploadFormRef = ref(null)
 
 const configForm = ref({
-  siteName: '健身资讯网站',
-  announcement: '欢迎访问健身资讯网站，这里有最新的健身资讯和课程！',
+  siteName: '菜头健身',
+  announcement: '欢迎访问菜头健身，这里有最新的健身资讯和课程！',
   contactEmail: 'contact@fitness.com',
   contactPhone: '12345678901',
-  copyright: '© 2023 健身资讯网站 版权所有',
+  copyright: '© 2023 菜头健身 版权所有',
   icpNumber: '京ICP备12345678号'
 })
 
@@ -116,9 +116,9 @@ const saveUploadConfig = () => {
 
 const resetForm = () => {
   configForm.value = {
-    siteName: '健身资讯网站', announcement: '欢迎访问健身资讯网站，这里有最新的健身资讯和课程！',
+    siteName: '菜头健身', announcement: '欢迎访问菜头健身，这里有最新的健身资讯和课程！',
     contactEmail: 'contact@fitness.com', contactPhone: '12345678901',
-    copyright: '© 2023 健身资讯网站 版权所有', icpNumber: '京ICP备12345678号'
+    copyright: '© 2023 菜头健身 版权所有', icpNumber: '京ICP备12345678号'
   }
   uploadConfig.value = { maxFileSize: 5, allowedTypes: ['jpg', 'png', 'gif', 'webp'] }
 }

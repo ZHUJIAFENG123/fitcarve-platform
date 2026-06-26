@@ -61,7 +61,7 @@ const logs = ref([
   { id: 1, operator: 'admin', type: 'user_management', content: '新增用户 user4', target: '用户管理', ip: '127.0.0.1', createdAt: '2023-01-01 10:00:00' },
   { id: 2, operator: 'admin', type: 'content_audit', content: '通过资讯 "健身初学者必备的5个基础动作"', target: '资讯审核', ip: '127.0.0.1', createdAt: '2023-01-01 10:30:00' },
   { id: 3, operator: 'admin', type: 'content_audit', content: '驳回资讯 "常见健身误区解析"', target: '资讯审核', ip: '127.0.0.1', createdAt: '2023-01-01 11:00:00' },
-  { id: 4, operator: 'admin', type: 'system_config', content: '修改网站名称为 "健身资讯平台"', target: '系统配置', ip: '127.0.0.1', createdAt: '2023-01-01 11:30:00' },
+  { id: 4, operator: 'admin', type: 'system_config', content: '修改网站名称为 "菜头健身"', target: '系统配置', ip: '127.0.0.1', createdAt: '2023-01-01 11:30:00' },
   { id: 5, operator: 'admin', type: 'comment_management', content: '删除评论 ID: 5', target: '评论管理', ip: '127.0.0.1', createdAt: '2023-01-01 12:00:00' },
   { id: 6, operator: 'admin', type: 'user_management', content: '修改用户 user1 角色为教练', target: '用户管理', ip: '127.0.0.1', createdAt: '2023-01-01 12:30:00' },
   { id: 7, operator: 'admin', type: 'content_audit', content: '通过课程 "力量训练基础"', target: '课程审核', ip: '127.0.0.1', createdAt: '2023-01-01 13:00:00' },

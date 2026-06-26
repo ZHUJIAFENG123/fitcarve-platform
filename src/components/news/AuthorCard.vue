@@ -25,11 +25,11 @@ const defaultBios: Record<string, string> = {
   '陈教练': 'ACE 认证教练，HIIT 与功能性训练专家，帮助超过 500 名学员达成减脂目标。',
   '刘博士': '运动人体科学博士，运动补剂研究方向，发表多篇 SCI 论文。',
   '赵教练': '瑜伽与拉伸认证导师，10 年教学经验，擅长柔韧性与体态矫正训练。',
-  '编辑组': 'FitNews 编辑团队，致力于传播科学、循证的健身知识。',
+  '编辑组': '菜头健身 编辑团队，致力于传播科学、循证的健身知识。',
   '王教练': 'IFBB 职业认证教练，健美备赛指导专家，专注肌肉控制与训练技巧。'
 }
 
-const bio = computed(() => props.bio || defaultBios[props.author] || 'FitNews 认证创作者')
+const bio = computed(() => props.bio || defaultBios[props.author] || '菜头健身 认证创作者')
 </script>
 
 <style scoped>
