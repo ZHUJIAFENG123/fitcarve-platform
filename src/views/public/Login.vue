@@ -7,7 +7,7 @@
         <div class="brand-content">
           <router-link to="/home" class="brand-logo">
             <img src="/logo.png" alt="Logo" />
-            <span>菜头健身</span>
+            <span>躯造</span>
           </router-link>
           <h1>科学健身，从这里开始</h1>
           <p class="brand-desc">专业训练计划 · 循证健身资讯 · AI智能助手</p>

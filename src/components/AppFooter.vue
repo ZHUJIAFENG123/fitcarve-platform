@@ -5,9 +5,9 @@
         <div class="footer-col footer-brand-col">
           <div class="footer-brand">
             <img src="/logo.png" alt="Logo" class="footer-logo" />
-            <span class="footer-name">菜头健身</span>
+            <span class="footer-name">躯造</span>
           </div>
-          <p class="footer-desc">专业 · 科学 · 前沿的菜头健身，为您提供权威的训练指导与健康知识。</p>
+          <p class="footer-desc">专业 · 科学 · 前沿的躯造，为您提供权威的训练指导与健康知识。</p>
         </div>
         <div class="footer-col">
           <h4>快速导航</h4>
@@ -31,7 +31,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© {{ currentYear }} 菜头健身 版权所有 | 京ICP备12345678号 | 仅供学习交流使用</p>
+        <p>© {{ currentYear }} 躯造 版权所有 | 京ICP备12345678号 | 仅供学习交流使用</p>
       </div>
     </div>
   </footer>

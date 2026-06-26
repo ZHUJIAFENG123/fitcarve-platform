@@ -14,7 +14,7 @@ import AiChatFab from '@/components/ai/AiChatFab.vue'
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
 
-/* ===== 菜头健身 Brand Design System — 活力运动风 ===== */
+/* ===== 躯造 Brand Design System — 活力运动风 ===== */
 :root {
   /* --- Brand Colors --- */
   --color-primary: #1B6B3A;

@@ -3,7 +3,7 @@
     <div class="auth-card">
       <router-link to="/home" class="fp-logo">
         <img src="/logo.png" alt="Logo" />
-        <span>菜头健身</span>
+        <span>躯造</span>
       </router-link>
 
       <h2>忘记密码</h2>
