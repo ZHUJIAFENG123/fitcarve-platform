@@ -64,7 +64,6 @@
             <el-dropdown-menu>
               <el-dropdown-item @click="$router.push('/profile')">个人中心</el-dropdown-item>
               <el-dropdown-item @click="$router.push('/favorites')">我的收藏</el-dropdown-item>
-              <el-dropdown-item @click="$router.push('/learning-progress')">学习进度</el-dropdown-item>
               <el-dropdown-item divided @click="$router.push('/user/publish-news')">✍ 发布资讯</el-dropdown-item>
               <el-dropdown-item @click="$router.push('/user/publish-course')">📚 发布课程</el-dropdown-item>
               <el-dropdown-item @click="$router.push('/user/manage-news')">📋 资讯管理</el-dropdown-item>

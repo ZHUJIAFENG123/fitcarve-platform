@@ -52,7 +52,6 @@ const routes = [
   // 旧路由重定向
   { path: '/courses/list', redirect: '/fitness/training' },
   { path: '/courses/detail/:id', redirect: '/fitness/training' },
-  { path: '/learning-progress', redirect: '/favorites' },
 
   // 404
   { path: '/:pathMatch(.*)*', redirect: '/404' }

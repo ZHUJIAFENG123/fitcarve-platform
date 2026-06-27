@@ -20,10 +20,6 @@
           <span class="pf-stat-num">12</span>
           <span class="pf-stat-label">收藏</span>
         </div>
-        <div class="pf-stat" @click="goToLearningProgress">
-          <span class="pf-stat-num">5</span>
-          <span class="pf-stat-label">课程</span>
-        </div>
         <div class="pf-stat" @click="goToComments">
           <span class="pf-stat-num">8</span>
           <span class="pf-stat-label">评论</span>
@@ -38,7 +34,6 @@
       <div class="pf-links">
         <router-link to="/favorites" class="pf-link-card">⭐ 我的收藏</router-link>
         <router-link to="/my-comments" class="pf-link-card">💬 我的评论</router-link>
-        <router-link to="/learning-progress" class="pf-link-card">📊 学习进度</router-link>
         <router-link to="/user/publish-news" class="pf-link-card">✍ 发布资讯</router-link>
         <router-link to="/user/manage-news" class="pf-link-card">📋 资讯管理</router-link>
         <button class="pf-link-card pf-logout" @click="handleLogout">🚪 退出登录</button>
@@ -114,7 +109,6 @@ function handleLogout() {
 
 function goToFavorites() { router.push('/favorites') }
 function goToComments() { router.push('/my-comments') }
-function goToLearningProgress() { router.push('/learning-progress') }
 
 onMounted(loadUser)
 </script>
