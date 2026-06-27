@@ -32,13 +32,16 @@ const routes = [
   { path: '/favorites', component: () => import('../views/user/Favorites.vue'), meta: { requiresAuth: true } },
   { path: '/my-comments', component: () => import('../views/user/MyComments.vue'), meta: { requiresAuth: true } },
 
-  // 内容中心
-  { path: '/user/publish-news',   component: () => import('../views/creator/Publish.vue'),     meta: { requiresAuth: true } },
-  { path: '/user/publish-course', component: () => import('../views/coach/Publish.vue'),       meta: { requiresAuth: true } },
-  { path: '/user/manage-news',    component: () => import('../views/creator/Manage.vue'),      meta: { requiresAuth: true } },
-  { path: '/user/manage-courses', component: () => import('../views/coach/Manage.vue'),        meta: { requiresAuth: true } },
-  { path: '/user/interaction',    component: () => import('../views/coach/Interaction.vue'),   meta: { requiresAuth: true } },
-  { path: '/user/statistics',     component: () => import('../views/coach/Statistics.vue'),    meta: { requiresAuth: true } },
+  // 创作者中心
+  { path: '/creator', component: () => import('../views/creator/CreatorCenter.vue'), meta: { requiresAuth: true } },
+
+  // 旧路由重定向
+  { path: '/user/publish-news', redirect: '/creator' },
+  { path: '/user/publish-course', redirect: '/creator' },
+  { path: '/user/manage-news', redirect: '/creator' },
+  { path: '/user/manage-courses', redirect: '/creator' },
+  { path: '/user/interaction', redirect: '/creator' },
+  { path: '/user/statistics', redirect: '/creator' },
 
   // 管理后台
   { path: '/admin/dashboard', component: () => import('../views/admin/Dashboard.vue'),  meta: { requiresAuth: true } },

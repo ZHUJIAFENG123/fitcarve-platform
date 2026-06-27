@@ -64,12 +64,7 @@
             <el-dropdown-menu>
               <el-dropdown-item @click="$router.push('/profile')">个人中心</el-dropdown-item>
               <el-dropdown-item @click="$router.push('/favorites')">我的收藏</el-dropdown-item>
-              <el-dropdown-item divided @click="$router.push('/user/publish-news')">✍ 发布资讯</el-dropdown-item>
-              <el-dropdown-item @click="$router.push('/user/publish-course')">📚 发布课程</el-dropdown-item>
-              <el-dropdown-item @click="$router.push('/user/manage-news')">📋 资讯管理</el-dropdown-item>
-              <el-dropdown-item @click="$router.push('/user/manage-courses')">🎓 课程管理</el-dropdown-item>
-              <el-dropdown-item @click="$router.push('/user/interaction')">💬 互动消息</el-dropdown-item>
-              <el-dropdown-item @click="$router.push('/user/statistics')">📊 数据统计</el-dropdown-item>
+              <el-dropdown-item divided @click="$router.push('/creator')">🎨 创作者中心</el-dropdown-item>
               <el-dropdown-item divided @click="doLogout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>

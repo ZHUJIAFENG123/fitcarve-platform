@@ -34,7 +34,7 @@
       <div class="pf-links">
         <router-link to="/favorites" class="pf-link-card">⭐ 我的收藏</router-link>
         <router-link to="/my-comments" class="pf-link-card">💬 我的评论</router-link>
-        <router-link to="/user/publish-news" class="pf-link-card">✍ 发布资讯</router-link>
+        <router-link to="/creator" class="pf-link-card">🎨 创作者中心</router-link>
         <router-link to="/user/manage-news" class="pf-link-card">📋 资讯管理</router-link>
         <button class="pf-link-card pf-logout" @click="handleLogout">🚪 退出登录</button>
       </div>
