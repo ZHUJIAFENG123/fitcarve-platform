@@ -48,8 +48,8 @@ class Comment {
 
   static async findByTarget(targetType, targetId) {
     const [rows] = await pool.query(
-      'SELECT * FROM comments WHERE target_type = ? AND target_id = ? ORDER BY created_at DESC',
-      [targetType, targetId]
+      'SELECT * FROM comments WHERE target_id = ? ORDER BY created_at DESC',
+      [targetId]
     );
     return rows;
   }
