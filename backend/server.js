@@ -127,7 +127,11 @@ const PORT = process.env.PORT || 5000;
 
 async function startServer() {
   const dbConnected = await testConnection();
-  if (!dbConnected) {
+  if (dbConnected) {
+    // 自动创建数据库表（如果不存在）
+    const autoInit = require('./auto-init');
+    await autoInit();
+  } else {
     console.error('无法连接到数据库，服务器将在数据库不可用的情况下启动');
   }
 
