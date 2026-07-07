@@ -31,9 +31,11 @@
               <el-input
                 v-model="form.account"
                 :placeholder="loginMode === 'email' ? '请输入邮箱' : '请输入用户名'"
-                prefix-icon="User"
+                prefix-icon=""
                 size="large"
-              />
+              >
+                <template #prefix><User :size="16" style="opacity:0.5" /></template>
+              </el-input>
             </el-form-item>
 
             <el-form-item prop="password">
@@ -41,11 +43,15 @@
                 v-model="form.password"
                 :type="showPwd ? 'text' : 'password'"
                 placeholder="请输入密码"
-                prefix-icon="Lock"
+                prefix-icon=""
                 size="large"
               >
+                <template #prefix><Lock :size="16" style="opacity:0.5" /></template>
                 <template #suffix>
-                  <span class="pwd-toggle" @click="showPwd = !showPwd">{{ showPwd ? '🙈' : '👁' }}</span>
+                  <span class="pwd-toggle" @click="showPwd = !showPwd">
+                    <Eye v-if="!showPwd" :size="16" />
+                    <EyeOff v-else :size="16" />
+                  </span>
                 </template>
               </el-input>
             </el-form-item>
@@ -64,6 +70,15 @@
             <div class="form-switch">
               还没有账号？<router-link to="/register">立即注册</router-link>
             </div>
+
+            <!-- Third-party login -->
+            <div class="form-divider">
+              <span>或通过以下方式登录</span>
+            </div>
+            <div class="form-social">
+              <button class="social-btn" title="Google登录"><Mail :size="18" /></button>
+              <button class="social-btn" title="GitHub登录"><Github :size="18" /></button>
+            </div>
           </el-form>
         </div>
       </div>
@@ -75,7 +90,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { User, Lock } from '@element-plus/icons-vue'
+import { User, Lock, Eye, EyeOff, Mail, Github } from 'lucide-vue-next'
 import { login, loginByEmail, saveSession, mockLogin } from '@/services/auth.js'
 
 const router = useRouter()
@@ -189,7 +204,8 @@ if (remembered) {
 }
 .login-tabs button.active { background: var(--color-primary); color: #fff; font-weight: 600; }
 
-.pwd-toggle { cursor: pointer; font-size: 16px; user-select: none; }
+.pwd-toggle { cursor: pointer; display: flex; align-items: center; color: var(--color-text-tertiary); transition: color 0.2s; }
+.pwd-toggle:hover { color: var(--color-text-primary); }
 
 .form-extra { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
 .forgot-link { font-size: 13px; color: var(--color-primary); text-decoration: none; }
@@ -208,6 +224,23 @@ if (remembered) {
 .form-switch { text-align: center; margin-top: 24px; font-size: 14px; color: var(--color-text-secondary); }
 .form-switch a { color: var(--color-primary); font-weight: 600; text-decoration: none; margin-left: 4px; }
 .form-switch a:hover { text-decoration: underline; }
+
+.form-divider {
+  display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-5);
+  color: var(--color-text-tertiary); font-size: 12px;
+}
+.form-divider::before, .form-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--color-border-light);
+}
+
+.form-social { display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-4); }
+.social-btn {
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--color-border);
+  background: var(--color-bg-card); color: var(--color-text-secondary);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s;
+}
+.social-btn:hover { border-color: var(--color-primary); color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
 @media (max-width: 700px) {
   .auth-wrapper { flex-direction: column; }

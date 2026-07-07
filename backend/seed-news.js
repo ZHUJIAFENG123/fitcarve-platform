@@ -1,3 +1,41 @@
+/**
+ * 资讯种子数据导入脚本
+ * 用法: node backend/seed-news.js
+ * 
+ * 数据来源: seed/news.js（30篇高质量资讯）
+ */
+
+const { pool } = require('./db');
+const path = require('path');
+
+async function seedNews() {
+  const newsPath = path.join(__dirname, '..', 'seed', 'news.js');
+  delete require.cache[require.resolve(newsPath)];
+  const newsData = require(newsPath);
+
+  try {
+    let inserted = 0;
+    for (const item of newsData) {
+      // 跳过没有标题或内容的占位条目
+      if (!item.title || !item.content) {
+        console.log(`   ⏭ 跳过占位条目 #${item.id}`);
+        continue;
+      }
+      await pool.query(
+        `INSERT INTO news (title, content, summary, tags, image, category, author, status, views, comment_count, publish_date)
+         VALUES (?, ?, ?, ?, ?, ?, ?, 'approved', ?, ?, NOW())`,
+        [item.title, item.content, item.summary, item.tags, item.image || '', item.category, item.author, item.views || 0, Math.floor(Math.random() * 50)]
+      );
+      inserted++;
+    }
+    console.log('成功插入 ' + inserted + ' 条资讯数据（共 ' + newsData.length + ' 条，跳过 ' + (newsData.length - inserted) + ' 条占位）');
+  } catch (error) {
+    console.error('插入失败:', error.message);
+  }
+  process.exit();
+}
+
+seedNews();
 const { pool } = require('./db');
 
 const newsData = [

@@ -2,7 +2,7 @@
  * 健身资讯网站 - 完整种子数据入口
  * 
  * 数据汇总:
- * - news: 12篇资讯 (knowledge×2, nutrition×2, recovery×4, equipment×4)
+ * - news: 30篇高质量资讯 (training-science×4, sports-nutrition×7, muscle-building×7, fat-loss×4, recovery-injury×4, gear-equipment×4)
  * - exercises: 60个动作 (chest×8, back×8, legs×10, shoulders×8, arms×8, core×8, full_body×10)
  * - foods: 120种食物 (staple×20, meat×20, vegetable×25, fruit×15, dairy×10, snack×10, drink×10, condiment×10)
  * - training_plans: 12套训练计划 (增肌×3, 减脂×3, 耐力×2, 柔韧×2, 综合×2)

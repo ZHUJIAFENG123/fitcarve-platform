@@ -20,19 +20,49 @@
 
           <el-form ref="formRef" :model="form" :rules="rules" @keyup.enter="handleRegister">
             <el-form-item prop="username">
-              <el-input v-model="form.username" placeholder="用户名（4-20位字母数字）" prefix-icon="User" size="large" />
+              <el-input v-model="form.username" placeholder="用户名（4-20位字母数字）" prefix-icon="" size="large">
+                <template #prefix><User :size="16" style="opacity:0.5" /></template>
+              </el-input>
             </el-form-item>
 
             <el-form-item prop="email">
-              <el-input v-model="form.email" placeholder="邮箱地址" prefix-icon="Message" size="large" />
+              <el-input v-model="form.email" placeholder="邮箱地址" prefix-icon="" size="large">
+                <template #prefix><Mail :size="16" style="opacity:0.5" /></template>
+              </el-input>
             </el-form-item>
 
             <el-form-item prop="password">
-              <el-input v-model="form.password" type="password" placeholder="密码（至少6位）" prefix-icon="Lock" size="large" />
+              <el-input v-model="form.password" :type="showPwd ? 'text' : 'password'" placeholder="密码（至少6位）" size="large">
+                <template #prefix><Lock :size="16" style="opacity:0.5" /></template>
+                <template #suffix>
+                  <span class="pwd-toggle" @click="showPwd = !showPwd">
+                    <Eye v-if="!showPwd" :size="16" /><EyeOff v-else :size="16" />
+                  </span>
+                </template>
+              </el-input>
+              <!-- Password Strength -->
+              <div v-if="form.password" class="pwd-strength">
+                <div class="pwd-str-bar">
+                  <div class="pwd-str-fill" :class="pwdStrengthClass" :style="{ width: pwdStrengthWidth }"></div>
+                </div>
+                <span class="pwd-str-label" :class="pwdStrengthClass">{{ pwdStrengthLabel }}</span>
+              </div>
             </el-form-item>
 
             <el-form-item prop="confirmPassword">
-              <el-input v-model="form.confirmPassword" type="password" placeholder="确认密码" prefix-icon="Lock" size="large" />
+              <el-input v-model="form.confirmPassword" :type="showPwd2 ? 'text' : 'password'" placeholder="确认密码" size="large">
+                <template #prefix><Lock :size="16" style="opacity:0.5" /></template>
+                <template #suffix>
+                  <span class="pwd-toggle" @click="showPwd2 = !showPwd2">
+                    <Eye v-if="!showPwd2" :size="16" /><EyeOff v-else :size="16" />
+                  </span>
+                </template>
+              </el-input>
+              <div v-if="form.confirmPassword" class="pwd-match">
+                <Check v-if="form.confirmPassword === form.password" :size="14" class="pwd-match-ok" />
+                <XIcon v-else :size="14" class="pwd-match-bad" />
+                <span>{{ form.confirmPassword === form.password ? '密码一致' : '密码不一致' }}</span>
+              </div>
             </el-form-item>
 
             <el-button type="primary" size="large" class="submit-btn" @click="handleRegister" :loading="loading">
@@ -53,16 +83,32 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { User, Lock, Message } from '@element-plus/icons-vue'
+import { User, Lock, Mail, Eye, EyeOff, Check, X as XIcon } from 'lucide-vue-next'
 import { register as apiRegister, mockRegister } from '@/services/auth.js'
 
 const router = useRouter()
 const loading = ref(false)
 const error = ref('')
 const success = ref('')
+const showPwd = ref(false)
+const showPwd2 = ref(false)
+
+const pwdStrength = computed(() => {
+  const p = form.password
+  if (!p || p.length < 6) return 0
+  let s = 0
+  if (p.length >= 8) s++
+  if (/[A-Z]/.test(p)) s++
+  if (/[0-9]/.test(p)) s++
+  if (/[^A-Za-z0-9]/.test(p)) s++
+  return s
+})
+const pwdStrengthClass = computed(() => ['', 'weak', 'medium', 'strong', 'strong'][pwdStrength.value] || '')
+const pwdStrengthWidth = computed(() => ['0%', '25%', '50%', '75%', '100%'][pwdStrength.value] || '0%')
+const pwdStrengthLabel = computed(() => ['', '弱', '中等', '强', '很强'][pwdStrength.value] || '')
 
 const form = reactive({
   username: '',
@@ -192,6 +238,25 @@ async function handleRegister() {
 .form-switch { text-align: center; margin-top: 24px; font-size: 14px; color: var(--color-text-secondary); }
 .form-switch a { color: var(--color-primary); font-weight: 600; text-decoration: none; margin-left: 4px; }
 .form-switch a:hover { text-decoration: underline; }
+
+.pwd-toggle { cursor: pointer; display: flex; align-items: center; color: var(--color-text-tertiary); }
+.pwd-toggle:hover { color: var(--color-text-primary); }
+
+.pwd-strength { display: flex; align-items: center; gap: 8px; margin-top: 6px; width: 100%; }
+.pwd-str-bar { flex: 1; height: 4px; border-radius: 2px; background: var(--color-surface); overflow: hidden; }
+.pwd-str-fill { height: 100%; border-radius: 2px; transition: all 0.3s; }
+.pwd-str-fill.weak { background: #EF4444; }
+.pwd-str-fill.medium { background: #F59E0B; }
+.pwd-str-fill.strong { background: #16A34A; }
+.pwd-str-label { font-size: 11px; font-weight: 600; }
+.pwd-str-label.weak { color: #EF4444; }
+.pwd-str-label.medium { color: #F59E0B; }
+.pwd-str-label.strong { color: #16A34A; }
+
+.pwd-match { display: flex; align-items: center; gap: 4px; margin-top: 4px; font-size: 11px; }
+.pwd-match-ok { color: #16A34A; }
+.pwd-match-bad { color: #EF4444; }
+.pwd-match span { color: var(--color-text-tertiary); }
 
 @media (max-width: 700px) {
   .auth-wrapper { flex-direction: column; }

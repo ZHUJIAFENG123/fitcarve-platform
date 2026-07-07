@@ -12,6 +12,17 @@ import type { NewsCategory } from '@/types/common'
 
 // ── Backend response normalizers ──
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+
+function resolveImageUrl(path: string): string {
+  if (!path) return ''
+  if (path.startsWith('http://') || path.startsWith('https://')) return path
+  // Backend returns relative paths like /news-images/xxx.jpg
+  // Remove /api prefix and use the base URL
+  const baseUrl = BASE_URL.replace('/api', '')
+  return `${baseUrl}${path}`
+}
+
 function parseTags(raw: unknown): string[] {
   if (Array.isArray(raw)) return raw.filter(Boolean)
   if (typeof raw === 'string') return raw.split(',').map(t => t.trim()).filter(Boolean)
@@ -31,7 +42,7 @@ function mapCardData(raw: Record<string, unknown>): NewsCardData {
     title: String(raw.title || ''),
     summary: String(raw.summary || ''),
     tags: parseTags(raw.tags),
-    image: String(raw.image || ''),
+    image: resolveImageUrl(String(raw.image || '')),
     category: normalizeCategory(String(raw.category || '')),
     author: String(raw.author || ''),
     views: Number(raw.views) || 0,
@@ -46,7 +57,7 @@ function mapNews(raw: Record<string, unknown>): News {
     content: String(raw.content || ''),
     summary: String(raw.summary || ''),
     tags: parseTags(raw.tags),
-    image: String(raw.image || ''),
+    image: resolveImageUrl(String(raw.image || '')),
     category: normalizeCategory(String(raw.category || '')),
     author: String(raw.author || ''),
     status: (raw.status as News['status']) || 'pending',
@@ -80,6 +91,7 @@ export const useNewsStore = defineStore('news', () => {
   const commentsLoading = ref(false)
 
   const popularNews = ref<NewsCardData[]>([])
+  const hotTags = ref<string[]>([])
 
   const likedIds = ref<Set<number>>(new Set())
   const favoritedIds = ref<Set<number>>(new Set())
@@ -134,6 +146,8 @@ export const useNewsStore = defineStore('news', () => {
       }
       if (query.category) params.category = query.category
       if (query.keyword) params.keyword = query.keyword
+      if (query.tags && query.tags.length > 0) params.tags = query.tags.join(',')
+      if (query.sort) params.sort = query.sort
 
       // Backend returns { news: [...], pagination: { total, page, limit, pages } }
       const data = await httpGet<any>('/news', params)
@@ -171,9 +185,20 @@ export const useNewsStore = defineStore('news', () => {
     }
   }
 
+  async function fetchHotTags(limit = 20) {
+    try {
+      const data = await httpGet<any[]>('/news/tags/hot', { limit })
+      hotTags.value = (Array.isArray(data) ? data : []).map((t: any) => t.name).filter(Boolean)
+      return hotTags.value
+    } catch {
+      hotTags.value = []
+      return []
+    }
+  }
+
   async function fetchPopular(limit = 5) {
     try {
-      const data = await httpGet<any[]>('/news/popular', { limit })
+      const data = await httpGet<any[]>('/news/popular/list', { limit })
       popularNews.value = (Array.isArray(data) ? data : []).map(mapCardData)
       return popularNews.value
     } catch {
@@ -323,10 +348,11 @@ export const useNewsStore = defineStore('news', () => {
     relatedNews, prevArticleId, nextArticleId,
     comments, commentsLoading,
     popularNews,
+    hotTags,
     likedIds, favoritedIds,
     readingTime, currentDetailId,
     isLiked, isFavorited,
-    fetchList, fetchDetail, fetchPopular,
+    fetchList, fetchDetail, fetchPopular, fetchHotTags,
     toggleLike, toggleFavorite,
     fetchComments, submitComment, deleteComment,
     createNews, updateNews, getStats

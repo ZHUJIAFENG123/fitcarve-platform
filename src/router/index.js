@@ -23,14 +23,17 @@ const routes = [
   { path: '/fitness/training/:id', component: () => import('../views/fitness/TrainingDetail.vue') },
   { path: '/fitness/diet', component: () => import('../views/fitness/DietList.vue') },
   { path: '/fitness/diet/:id', component: () => import('../views/fitness/DietDetail.vue') },
-  { path: '/fitness/diet-log', component: () => import('../views/fitness/DietLog.vue'), meta: { requiresAuth: true } },
   { path: '/fitness/calculator', component: () => import('../views/fitness/Calculator.vue') },
   { path: '/fitness/ai-generator', component: () => import('../views/fitness/AiGenerator.vue') },
 
   // 需登录
+  { path: '/fitness/diet-log', component: () => import('../views/fitness/DietLog.vue'), meta: { requiresAuth: true } },
+  { path: '/fitness/nutrition', component: () => import('../views/fitness/NutritionSearch.vue'), meta: { requiresAuth: true } },
+  { path: '/fitness/exercises', component: () => import('../views/fitness/ExerciseLibrary.vue'), meta: { requiresAuth: true } },
+  { path: '/fitness/exercise/:id', component: () => import('../views/fitness/ExerciseDetail.vue'), meta: { requiresAuth: true } },
   { path: '/profile', component: () => import('../views/public/Profile.vue'), meta: { requiresAuth: true } },
-  { path: '/favorites', component: () => import('../views/user/Favorites.vue'), meta: { requiresAuth: true } },
-  { path: '/my-comments', component: () => import('../views/user/MyComments.vue'), meta: { requiresAuth: true } },
+  { path: '/favorites', redirect: '/profile' },
+  { path: '/my-comments', redirect: '/profile' },
 
   // 创作者中心
   { path: '/creator', component: () => import('../views/creator/CreatorCenter.vue'), meta: { requiresAuth: true } },

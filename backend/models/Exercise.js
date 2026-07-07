@@ -9,6 +9,8 @@ class Exercise {
     if (options.muscleGroup) { conditions.push('muscle_group = ?'); params.push(options.muscleGroup); }
     if (options.category) { conditions.push('category = ?'); params.push(options.category); }
     if (options.difficulty) { conditions.push('difficulty = ?'); params.push(options.difficulty); }
+    if (options.equipment) { conditions.push('equipment LIKE ?'); params.push(`%${options.equipment}%`); }
+    if (options.bodyPart) { conditions.push('(body_part LIKE ? OR muscle_group LIKE ?)'); params.push(`%${options.bodyPart}%`); params.push(`%${options.bodyPart}%`); }
 
     if (conditions.length > 0) query += ' WHERE ' + conditions.join(' AND ');
     query += ' ORDER BY muscle_group, name';
@@ -19,11 +21,11 @@ class Exercise {
     return rows;
   }
 
-  static async search(keyword, limit = 20) {
+  static async search(keyword, limit = 50) {
     const kw = `%${keyword}%`;
     const [rows] = await pool.query(
-      'SELECT * FROM exercises WHERE name LIKE ? OR muscle_group LIKE ? LIMIT ?',
-      [kw, kw, limit]
+      'SELECT * FROM exercises WHERE name LIKE ? OR muscle_group LIKE ? OR target_muscles LIKE ? OR secondary_muscles LIKE ? OR equipment LIKE ? LIMIT ?',
+      [kw, kw, kw, kw, kw, limit]
     );
     return rows;
   }
@@ -36,6 +38,23 @@ class Exercise {
   static async getMuscleGroups() {
     const [rows] = await pool.query('SELECT DISTINCT muscle_group FROM exercises ORDER BY muscle_group');
     return rows.map(r => r.muscle_group);
+  }
+
+  static async getStats() {
+    const [rows] = await pool.query(
+      'SELECT muscle_group, COUNT(*) as count FROM exercises GROUP BY muscle_group ORDER BY count DESC'
+    );
+    return rows;
+  }
+
+  static async findByNames(names) {
+    if (!names.length) return [];
+    const placeholders = names.map(() => '?').join(',');
+    const [rows] = await pool.query(
+      `SELECT * FROM exercises WHERE name IN (${placeholders})`,
+      names
+    );
+    return rows;
   }
 }
 

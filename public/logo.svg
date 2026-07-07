@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- 哑铃左侧配重 -->
+  <rect x="8" y="28" width="14" height="64" rx="4" fill="#1B6B3A"/>
+  <rect x="24" y="38" width="10" height="44" rx="3" fill="#238B4D"/>
+  <!-- 哑铃杆 -->
+  <rect x="34" y="52" width="52" height="16" rx="4" fill="#145230"/>
+  <!-- 哑铃右侧配重 -->
+  <rect x="86" y="38" width="10" height="44" rx="3" fill="#238B4D"/>
+  <rect x="98" y="28" width="14" height="64" rx="4" fill="#1B6B3A"/>
+  <!-- L 字母 - 左侧融入 -->
+  <path d="M30 42 L30 78 L42 78" stroke="#4ADE80" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- K 字母 - 右侧融入 -->
+  <path d="M78 42 L78 78 M78 60 L90 42 M78 60 L90 78" stroke="#4ADE80" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- 顶部能量弧线 -->
+  <path d="M40 22 Q60 8 80 22" stroke="#F97316" stroke-width="3" stroke-linecap="round" fill="none"/>
+</svg>

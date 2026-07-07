@@ -1,34 +1,28 @@
 <template>
-  <div class="news-actions">
-    <div class="action-item" :class="{ 'action-active': liked }" @click="$emit('like')">
-      <el-icon :size="22" class="action-icon" :class="{ 'action-icon--animate': liked }">
-        <StarFilled v-if="liked" />
-        <Star v-else />
-      </el-icon>
-      <span class="action-text">{{ liked ? '已点赞' : '点赞' }}</span>
-      <span v-if="likeCount !== undefined" class="action-count">{{ likeCount }}</span>
-    </div>
-    <div class="action-item" :class="{ 'action-active': favorited }" @click="$emit('favorite')">
-      <el-icon :size="22" class="action-icon">
-        <FolderOpened v-if="favorited" />
-        <FolderAdd v-else />
-      </el-icon>
-      <span class="action-text">{{ favorited ? '已收藏' : '收藏' }}</span>
-    </div>
-    <div class="action-item" @click="$emit('share')">
-      <el-icon :size="22" class="action-icon"><Share /></el-icon>
-      <span class="action-text">分享</span>
-    </div>
-    <div class="action-item" @click="$emit('comment')">
-      <el-icon :size="22" class="action-icon"><ChatDotRound /></el-icon>
-      <span class="action-text">评论</span>
-      <span v-if="commentCount !== undefined" class="action-count">{{ commentCount }}</span>
-    </div>
+  <div class="na-actions">
+    <button :class="['na-item', { active: liked }]" @click="$emit('like')">
+      <Heart :size="20" :fill="liked ? 'currentColor' : 'none'" :stroke-width="liked ? 0 : 2" />
+      <span class="na-label">{{ liked ? '已点赞' : '点赞' }}</span>
+      <span v-if="likeCount !== undefined" class="na-count">{{ likeCount }}</span>
+    </button>
+    <button :class="['na-item', { active: favorited }]" @click="$emit('favorite')">
+      <Bookmark :size="20" :fill="favorited ? 'currentColor' : 'none'" :stroke-width="favorited ? 0 : 2" />
+      <span class="na-label">{{ favorited ? '已收藏' : '收藏' }}</span>
+    </button>
+    <button class="na-item" @click="$emit('share')">
+      <Share2 :size="20" />
+      <span class="na-label">分享</span>
+    </button>
+    <button class="na-item" @click="$emit('comment')">
+      <MessageCircle :size="20" />
+      <span class="na-label">评论</span>
+      <span v-if="commentCount !== undefined" class="na-count">{{ commentCount }}</span>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Star, StarFilled, Share, ChatDotRound, FolderAdd, FolderOpened } from '@element-plus/icons-vue'
+import { Heart, Bookmark, Share2, MessageCircle } from 'lucide-vue-next'
 
 defineProps<{
   liked?: boolean
@@ -46,76 +40,64 @@ defineEmits<{
 </script>
 
 <style scoped>
-.news-actions {
-  margin: 30px 0;
+.na-actions {
   display: flex;
-  gap: 20px;
+  gap: 10px;
   justify-content: center;
-  padding: 16px 0;
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 20px 0;
+  flex-wrap: wrap;
 }
 
-.action-item {
+.na-item {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 24px;
-  border-radius: 24px;
+  padding: 10px 22px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border-light);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
   cursor: pointer;
-  transition: all 0.3s ease;
-  background: #f8f9fa;
-  user-select: none;
+  transition: all 0.25s;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
 }
 
-.action-item:hover {
-  background: #e8f4fd;
+.na-item:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-50);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(27,107,58,0.1);
 }
 
-.action-item.action-active {
-  background: #e6f7ff;
-  color: #1890ff;
+.na-item.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-50);
+  color: var(--color-primary);
 }
 
-.action-icon {
-  transition: transform 0.3s ease, color 0.3s ease;
+.na-item.active:first-child {
+  border-color: #ef4444;
+  background: rgba(239,68,68,0.06);
+  color: #ef4444;
 }
 
-.action-icon--animate {
-  animation: actionBeat 0.4s ease;
-  color: #ff6b6b;
-}
-
-@keyframes actionBeat {
-  0% { transform: scale(1); }
-  25% { transform: scale(1.3); }
-  50% { transform: scale(1); }
-  75% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-.action-text {
-  font-size: 15px;
-  color: #555;
-}
-
-.action-count {
-  font-size: 14px;
-  color: #999;
+.na-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
   margin-left: 2px;
 }
 
-@media (max-width: 768px) {
-  .news-actions {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
+.na-item.active .na-count {
+  color: inherit;
+}
 
-  .action-item {
-    padding: 8px 16px;
-    font-size: 13px;
-  }
+@media (max-width: 640px) {
+  .na-actions { gap: 8px; }
+  .na-item { padding: 8px 16px; font-size: 12px; }
+  .na-item svg { width: 18px; height: 18px; }
 }
 </style>

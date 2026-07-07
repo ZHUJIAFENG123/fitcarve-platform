@@ -1,0 +1,132 @@
+/* ========================================
+   Fitness Articles - Unified Stylesheet
+   Generated for Vue 3 / Express.js project
+   ======================================== */
+
+.article-container {
+  font-family: "PingFang SC", "Segoe UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #333;
+}
+
+.article-container h1 {
+  color: #2c3e50;
+  border-bottom: 3px solid #3498db;
+  padding-bottom: 10px;
+  margin-bottom: 24px;
+  font-size: 1.8rem;
+}
+
+.article-container h2 {
+  color: #1a5276;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 8px;
+  margin-top: 36px;
+  font-size: 1.4rem;
+}
+
+.article-container h3 {
+  color: #2874a6;
+  margin-top: 24px;
+  font-size: 1.15rem;
+}
+
+.article-container blockquote {
+  background: #f4f6f7;
+  border-left: 4px solid #3498db;
+  padding: 16px 20px;
+  margin: 20px 0;
+  font-style: italic;
+  border-radius: 0 6px 6px 0;
+}
+
+.article-container blockquote strong {
+  color: #1a5276;
+  font-style: normal;
+}
+
+.article-container table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  font-size: 0.95rem;
+}
+
+.article-container th,
+.article-container td {
+  border: 1px solid #bdc3c7;
+  padding: 12px;
+  text-align: left;
+}
+
+.article-container th {
+  background: #eaf2f8;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.article-container tr:nth-child(even) {
+  background: #f8f9f9;
+}
+
+.article-container tr:hover {
+  background: #eef5fa;
+}
+
+.article-container strong {
+  color: #c0392b;
+}
+
+.article-container ul,
+.article-container ol {
+  margin: 12px 0;
+  padding-left: 28px;
+}
+
+.article-container li {
+  margin-bottom: 6px;
+}
+
+.article-container p {
+  margin: 14px 0;
+}
+
+/* Evidence level badges (for sports-nutrition category) */
+.article-container .evidence-a { color: #27ae60; font-weight: bold; }
+.article-container .evidence-b { color: #f39c12; font-weight: bold; }
+.article-container .evidence-c { color: #e67e22; font-weight: bold; }
+.article-container .evidence-d { color: #c0392b; font-weight: bold; }
+
+/* Medical disclaimer (for recovery-injury category) */
+.article-container .medical-disclaimer {
+  background: #fdf2f2;
+  border-left-color: #e74c3c;
+}
+
+/* Tag display */
+.article-container .tag {
+  color: #7f8c8d;
+  font-size: 0.9em;
+  margin-top: 30px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .article-container {
+    padding: 12px;
+  }
+  .article-container h1 {
+    font-size: 1.5rem;
+  }
+  .article-container h2 {
+    font-size: 1.2rem;
+  }
+  .article-container th,
+  .article-container td {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+}

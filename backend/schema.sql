@@ -42,13 +42,21 @@ CREATE TABLE IF NOT EXISTS news (
   title         VARCHAR(200)    NOT NULL                COMMENT '资讯标题',
   content       LONGTEXT        NOT NULL                COMMENT '资讯正文(富文本HTML)',
   summary       VARCHAR(500)    NOT NULL DEFAULT ''     COMMENT '资讯摘要',
-  tags          VARCHAR(500)    NOT NULL DEFAULT ''     COMMENT '标签，逗号分隔',
+  tags          VARCHAR(500)    NOT NULL DEFAULT ''     COMMENT '标签，逗号分隔(兼容旧数据)',
   image         VARCHAR(255)    NOT NULL DEFAULT ''     COMMENT '封面图片URL',
-  category      VARCHAR(50)     NOT NULL                COMMENT '分类: knowledge/nutrition/recovery/equipment',
+  category      VARCHAR(50)     NOT NULL                COMMENT '分类: training-science/sports-nutrition/muscle-building/fat-loss/recovery-injury/gear-equipment',
   author        VARCHAR(50)     NOT NULL                COMMENT '创作者用户名',
   status        VARCHAR(20)     NOT NULL DEFAULT 'pending' COMMENT '审核状态: pending/approved/rejected',
+  quality_score DECIMAL(5,2)    NOT NULL DEFAULT 0.00    COMMENT '内容质量分(0-100)',
+  is_featured   TINYINT(1)      NOT NULL DEFAULT 0       COMMENT '是否精选/推荐',
+  is_original   TINYINT(1)      NOT NULL DEFAULT 1       COMMENT '是否原创',
+  source_url    VARCHAR(500)    NOT NULL DEFAULT ''      COMMENT '原文链接(非原创时)',
+  word_count    INT             NOT NULL DEFAULT 0       COMMENT '正文字数',
+  read_time_min INT             NOT NULL DEFAULT 5       COMMENT '预计阅读时长(分钟)',
+  report_count  INT             NOT NULL DEFAULT 0       COMMENT '举报次数',
   audit_by      VARCHAR(50)     NULL                    COMMENT '审核人用户名',
   audit_at      DATETIME        NULL                    COMMENT '审核时间',
+  last_audited_at DATETIME      NULL                    COMMENT '最后审核时间',
   reject_reason TEXT            NULL                    COMMENT '驳回原因',
   views         INT             NOT NULL DEFAULT 0       COMMENT '浏览量',
   comment_count INT             NOT NULL DEFAULT 0       COMMENT '评论总数',
@@ -59,8 +67,82 @@ CREATE TABLE IF NOT EXISTS news (
   INDEX idx_category (category),
   INDEX idx_author (author),
   INDEX idx_status (status),
-  INDEX idx_publish_date (publish_date)
+  INDEX idx_publish_date (publish_date),
+  INDEX idx_quality (quality_score DESC),
+  INDEX idx_featured (is_featured)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='资讯表';
+
+-- -------------------------------------------
+-- 2b. 资讯分类表
+-- -------------------------------------------
+CREATE TABLE IF NOT EXISTS news_categories (
+  id            INT             NOT NULL AUTO_INCREMENT  COMMENT '分类ID',
+  key_name      VARCHAR(30)     NOT NULL                COMMENT '分类英文key',
+  name          VARCHAR(20)     NOT NULL                COMMENT '分类中文名',
+  description   VARCHAR(200)    NOT NULL DEFAULT ''     COMMENT '分类描述',
+  icon          VARCHAR(100)    NOT NULL DEFAULT ''     COMMENT '分类图标(emoji或URL)',
+  color         VARCHAR(20)     NOT NULL DEFAULT '#1890ff' COMMENT '分类主题色',
+  sort_order    INT             NOT NULL DEFAULT 0      COMMENT '排序权重',
+  article_count INT             NOT NULL DEFAULT 0      COMMENT '文章数量(冗余)',
+  is_active     TINYINT(1)      NOT NULL DEFAULT 1      COMMENT '是否启用',
+  created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_key_name (key_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='资讯分类表';
+
+-- -------------------------------------------
+-- 2c. 资讯标签表
+-- -------------------------------------------
+CREATE TABLE IF NOT EXISTS news_tags (
+  id            INT             NOT NULL AUTO_INCREMENT  COMMENT '标签ID',
+  name          VARCHAR(50)     NOT NULL                COMMENT '标签名称',
+  slug          VARCHAR(50)     NOT NULL                COMMENT '标签slug(URL用)',
+  category      VARCHAR(30)     NULL                    COMMENT '所属分类key',
+  usage_count   INT             NOT NULL DEFAULT 0      COMMENT '使用次数',
+  heat_score    DECIMAL(8,2)    NOT NULL DEFAULT 0.00   COMMENT '热度分(综合使用量+互动)',
+  is_recommended TINYINT(1)     NOT NULL DEFAULT 0      COMMENT '是否推荐标签',
+  sort_order    INT             NOT NULL DEFAULT 0      COMMENT '排序权重',
+  created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_name (name),
+  UNIQUE KEY uk_slug (slug),
+  INDEX idx_category (category),
+  INDEX idx_heat (heat_score DESC)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='资讯标签表';
+
+-- -------------------------------------------
+-- 2d. 资讯-标签关联表（多对多）
+-- -------------------------------------------
+CREATE TABLE IF NOT EXISTS news_tag_relations (
+  news_id   INT NOT NULL COMMENT '资讯ID',
+  tag_id    INT NOT NULL COMMENT '标签ID',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (news_id, tag_id),
+  INDEX idx_tag_id (tag_id),
+  CONSTRAINT fk_ntr_news FOREIGN KEY (news_id) REFERENCES news(id) ON DELETE CASCADE,
+  CONSTRAINT fk_ntr_tag FOREIGN KEY (tag_id) REFERENCES news_tags(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='资讯-标签关联表';
+
+-- -------------------------------------------
+-- 2e. 资讯举报表
+-- -------------------------------------------
+CREATE TABLE IF NOT EXISTS news_reports (
+  id          INT             NOT NULL AUTO_INCREMENT  COMMENT '举报ID',
+  news_id     INT             NOT NULL                COMMENT '被举报资讯ID',
+  user_id     INT             NOT NULL                COMMENT '举报人用户ID',
+  reason_type VARCHAR(30)     NOT NULL                COMMENT '举报类型:misinformation/plagiarism/spam/inappropriate/other',
+  description TEXT            NULL                    COMMENT '举报详情',
+  status      VARCHAR(20)     NOT NULL DEFAULT 'pending' COMMENT '处理状态:pending/resolved/dismissed',
+  handled_by  VARCHAR(50)     NULL                    COMMENT '处理人',
+  handled_at  DATETIME        NULL                    COMMENT '处理时间',
+  created_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX idx_news_id (news_id),
+  INDEX idx_status (status),
+  CONSTRAINT fk_report_news FOREIGN KEY (news_id) REFERENCES news(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='资讯举报表';
 
 -- -------------------------------------------
 -- 3. 课程表
@@ -178,26 +260,68 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
 -- 5. Training Plans (训练计划)
 -- -------------------------------------------
 CREATE TABLE IF NOT EXISTS training_plans (
-  id            INT             NOT NULL AUTO_INCREMENT  COMMENT '计划ID',
-  title         VARCHAR(200)    NOT NULL                COMMENT '计划标题',
-  description   TEXT            NULL                    COMMENT '计划描述',
-  cover_image   VARCHAR(255)    DEFAULT ''              COMMENT '封面图',
-  goal          VARCHAR(20)     NOT NULL                COMMENT '目标: build_muscle/lose_fat/endurance/flexibility/general',
-  level         VARCHAR(20)     NOT NULL                COMMENT '难度: beginner/intermediate/advanced',
-  duration_weeks INT            NOT NULL DEFAULT 4      COMMENT '训练周期(周)',
-  days_per_week INT             NOT NULL DEFAULT 4      COMMENT '每周训练天数',
+  id             INT             NOT NULL AUTO_INCREMENT  COMMENT '计划ID',
+  title          VARCHAR(200)    NOT NULL                COMMENT '计划标题',
+  description    TEXT            NULL                    COMMENT '计划描述',
+  cover_image    VARCHAR(255)    DEFAULT ''              COMMENT '封面图',
+  goal           VARCHAR(20)     NOT NULL                COMMENT '目标: build_muscle/lose_fat/endurance/flexibility/general',
+  level          VARCHAR(20)     NOT NULL                COMMENT '难度: beginner/intermediate/advanced',
+  duration_weeks INT             NOT NULL DEFAULT 4      COMMENT '训练周期(周)',
+  days_per_week  INT             NOT NULL DEFAULT 4      COMMENT '每周训练天数',
   equipment     VARCHAR(255)    DEFAULT ''              COMMENT '所需器材,逗号分隔',
   coach         VARCHAR(50)     NOT NULL                COMMENT '作者',
+  author_id     INT             NULL                    COMMENT '创建者用户ID(NULL=官方预置)',
   views         INT             DEFAULT 0               COMMENT '浏览量',
   enrolled      INT             DEFAULT 0               COMMENT '参与人数',
-  syllabus      JSON            NOT NULL                COMMENT '训练大纲 {week, days: [{day, title, warmup, exercises: [{name, sets, reps, rest, notes, video_url}], cooldown}]}',
+  is_official   TINYINT(1)      NOT NULL DEFAULT 1      COMMENT '1=官方预置/0=用户创建',
+  is_public     TINYINT(1)      NOT NULL DEFAULT 1      COMMENT '1=公开/0=私有(仅作者可见)',
+  source        VARCHAR(20)     DEFAULT 'manual'        COMMENT '创建方式: manual/ai',
+  syllabus      JSON            NOT NULL                COMMENT '训练大纲 [{week:1, days:[{day:1, title, warmup, exercises:[{name, sets, reps, rest, notes, video_url, exercise_id(关联动作库), gif_url, image_url, target_muscles, secondary_muscles, muscle_group, equipment, difficulty, db_name(动作库原名), is_approximate(是否近似匹配)}], cooldown}]}]',
   created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    DATETIME        DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   INDEX idx_goal (goal),
   INDEX idx_level (level),
-  INDEX idx_coach (coach)
+  INDEX idx_coach (coach),
+  INDEX idx_author (author_id),
+  INDEX idx_official (is_official)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='训练计划表';
+
+-- -------------------------------------------
+-- 5b. User Training Enrollments (用户报名训练计划)
+-- -------------------------------------------
+CREATE TABLE IF NOT EXISTS user_training_enrollments (
+  id            INT             NOT NULL AUTO_INCREMENT  COMMENT '报名记录ID',
+  user_id       INT             NOT NULL                COMMENT '用户ID',
+  plan_id       INT             NOT NULL                COMMENT '训练计划ID',
+  status        VARCHAR(20)     DEFAULT 'active'        COMMENT 'active/completed/abandoned',
+  progress_pct  DECIMAL(5,2)    DEFAULT 0               COMMENT '完成百分比',
+  enrolled_at   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '报名时间',
+  completed_at  DATETIME        NULL                    COMMENT '完成时间',
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_user_plan (user_id, plan_id),
+  INDEX idx_user (user_id),
+  INDEX idx_plan (plan_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户训练计划报名表';
+
+-- -------------------------------------------
+-- 5c. Training Logs (训练日志/打卡)
+-- -------------------------------------------
+CREATE TABLE IF NOT EXISTS training_logs (
+  id                  INT             NOT NULL AUTO_INCREMENT  COMMENT '日志ID',
+  user_id             INT             NOT NULL                COMMENT '用户ID',
+  plan_id             INT             NOT NULL                COMMENT '训练计划ID',
+  week                INT             NOT NULL                COMMENT '第几周',
+  day                 INT             NOT NULL                COMMENT '第几天',
+  completed_exercises JSON            NULL                    COMMENT '完成的动作ID数组',
+  duration_minutes    INT             DEFAULT 0               COMMENT '训练时长(分钟)',
+  notes               TEXT            NULL                    COMMENT '训练感受',
+  completed_at        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '完成时间',
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_user_plan_day (user_id, plan_id, week, day),
+  INDEX idx_user (user_id),
+  INDEX idx_plan (plan_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='训练日志表';
 
 -- -------------------------------------------
 -- 6. Exercises (动作库)
@@ -214,6 +338,10 @@ CREATE TABLE IF NOT EXISTS exercises (
   video_url       VARCHAR(255)    DEFAULT ''              COMMENT '演示视频URL',
   image_url       VARCHAR(255)    DEFAULT ''              COMMENT '图片URL',
   calories_per_30min INT         DEFAULT 0               COMMENT '30分钟消耗热量',
+  target_muscles    VARCHAR(255) DEFAULT ''              COMMENT '目标肌群,逗号分隔(中文名)',
+  secondary_muscles VARCHAR(255) DEFAULT ''              COMMENT '辅助肌群,逗号分隔(中文名)',
+  body_part         VARCHAR(50)  DEFAULT ''              COMMENT '身体部位',
+  gif_url           VARCHAR(500) DEFAULT ''              COMMENT 'GIF动画URL',
   PRIMARY KEY (id),
   INDEX idx_muscle (muscle_group),
   INDEX idx_category (category)
@@ -243,23 +371,39 @@ CREATE TABLE IF NOT EXISTS diet_plans (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='饮食方案表';
 
 -- -------------------------------------------
--- 8. Foods (食物库)
+-- 8. Foods (食物库 - 薄荷网数据库)
 -- -------------------------------------------
 CREATE TABLE IF NOT EXISTS foods (
   id              INT             NOT NULL AUTO_INCREMENT  COMMENT '食物ID',
-  name            VARCHAR(100)    NOT NULL                COMMENT '食物名称',
-  category        VARCHAR(20)     NOT NULL                COMMENT '分类: staple/meat/vegetable/fruit/dairy/snack/drink/condiment',
+  boohee_id       VARCHAR(100)    DEFAULT ''               COMMENT '薄荷网食物ID',
+  name            VARCHAR(150)    NOT NULL                COMMENT '食物名称',
+  category        VARCHAR(50)     NOT NULL                COMMENT '分类(英文key)',
+  category_name   VARCHAR(50)     NOT NULL DEFAULT ''      COMMENT '分类名称(中文)',
   calories_per_100g INT          NOT NULL                COMMENT '每100g热量(kcal)',
-  protein_per_100g  DECIMAL(5,1) DEFAULT 0              COMMENT '每100g蛋白质(g)',
-  carbs_per_100g    DECIMAL(5,1) DEFAULT 0              COMMENT '每100g碳水(g)',
-  fat_per_100g      DECIMAL(5,1) DEFAULT 0              COMMENT '每100g脂肪(g)',
-  fiber_per_100g    DECIMAL(5,1) DEFAULT 0              COMMENT '每100g纤维(g)',
-  serving_size      INT           DEFAULT 100            COMMENT '一份多少克',
-  serving_unit      VARCHAR(10)   DEFAULT 'g'            COMMENT '单位',
+  protein_per_100g  DECIMAL(6,1) DEFAULT 0              COMMENT '每100g蛋白质(g)',
+  carbs_per_100g    DECIMAL(6,1) DEFAULT 0              COMMENT '每100g碳水(g)',
+  fat_per_100g      DECIMAL(6,1) DEFAULT 0              COMMENT '每100g脂肪(g)',
+  fiber_per_100g    DECIMAL(6,1) DEFAULT 0              COMMENT '每100g纤维(g)',
+  vitamin_a         DECIMAL(8,1) DEFAULT NULL            COMMENT '维生素A(μg)',
+  vitamin_c         DECIMAL(8,1) DEFAULT NULL            COMMENT '维生素C(mg)',
+  vitamin_e         DECIMAL(8,2) DEFAULT NULL            COMMENT '维生素E(mg)',
+  cholesterol       DECIMAL(8,1) DEFAULT NULL            COMMENT '胆固醇(mg)',
+  calcium           DECIMAL(8,1) DEFAULT NULL            COMMENT '钙(mg)',
+  iron              DECIMAL(8,2) DEFAULT NULL            COMMENT '铁(mg)',
+  sodium            DECIMAL(8,1) DEFAULT NULL            COMMENT '钠(mg)',
+  potassium         DECIMAL(8,1) DEFAULT NULL            COMMENT '钾(mg)',
+  phosphorus        DECIMAL(8,1) DEFAULT NULL            COMMENT '磷(mg)',
+  magnesium         DECIMAL(8,1) DEFAULT NULL            COMMENT '镁(mg)',
+  zinc              DECIMAL(8,2) DEFAULT NULL            COMMENT '锌(mg)',
+  selenium          DECIMAL(8,1) DEFAULT NULL            COMMENT '硒(μg)',
+  serving_units     TEXT            NULL                    COMMENT '度量单位(JSON数组)',
+  image_url         VARCHAR(500)    DEFAULT ''              COMMENT '食物图片URL',
+  source            VARCHAR(20)     DEFAULT '薄荷'          COMMENT '数据来源',
   PRIMARY KEY (id),
   INDEX idx_category (category),
+  INDEX idx_boohee_id (boohee_id),
   FULLTEXT idx_name (name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='食物库表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='食物库表(薄荷网数据)';
 
 -- -------------------------------------------
 -- 9. Diet Logs (饮食记录)

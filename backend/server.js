@@ -25,10 +25,13 @@ app.use(limiter);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/images', express.static(path.join(__dirname, '..', 'public', 'images')));
+app.use('/exercise-gifs', express.static(path.join(__dirname, '..', 'public', 'exercise-gifs')));
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const newsRoutes = require('./routes/news');
+const newsCategoryRoutes = require('./routes/news-categories');
+const newsTagRoutes = require('./routes/news-tags');
 const commentRoutes = require('./routes/comments');
 const interactionRoutes = require('./routes/interactions');
 const notificationRoutes = require('./routes/notifications');
@@ -42,11 +45,18 @@ const dietRoutes = require('./routes/diet');
 const foodsRoutes = require('./routes/foods');
 const exercisesRoutes = require('./routes/exercises');
 const dietLogRoutes = require('./routes/dietLog');
+const nutritionRoutes = require('./routes/nutrition');
 const aiRoutes = require('./routes/ai');
+const waterRoutes = require('./routes/water');
+const learningRoutes = require('./routes/learning');
+const knowledgeGraphRoutes = require('./routes/knowledge-graph');
+const coachRoutes = require('./routes/coach');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/news', newsRoutes);
+app.use('/api/news-categories', newsCategoryRoutes);
+app.use('/api/news-tags', newsTagRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/interactions', interactionRoutes);
 app.use('/api/notifications', notificationRoutes);
@@ -60,7 +70,12 @@ app.use('/api/diet', dietRoutes);
 app.use('/api/foods', foodsRoutes);
 app.use('/api/exercises', exercisesRoutes);
 app.use('/api/diet-log', dietLogRoutes);
+app.use('/api/nutrition', nutritionRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/water', waterRoutes);
+app.use('/api/learning', learningRoutes);
+app.use('/api/knowledge-graph', knowledgeGraphRoutes);
+app.use('/api/coaches', coachRoutes);
 
 app.get('/health', async (req, res) => {
   const dbConnected = await testConnection();
@@ -94,5 +109,15 @@ async function startServer() {
 }
 
 startServer();
+
+// 临时：捕获未处理的异常和 Promise 拒绝，定位崩溃原因
+process.on('uncaughtException', (err) => {
+  console.error('=== 未捕获异常 ===');
+  console.error(err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('=== 未处理的 Promise 拒绝 ===');
+  console.error(reason);
+});
 
 module.exports = app;

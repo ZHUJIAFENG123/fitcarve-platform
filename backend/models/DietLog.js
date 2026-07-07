@@ -26,7 +26,9 @@ class DietLog {
     const [rows] = await pool.query(
       `SELECT log_date, 
         COALESCE(SUM(calories), 0) as total_calories,
-        COALESCE(SUM(protein_g), 0) as total_protein
+        COALESCE(SUM(protein_g), 0) as total_protein,
+        COALESCE(SUM(carbs_g), 0) as total_carbs,
+        COALESCE(SUM(fat_g), 0) as total_fat
       FROM diet_logs WHERE user_id = ? AND log_date BETWEEN ? AND ? 
       GROUP BY log_date ORDER BY log_date`,
       [userId, startDate, endDate]

@@ -1,0 +1,160 @@
+/* ===== 炼刻 Brand Design System — 活力运动风 ===== */
+:root {
+  /* --- Brand Colors --- */
+  --color-primary: #1B6B3A;
+  --color-primary-light: #238B4D;
+  --color-primary-dark: #145230;
+  --color-primary-50: #E8F5EC;
+  --color-primary-100: #C8E6D0;
+  --color-primary-200: #A3D4B0;
+  --color-primary-500: #1B6B3A;
+  --color-primary-600: #145230;
+  --color-primary-700: #0F3D24;
+
+  /* --- Accent --- */
+  --color-accent: #F97316;
+  --color-accent-light: #FB923C;
+  --color-accent-dark: #EA580C;
+  --color-accent-50: #FFF7ED;
+  --color-accent-100: #FFEDD5;
+
+  /* --- Neutral Palette --- */
+  --color-bg: #FAFAF8;
+  --color-bg-warm: #F5F3EF;
+  --color-bg-card: #FFFFFF;
+  --color-surface: #F0EFEB;
+  --color-border: #E5E3DD;
+  --color-border-light: #EDEBE6;
+
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #5A5A55;
+  --color-text-tertiary: #8A8A82;
+  --color-text-inverse: #FFFFFF;
+
+  /* --- State Colors --- */
+  --state-success: #16A34A;
+  --state-success-bright: #22C55E;
+  --state-warning: #D97706;
+  --state-error: #DC2626;
+  --state-info: #2563EB;
+  --state-ai: #7C3AED;
+  --state-ai-light: #DDD6FE;
+
+  /* --- Typography --- */
+  --font-display: 'Barlow Condensed', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-body: 'Barlow', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  /* --- Spacing --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+
+  /* --- Border Radius --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.05);
+  --shadow-xl: 0 8px 32px rgba(0,0,0,0.06);
+
+  /* --- Hero Gradients --- */
+  --hero-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  --hero-accent: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%);
+  --hero-ai: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+  --hero-subtle: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-bg) 100%);
+
+  /* --- Interaction States --- */
+  --hover-lift: translateY(-3px);
+  --hover-lift-sm: translateY(-1px);
+  --hover-lift-lg: translateY(-5px);
+  --hover-shadow: var(--shadow-lg);
+  --transition-base: all 0.25s ease;
+  --transition-fast: all 0.15s ease;
+  --transition-slow: all 0.4s ease;
+
+  /* --- Breakpoints (for JS reference) --- */
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1400px;
+
+  /* --- Element Plus overrides --- */
+  --el-color-primary: var(--color-primary);
+  --el-color-primary-light-3: var(--color-primary-light);
+  --el-color-primary-light-5: #3DA068;
+  --el-color-primary-light-7: #7BC89A;
+  --el-color-primary-light-8: #A3D4B0;
+  --el-color-primary-light-9: #C8E6D0;
+  --el-color-primary-dark-2: var(--color-primary-dark);
+  --el-font-family: var(--font-body);
+  --el-border-radius-base: var(--radius-md);
+  --el-border-radius-round: var(--radius-full);
+  --el-bg-color: var(--color-bg);
+  --el-bg-color-page: var(--color-bg);
+  --el-text-color-primary: var(--color-text-primary);
+  --el-text-color-regular: var(--color-text-secondary);
+  --el-text-color-secondary: var(--color-text-tertiary);
+  --el-border-color: var(--color-border);
+  --el-border-color-light: var(--color-border-light);
+  --el-fill-color-blank: var(--color-bg-card);
+}
+
+/* ===== Dark mode ===== */
+html.dark {
+  --color-bg: #111827;
+  --color-bg-warm: #1E293B;
+  --color-bg-card: #1F2937;
+  --color-surface: #374151;
+  --color-border: #374151;
+  --color-border-light: #2D3748;
+  --color-text-primary: #F0F0EC;
+  --color-text-secondary: #A0A098;
+  --color-text-tertiary: #6A6A62;
+  --color-primary-50: #0F2A18;
+  --color-primary-100: #163D22;
+  --color-accent-50: #2A1A08;
+  --color-accent-100: #3D2510;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.35);
+  --shadow-xl: 0 8px 32px rgba(0,0,0,0.4);
+
+  --el-bg-color: var(--color-bg);
+  --el-bg-color-page: var(--color-bg);
+  --el-text-color-primary: var(--color-text-primary);
+  --el-text-color-regular: var(--color-text-secondary);
+  --el-text-color-secondary: var(--color-text-tertiary);
+  --el-border-color: var(--color-border);
+  --el-border-color-light: var(--color-border-light);
+  --el-fill-color-blank: var(--color-bg-card);
+}

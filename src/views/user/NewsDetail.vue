@@ -35,12 +35,12 @@
           <span class="article-category">{{ categoryLabel }}</span>
           <h1 class="article-title">{{ news.title }}</h1>
           <div class="article-meta">
-            <span class="meta-item"><span class="meta-icon">👤</span>{{ news.author }}</span>
-            <span class="meta-item"><span class="meta-icon">📅</span>{{ formatDate(news.publishDate) }}</span>
-            <span class="meta-item"><span class="meta-icon">👁</span>{{ formatViews(news.views) }} 浏览</span>
-            <span class="meta-item"><span class="meta-icon">💬</span>{{ news.commentCount }} 评论</span>
+            <span class="meta-item"><User :size="14" />{{ news.author }}</span>
+            <span class="meta-item"><Calendar :size="14" />{{ formatDate(news.publishDate) }}</span>
+            <span class="meta-item"><Eye :size="14" />{{ formatViews(news.views) }} 浏览</span>
+            <span class="meta-item"><MessageCircle :size="14" />{{ news.commentCount }} 评论</span>
             <span class="meta-item meta-reading">
-              <span class="meta-icon">📖</span>约 {{ readingTime }} 分钟
+              <Clock :size="14" />约 {{ readingTime }} 分钟
             </span>
           </div>
           <div class="article-tags" v-if="news.tags && news.tags.length > 0">
@@ -150,6 +150,7 @@ import { useComment } from '@/composables/useComment'
 import { addToHistory } from '@/composables/useReadingHistory'
 import { CATEGORY_MAP } from '@/utils/constants'
 import type { NewsCardData } from '@/types/news'
+import { User, Calendar, Eye, MessageCircle, Clock } from 'lucide-vue-next'
 import { watch } from 'vue'
 
 const store = useNewsStore()
@@ -304,7 +305,7 @@ watch(() => news.value, (n) => {
   align-items: center;
   gap: 4px;
 }
-.meta-icon { font-size: 14px; }
+.meta-item svg { flex-shrink: 0; opacity: 0.7; }
 .meta-reading {
   color: var(--color-primary);
   font-weight: 600;

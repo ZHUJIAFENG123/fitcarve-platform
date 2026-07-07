@@ -18,13 +18,30 @@ dist-ssr
 .env.development
 .env.production
 
-# Reasonix
+# AI coding tools
 .reasonix/
+.impeccable/
+.qoder/
+.trae/
+.uploads/
+.workbuddy/
+
+# Build temp files
+*.timestamp-*.mjs
+
+# Backend uploads
+backend/uploads/
 
 # Misc
 node.msi
 *.msi
 *.txt
+vite.log
+
+# Reference / research (not part of project)
+开源项目应用/
+开源项目推荐清单.html
+fitness_images/
 
 # Editor directories and files
 .vscode/*

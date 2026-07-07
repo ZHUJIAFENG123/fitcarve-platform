@@ -49,9 +49,12 @@ import AiChatFab from '@/components/ai/AiChatFab.vue'
 
   /* --- State Colors --- */
   --state-success: #16A34A;
+  --state-success-bright: #22C55E;
   --state-warning: #D97706;
   --state-error: #DC2626;
   --state-info: #2563EB;
+  --state-ai: #7C3AED;
+  --state-ai-light: #DDD6FE;
 
   /* --- Typography --- */
   --font-display: 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
@@ -90,6 +93,7 @@ import AiChatFab from '@/components/ai/AiChatFab.vue'
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
+  --radius-2xl: 24px;
   --radius-full: 9999px;
 
   /* --- Shadows --- */
@@ -97,6 +101,27 @@ import AiChatFab from '@/components/ai/AiChatFab.vue'
   --shadow-md: 0 2px 8px rgba(0,0,0,0.04);
   --shadow-lg: 0 4px 16px rgba(0,0,0,0.05);
   --shadow-xl: 0 8px 32px rgba(0,0,0,0.06);
+
+  /* --- Interaction States --- */
+  --hover-lift: translateY(-3px);
+  --hover-lift-sm: translateY(-1px);
+  --hover-lift-lg: translateY(-5px);
+  --hover-shadow: var(--shadow-lg);
+  --transition-base: all 0.25s ease;
+  --transition-fast: all 0.15s ease;
+  --transition-slow: all 0.4s ease;
+
+  /* --- Chart Colors --- */
+  --chart-protein: #3B82F6;
+  --chart-carbs: #F59E0B;
+  --chart-fat: #EF4444;
+  --chart-fiber: #10B981;
+
+  /* --- Hero Gradients --- */
+  --hero-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  --hero-accent: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%);
+  --hero-ai: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+  --hero-subtle: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-bg) 100%);
 
   /* --- Element Plus overrides --- */
   --el-color-primary: var(--color-primary);

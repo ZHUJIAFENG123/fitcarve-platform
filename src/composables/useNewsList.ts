@@ -2,7 +2,14 @@ import { ref, computed, watch, type Ref } from 'vue'
 import type { NewsCategory, NewsSort } from '@/types/common'
 import type { NewsCardData, NewsQuery } from '@/types/news'
 import { useNewsStore } from '@/stores/news'
-import { CATEGORY_OPTIONS, COMMON_TAGS, DEFAULT_PAGE_SIZE } from '@/utils/constants'
+import { CATEGORY_OPTIONS, DEFAULT_PAGE_SIZE } from '@/utils/constants'
+
+// Fallback tags if backend fails
+const COMMON_TAGS_FALLBACK = [
+  '力量训练', '减脂', '增肌', '瑜伽', '跑步',
+  '营养', '康复', '拉伸', '有氧运动', 'HIIT',
+  '核心训练', '体态矫正', '运动损伤', '补剂', '女性健身'
+]
 
 export function useNewsList() {
   const store = useNewsStore()
@@ -22,8 +29,8 @@ export function useNewsList() {
 
   const categories = computed(() => CATEGORY_OPTIONS)
 
-  // Tags always from COMMON_TAGS only (don't change with pagination)
-  const allTags = computed(() => [...COMMON_TAGS].sort())
+  // Tags from backend (dynamic)
+  const allTags = computed(() => store.hotTags.length > 0 ? store.hotTags : [...COMMON_TAGS_FALLBACK].sort())
 
   const query = computed<NewsQuery>(() => ({
     page: page.value,

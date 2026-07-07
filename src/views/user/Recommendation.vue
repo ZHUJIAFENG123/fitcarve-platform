@@ -4,12 +4,22 @@
 
     <!-- Hero -->
     <section class="dis-hero">
-      <h1>🔍 发现</h1>
-      <p>{{ heroSubtitle }}</p>
-      <div class="dis-hero-tabs">
-        <button :class="{ active: activeTab === 'hot' }" @click="activeTab = 'hot'">🔥 热门</button>
-        <button :class="{ active: activeTab === 'personal' }" @click="activeTab = 'personal'">🎯 为你推荐</button>
-        <button :class="{ active: activeTab === 'newest' }" @click="activeTab = 'newest'">📰 最新</button>
+      <div class="dis-hero-orb dis-hero-orb--1"></div>
+      <div class="dis-hero-orb dis-hero-orb--2"></div>
+      <div class="dis-hero-content">
+        <h1><Compass :size="28" /> 发现</h1>
+        <p>{{ heroSubtitle }}</p>
+        <div class="dis-tabs">
+          <button :class="{ active: activeTab === 'hot' }" @click="activeTab = 'hot'">
+            <Flame :size="15" /> 热门
+          </button>
+          <button :class="{ active: activeTab === 'personal' }" @click="activeTab = 'personal'">
+            <Sparkles :size="15" /> 为你推荐
+          </button>
+          <button :class="{ active: activeTab === 'newest' }" @click="activeTab = 'newest'">
+            <Newspaper :size="15" /> 最新
+          </button>
+        </div>
       </div>
     </section>
 
@@ -21,14 +31,16 @@
         <section class="dis-section" v-if="featuredNews.length > 0">
           <div class="dis-featured">
             <div class="dis-feat-main" @click="goNews(featuredNews[0].id)">
-              <div class="dis-feat-img" :style="featBg(featuredNews[0].image)"></div>
+              <div class="dis-feat-img" :style="featBg(featuredNews[0].image)">
+                <div class="dis-feat-img-overlay"></div>
+              </div>
               <div class="dis-feat-body">
                 <span class="dis-feat-cat">{{ catLabel(featuredNews[0].category) }}</span>
                 <h2>{{ featuredNews[0].title }}</h2>
                 <p>{{ featuredNews[0].summary }}</p>
                 <div class="dis-feat-meta">
-                  <span>👁 {{ fmt(featuredNews[0].views) }}</span>
-                  <span>📅 {{ fmtDate(featuredNews[0].publishDate) }}</span>
+                  <span><Eye :size="12" />{{ fmt(featuredNews[0].views) }}</span>
+                  <span><Calendar :size="12" />{{ fmtDate(featuredNews[0].publishDate) }}</span>
                 </div>
               </div>
             </div>
@@ -43,13 +55,19 @@
 
         <!-- 热门资讯 -->
         <section class="dis-section">
-          <div class="dis-section-hd"><h3>🔥 热门资讯</h3><router-link to="/news/list?sort=popular" class="dis-more">查看全部 →</router-link></div>
+          <div class="dis-section-hd">
+            <h3><Flame :size="18" class="dis-section-icon" /> 热门资讯</h3>
+            <router-link to="/news/list?sort=popular" class="dis-more">查看全部 <ArrowRight :size="14" /></router-link>
+          </div>
           <div class="dis-scroll">
             <article v-for="n in hotNews" :key="n.id" class="dis-card" @click="goNews(n.id)">
-              <div class="dis-card-img" :style="cardBg(n.image)"><span class="dis-card-cat">{{ catLabel(n.category) }}</span></div>
+              <div class="dis-card-img" :style="cardBg(n.image)">
+                <span class="dis-card-cat">{{ catLabel(n.category) }}</span>
+                <BookOpen :size="48" class="dis-card-deco" />
+              </div>
               <div class="dis-card-body">
                 <h4>{{ n.title }}</h4>
-                <span class="dis-card-meta">👁 {{ fmt(n.views) }} · {{ fmtDate(n.publishDate) }}</span>
+                <span class="dis-card-meta"><Eye :size="11" />{{ fmt(n.views) }} · {{ fmtDate(n.publishDate) }}</span>
               </div>
             </article>
           </div>
@@ -57,13 +75,19 @@
 
         <!-- 热门训练计划 -->
         <section class="dis-section" v-if="hotTraining.length > 0">
-          <div class="dis-section-hd"><h3>📋 热门训练计划</h3><router-link to="/fitness/training" class="dis-more">查看全部 →</router-link></div>
+          <div class="dis-section-hd">
+            <h3><ClipboardList :size="18" class="dis-section-icon" /> 热门训练计划</h3>
+            <router-link to="/fitness/training" class="dis-more">查看全部 <ArrowRight :size="14" /></router-link>
+          </div>
           <div class="dis-scroll">
             <article v-for="t in hotTraining" :key="'t'+t.id" class="dis-card" @click="$router.push(`/fitness/training/${t.id}`)">
-              <div class="dis-card-img dis-card-img--green"><span class="dis-card-cat dis-card-cat--green">{{ goalLabel(t.goal) }}</span></div>
+              <div class="dis-card-img dis-card-img--green">
+                <span class="dis-card-cat dis-card-cat--green">{{ goalLabel(t.goal) }}</span>
+                <Dumbbell :size="48" class="dis-card-deco" />
+              </div>
               <div class="dis-card-body">
                 <h4>{{ t.title }}</h4>
-                <span class="dis-card-meta">📆 {{ t.duration_weeks }}周 · {{ levelLabel(t.level) }} · 👁 {{ fmt(t.views) }}</span>
+                <span class="dis-card-meta"><CalendarDays :size="11" />{{ t.duration_weeks }}周 · {{ levelLabel(t.level) }} · <Eye :size="11" />{{ fmt(t.views) }}</span>
               </div>
             </article>
           </div>
@@ -71,13 +95,19 @@
 
         <!-- 热门饮食方案 -->
         <section class="dis-section" v-if="hotDiet.length > 0">
-          <div class="dis-section-hd"><h3>🍽 热门饮食方案</h3><router-link to="/fitness/diet" class="dis-more">查看全部 →</router-link></div>
+          <div class="dis-section-hd">
+            <h3><UtensilsCrossed :size="18" class="dis-section-icon" /> 热门饮食方案</h3>
+            <router-link to="/fitness/diet" class="dis-more">查看全部 <ArrowRight :size="14" /></router-link>
+          </div>
           <div class="dis-scroll">
             <article v-for="d in hotDiet" :key="'d'+d.id" class="dis-card" @click="$router.push(`/fitness/diet/${d.id}`)">
-              <div class="dis-card-img dis-card-img--orange"><span class="dis-card-cat dis-card-cat--orange">{{ goalLabel(d.goal) }}</span></div>
+              <div class="dis-card-img dis-card-img--orange">
+                <span class="dis-card-cat dis-card-cat--orange">{{ goalLabel(d.goal) }}</span>
+                <UtensilsCrossed :size="48" class="dis-card-deco" />
+              </div>
               <div class="dis-card-body">
                 <h4>{{ d.title }}</h4>
-                <span class="dis-card-meta">🔥 {{ d.daily_calories }}kcal · 蛋白{{ d.protein_g }}g</span>
+                <span class="dis-card-meta"><Flame :size="11" />{{ d.daily_calories }}kcal · 蛋白{{ d.protein_g }}g</span>
               </div>
             </article>
           </div>
@@ -87,43 +117,50 @@
       <!-- ===== 个性化Tab ===== -->
       <template v-if="activeTab === 'personal'">
         <section class="dis-section" v-if="personalList.length > 0">
-          <div class="dis-section-hd"><h3>🎯 猜你喜欢</h3><span class="dis-section-sub">基于你的阅读偏好</span></div>
+          <div class="dis-section-hd">
+            <h3><Sparkles :size="18" class="dis-section-icon dis-section-icon--accent" /> 猜你喜欢</h3>
+            <span class="dis-section-sub">基于你的阅读偏好</span>
+          </div>
           <div class="dis-grid">
             <article v-for="item in personalList" :key="item.type+item.id" class="dis-card dis-card--grid" @click="goItem(item)">
               <div class="dis-card-img" :style="cardBg(item.image)"><span class="dis-card-cat">{{ item.typeLabel }}</span></div>
               <div class="dis-card-body">
                 <h4>{{ item.title }}</h4>
-                <p class="dis-reason">{{ item.reason }}</p>
+                <p class="dis-reason"><Sparkles :size="11" /> {{ item.reason }}</p>
               </div>
             </article>
           </div>
         </section>
-        <section v-else class="dis-empty">
-          <el-empty description="多看看内容，我会更懂你">
-            <template #extra><el-button type="primary" @click="$router.push('/news/list')">去逛逛</el-button></template>
-          </el-empty>
+        <section v-else class="dis-empty-state">
+          <div class="dis-empty-icon"><Inbox :size="48" /></div>
+          <p>多看看内容，我会更懂你</p>
+          <button class="dis-empty-btn" @click="$router.push('/news/list')">去逛逛</button>
         </section>
       </template>
 
       <!-- ===== 最新Tab ===== -->
       <template v-if="activeTab === 'newest'">
         <section class="dis-section">
-          <div class="dis-section-hd"><h3>📰 最新资讯</h3></div>
+          <div class="dis-section-hd">
+            <h3><Newspaper :size="18" class="dis-section-icon" /> 最新资讯</h3>
+          </div>
           <div class="dis-grid">
             <article v-for="n in newestNews" :key="n.id" class="dis-card dis-card--grid" @click="goNews(n.id)">
               <div class="dis-card-img" :style="cardBg(n.image)"><span class="dis-card-cat">{{ catLabel(n.category) }}</span></div>
               <div class="dis-card-body">
                 <h4>{{ n.title }}</h4>
-                <span class="dis-card-meta">{{ fmtDate(n.publishDate) }} · 👁 {{ fmt(n.views) }}</span>
+                <span class="dis-card-meta"><Calendar :size="11" />{{ fmtDate(n.publishDate) }} · <Eye :size="11" />{{ fmt(n.views) }}</span>
               </div>
             </article>
           </div>
         </section>
       </template>
 
-      <!-- ===== 热门标签云（所有Tab都显示）===== -->
+      <!-- ===== 热门标签 ===== -->
       <section class="dis-section">
-        <div class="dis-section-hd"><h3>🏷 热门标签</h3></div>
+        <div class="dis-section-hd">
+          <h3><Tags :size="18" class="dis-section-icon dis-section-icon--accent" /> 热门标签</h3>
+        </div>
         <div class="dis-tags">
           <button v-for="tag in hotTags" :key="tag" class="dis-tag" @click="$router.push(`/news/list?tag=${tag}`)">{{ tag }}</button>
         </div>
@@ -139,6 +176,11 @@ import { useRouter } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
 import { getHistory } from '@/composables/useReadingHistory'
 import { CATEGORY_MAP, COMMON_TAGS } from '@/utils/constants'
+import {
+  Compass, Flame, Sparkles, Newspaper, Eye, Calendar, CalendarDays,
+  ClipboardList, UtensilsCrossed, Tags, ArrowRight, Inbox,
+  BookOpen, Dumbbell
+} from 'lucide-vue-next'
 
 const router = useRouter()
 const API = import.meta.env.VITE_API_BASE_URL || '/api'
@@ -209,13 +251,9 @@ async function fetchHotDiet() {
 function buildPersonal() {
   const history = getHistory()
   if (history.length === 0) { personalList.value = []; return }
-
-  // Extract top categories from reading history
   const catCount: Record<string, number> = {}
   history.forEach(h => { catCount[h.category] = (catCount[h.category] || 0) + 1 })
   const topCat = Object.entries(catCount).sort((a, b) => b[1] - a[1])[0]?.[0]
-
-  // Build personal list from history
   personalList.value = history.slice(0, 6).map(h => ({
     ...h,
     type: 'news',
@@ -224,7 +262,6 @@ function buildPersonal() {
   }))
 }
 
-// Hot tags from COMMON_TAGS
 hotTags.value = COMMON_TAGS.slice(0, 15)
 
 onMounted(async () => {
@@ -236,47 +273,113 @@ onMounted(async () => {
 <style scoped>
 .discover-page { min-height: 100vh; background: var(--color-bg); }
 
+/* Hero */
 .dis-hero {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  padding: var(--space-10) var(--space-4) var(--space-6);
-  text-align: center;
+  background: linear-gradient(135deg, #0f4d2a, #1B6B3A);
+  padding: var(--space-10) var(--space-4) var(--space-8);
+  text-align: center; position: relative; overflow: hidden;
 }
-.dis-hero h1 { font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 800; color: #fff; }
-.dis-hero p { color: var(--color-primary-100); margin: var(--space-2) 0 var(--space-5); font-size: var(--text-base); }
-.dis-hero-tabs { display: inline-flex; background: rgba(255,255,255,0.15); border-radius: var(--radius-full); padding: 4px; }
-.dis-hero-tabs button {
+.dis-hero-orb {
+  position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.12; pointer-events: none;
+}
+.dis-hero-orb--1 { width: 350px; height: 350px; background: #F97316; top: -100px; right: -50px; }
+.dis-hero-orb--2 { width: 250px; height: 250px; background: #7C3AED; bottom: -60px; left: 10%; }
+
+.dis-hero-content { position: relative; z-index: 1; }
+.dis-hero h1 {
+  font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 800;
+  color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0;
+}
+.dis-hero p { color: rgba(255,255,255,0.75); margin: var(--space-2) 0 var(--space-5); font-size: var(--text-base); }
+
+.dis-tabs {
+  display: inline-flex; background: rgba(255,255,255,0.12); border-radius: var(--radius-full); padding: 4px;
+  backdrop-filter: blur(8px);
+}
+.dis-tabs button {
   padding: 8px 20px; border-radius: var(--radius-full); border: none; background: transparent;
-  color: rgba(255,255,255,0.7); font-weight: 600; cursor: pointer; font-size: var(--text-sm);
-  transition: all 0.2s; font-family: var(--font-body); white-space: nowrap;
+  color: rgba(255,255,255,0.65); font-weight: 600; cursor: pointer; font-size: var(--text-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-family: var(--font-body);
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
 }
-.dis-hero-tabs button:hover { color: #fff; }
-.dis-hero-tabs button.active { background: #fff; color: var(--color-primary); }
+.dis-tabs button:hover { color: rgba(255,255,255,0.9); }
+.dis-tabs button.active {
+  background: rgba(255,255,255,0.95); color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
 
 .dis-container { max-width: 1100px; margin: 0 auto; padding: var(--space-6) var(--space-4) var(--space-16); }
 
 /* Sections */
 .dis-section { margin-bottom: var(--space-8); }
-.dis-section-hd { display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-4); }
-.dis-section-hd h3 { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; color: var(--color-text-primary); }
+.dis-section-hd { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
+.dis-section-hd h3 {
+  font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700;
+  color: var(--color-text-primary); display: flex; align-items: center; gap: 8px; margin: 0;
+}
+.dis-section-icon { color: var(--color-primary); }
+.dis-section-icon--accent { color: var(--color-accent); }
 .dis-section-sub { font-size: var(--text-sm); color: var(--color-text-tertiary); }
-.dis-more { font-size: var(--text-sm); color: var(--color-primary); text-decoration: none; font-weight: 600; margin-left: auto; }
-.dis-more:hover { text-decoration: underline; }
+.dis-more {
+  font-size: var(--text-sm); color: var(--color-primary); text-decoration: none;
+  font-weight: 600; margin-left: auto; display: flex; align-items: center; gap: 4px;
+  transition: gap 0.2s;
+}
+.dis-more:hover { gap: 8px; text-decoration: underline; }
 
 /* Featured */
 .dis-featured { display: flex; gap: var(--space-4); margin-bottom: var(--space-2); }
-.dis-feat-main { flex: 1; background: var(--color-bg-card); border-radius: var(--radius-xl); overflow: hidden; cursor: pointer; transition: all 0.25s; border: 1px solid var(--color-border-light); }
-.dis-feat-main:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-.dis-feat-img { height: 200px; background-size: cover; background-position: center; }
+.dis-feat-main {
+  flex: 1; background: var(--color-bg-card); border-radius: var(--radius-xl); overflow: hidden;
+  cursor: pointer; transition: all 0.3s; border: 1px solid var(--color-border-light);
+}
+.dis-feat-main:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.1); transform: translateY(-3px); }
+.dis-feat-img {
+  height: 220px; background-size: cover; background-position: center; position: relative;
+}
+.dis-feat-img-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 60%);
+}
 .dis-feat-body { padding: var(--space-4); }
-.dis-feat-cat { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: var(--radius-sm); background: var(--color-primary-50); color: var(--color-primary); }
-.dis-feat-body h2 { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; margin: var(--space-2) 0; color: var(--color-text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.dis-feat-body p { font-size: var(--text-sm); color: var(--color-text-secondary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: var(--space-2); }
+.dis-feat-cat {
+  font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: var(--radius-sm);
+  background: rgba(27,107,58,0.1); color: var(--color-primary);
+  backdrop-filter: blur(4px);
+}
+.dis-feat-body h2 {
+  font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700;
+  margin: var(--space-2) 0; color: var(--color-text-primary);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.dis-feat-body p {
+  font-size: var(--text-sm); color: var(--color-text-secondary);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  margin-bottom: var(--space-2);
+}
 .dis-feat-meta { font-size: var(--text-xs); color: var(--color-text-tertiary); display: flex; gap: var(--space-3); }
+.dis-feat-meta span { display: flex; align-items: center; gap: 4px; }
+.dis-feat-meta svg { opacity: 0.7; }
 
 .dis-feat-side { width: 280px; display: flex; flex-direction: column; gap: var(--space-3); flex-shrink: 0; }
-.dis-feat-mini { flex: 1; background: var(--color-bg-card); border: 1px solid var(--color-border-light); border-radius: var(--radius-lg); padding: var(--space-4); cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; justify-content: center; }
+.dis-feat-mini {
+  flex: 1; background: var(--color-bg-card); border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg); padding: var(--space-4); cursor: pointer;
+  transition: all 0.25s; display: flex; flex-direction: column; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.dis-feat-mini::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--color-primary); opacity: 0; transition: opacity 0.25s;
+}
 .dis-feat-mini:hover { border-color: var(--color-primary); background: var(--color-primary-50); }
-.dis-feat-mini h4 { font-family: var(--font-display); font-size: var(--text-base); font-weight: 700; color: var(--color-text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; }
+.dis-feat-mini:hover::before { opacity: 1; }
+.dis-feat-mini h4 {
+  font-family: var(--font-display); font-size: var(--text-base); font-weight: 700;
+  color: var(--color-text-primary);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  margin-bottom: 4px;
+}
 .dis-feat-mini span { font-size: var(--text-xs); color: var(--color-text-tertiary); }
 
 /* Scroll row */
@@ -288,29 +391,40 @@ onMounted(async () => {
 .dis-scroll::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 10px; }
 
 .dis-card {
-  min-width: 200px; max-width: 200px; background: var(--color-bg-card); border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; transition: all 0.2s;
+  min-width: 200px; max-width: 200px; background: var(--color-bg-card);
+  border: 1px solid var(--color-border-light); border-radius: var(--radius-lg);
+  overflow: hidden; cursor: pointer; transition: all 0.25s;
   scroll-snap-align: start; flex-shrink: 0;
 }
-.dis-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.dis-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.1); }
 .dis-card--grid { max-width: none; min-width: 0; }
 
 .dis-card-img {
-  height: 120px; background-size: cover; background-position: center;
+  height: 130px; background-size: cover; background-position: center;
   position: relative; display: flex; align-items: flex-start; padding: 8px;
+  overflow: hidden; transition: all 0.3s;
 }
+.dis-card:hover .dis-card-img { }
 .dis-card-img--green { background: linear-gradient(135deg, #E8F5EC, #C8E6D0); }
 .dis-card-img--orange { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); }
+.dis-card-deco {
+  position: absolute; bottom: -8px; right: -8px; opacity: 0.08; color: var(--color-primary);
+}
 .dis-card-cat {
   font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-sm);
-  background: var(--color-primary); color: #fff;
+  background: rgba(27,107,58,0.85); backdrop-filter: blur(4px); color: #fff; z-index: 1;
 }
-.dis-card-cat--green { background: var(--color-primary); color: #fff; }
-.dis-card-cat--orange { background: var(--color-accent); color: #fff; }
+.dis-card-cat--green { background: rgba(27,107,58,0.85); }
+.dis-card-cat--orange { background: rgba(249,115,22,0.85); }
 .dis-card-body { padding: var(--space-3); }
-.dis-card-body h4 { font-size: var(--text-sm); font-weight: 700; color: var(--color-text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; line-height: var(--leading-snug); }
-.dis-card-meta { font-size: 11px; color: var(--color-text-tertiary); }
-.dis-reason { font-size: 11px; color: var(--color-primary); margin-top: 2px; }
+.dis-card-body h4 {
+  font-size: var(--text-sm); font-weight: 700; color: var(--color-text-primary);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  margin-bottom: 4px; line-height: var(--leading-snug);
+}
+.dis-card-meta { font-size: 11px; color: var(--color-text-tertiary); display: flex; align-items: center; gap: 3px; }
+.dis-card-meta svg { opacity: 0.7; }
+.dis-reason { font-size: 11px; color: var(--color-accent); margin-top: 2px; display: flex; align-items: center; gap: 4px; }
 
 /* Grid */
 .dis-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-4); }
@@ -320,16 +434,31 @@ onMounted(async () => {
 .dis-tag {
   padding: 6px 16px; border-radius: var(--radius-full); border: 1px solid var(--color-border-light);
   background: var(--color-bg-card); color: var(--color-text-secondary); cursor: pointer;
-  font-size: var(--text-sm); transition: all 0.2s; font-family: var(--font-body);
+  font-size: var(--text-sm); transition: all 0.25s; font-family: var(--font-body);
 }
-.dis-tag:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-50); }
+.dis-tag:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-50); transform: scale(1.03); }
 
-.dis-empty { padding: var(--space-16) 0; }
+/* Empty state */
+.dis-empty-state {
+  padding: 80px 0; text-align: center;
+}
+.dis-empty-icon {
+  width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px;
+  background: var(--color-surface); display: flex; align-items: center; justify-content: center;
+  color: var(--color-text-tertiary);
+}
+.dis-empty-state p { color: var(--color-text-secondary); font-size: var(--text-base); margin: 0 0 20px; }
+.dis-empty-btn {
+  padding: 10px 28px; border-radius: var(--radius-full); border: none;
+  background: var(--color-primary); color: #fff; font-size: var(--text-sm);
+  font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all 0.25s;
+}
+.dis-empty-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(27,107,58,0.3); }
 
 @media (max-width: 768px) {
   .dis-featured { flex-direction: column; }
   .dis-feat-side { width: 100%; flex-direction: row; }
   .dis-feat-side .dis-feat-mini { flex: 1; }
-  .dis-hero-tabs button { padding: 6px 14px; font-size: var(--text-xs); }
+  .dis-tabs button { padding: 6px 14px; font-size: var(--text-xs); }
 }
 </style>

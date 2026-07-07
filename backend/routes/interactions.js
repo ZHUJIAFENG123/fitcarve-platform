@@ -15,7 +15,7 @@ router.post('/', authenticate, async (req, res) => {
       return res.status(400).json({ message: '无效的互动类型' });
     }
 
-    if (!['news', 'course', 'comment'].includes(targetType)) {
+    if (!['news', 'course', 'comment', 'training_plan'].includes(targetType)) {
       return res.status(400).json({ message: '无效的目标类型' });
     }
 
@@ -37,11 +37,25 @@ router.get('/user', authenticate, async (req, res) => {
   try {
     const { type, targetType, page = 1, limit = 10 } = req.query;
 
-    const interactions = await Interaction.findAll({
+    let interactions = await Interaction.findAll({
       userId: req.user.id,
       type,
       targetType
     });
+
+    // 如果是 training_plan 类型，JOIN 关联训练计划详情供前端展示
+    if (targetType === 'training_plan' && interactions.length > 0) {
+      const { pool } = require('../db');
+      const ids = interactions.map(i => i.target_id);
+      const placeholders = ids.map(() => '?').join(',');
+      const [plans] = await pool.query(
+        `SELECT id, title, description, cover_image, goal, level, duration_weeks, days_per_week, coach
+         FROM training_plans WHERE id IN (${placeholders})`,
+        ids
+      );
+      const planMap = new Map(plans.map(p => [p.id, p]));
+      interactions = interactions.map(i => ({ ...i, target: planMap.get(i.target_id) || null }));
+    }
 
     res.json({
       interactions,

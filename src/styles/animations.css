@@ -1,0 +1,103 @@
+/* ===== 炼刻 Animation System ===== */
+
+/* Fade Up - 卡片进入动画 */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade In */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Scale In */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulse - 脉冲效果 */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Shimmer - 骨架屏 */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Slide In Right */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Count Up Number */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Transition Classes ===== */
+
+/* Transition Group - 列表交错 */
+.fd-list-enter-active {
+  animation: fade-up 0.35s ease both;
+}
+.fd-list-leave-active {
+  animation: fade-up 0.25s ease reverse both;
+}
+.fd-list-move {
+  transition: transform 0.35s ease;
+}
+
+/* Stagger children */
+.fd-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.fd-stagger > *:nth-child(2) { animation-delay: 50ms; }
+.fd-stagger > *:nth-child(3) { animation-delay: 100ms; }
+.fd-stagger > *:nth-child(4) { animation-delay: 150ms; }
+.fd-stagger > *:nth-child(5) { animation-delay: 200ms; }
+.fd-stagger > *:nth-child(6) { animation-delay: 250ms; }
+.fd-stagger > *:nth-child(7) { animation-delay: 300ms; }
+.fd-stagger > *:nth-child(8) { animation-delay: 350ms; }
+
+/* ===== Utility Classes ===== */
+.animate-fade-up {
+  animation: fade-up 0.4s ease both;
+}
+.animate-fade-in {
+  animation: fade-in 0.3s ease both;
+}
+.animate-scale-in {
+  animation: scale-in 0.3s ease both;
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-border-light) 50%, var(--color-surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}

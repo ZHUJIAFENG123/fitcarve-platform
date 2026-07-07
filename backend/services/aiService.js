@@ -1,6 +1,6 @@
 /**
  * AI Service — wraps LLM API calls with mock fallback
- * 
+ *
  * Environment variables:
  *   AI_API_KEY=your-api-key       (required for real LLM)
  *   AI_API_URL=https://api.deepseek.com/v1/chat/completions
@@ -15,7 +15,7 @@ function isMockMode() {
   return !AI_API_KEY || AI_API_KEY === 'mock';
 }
 
-async function callLLM(systemPrompt, userMessage, temperature = 0.7) {
+async function callLLM(systemPrompt, userMessage, temperature = 0.7, maxTokens = 2000) {
   if (isMockMode()) {
     return mockResponse(systemPrompt, userMessage);
   }
@@ -33,7 +33,7 @@ async function callLLM(systemPrompt, userMessage, temperature = 0.7) {
         { role: 'user', content: userMessage }
       ],
       temperature,
-      max_tokens: 2000
+      max_tokens: maxTokens
     })
   });
 
@@ -51,7 +51,7 @@ async function callLLM(systemPrompt, userMessage, temperature = 0.7) {
 function mockResponse(systemPrompt, userMessage) {
   const msg = userMessage.toLowerCase();
 
-  if (msg.includes('训练计划') || msg.includes('生成') || systemPrompt.includes('训练')) {
+  if (msg.includes('训练计划') || msg.includes('生成') || systemPrompt.includes('训练计划')) {
     return mockPlan(userMessage);
   }
   if (msg.includes('吃了') || msg.includes('热量') || msg.includes('kcal') || systemPrompt.includes('饮食')) {
@@ -60,33 +60,68 @@ function mockResponse(systemPrompt, userMessage) {
   return mockChat(userMessage);
 }
 
+/**
+ * mockPlan - 返回与 training_plans.syllabus schema 一致的结构化 JSON
+ * 字段：title, description, goal, level, duration_weeks, days_per_week, equipment, syllabus
+ */
 function mockPlan(userMessage) {
-  return `**AI 生成训练计划（模拟模式）**
-
-**第1周 Day1：全身适应性训练**
-- 🏃 热身：跳绳5分钟 + 动态拉伸
-- 高脚杯深蹲 3×12-15
-- 哑铃卧推 3×10-12
-- 哑铃划船 3×10-12
-- 哑铃推举 3×10-12
-- 平板支撑 3×30秒
-- 🧘 拉伸：全身静态拉伸5分钟
-
-**第1周 Day2：休息或轻度有氧**
-- 快走30分钟 或 骑行20分钟
-
-**第1周 Day3：全身力量**
-- 🏃 热身：划船机5分钟
-- 罗马尼亚硬拉 3×10-12
-- 哑铃飞鸟 3×12-15
-- 单臂哑铃划船 3×10-12
-- 侧平举 3×15
-- 卷腹 3×15
-- 🧘 拉伸：泡沫轴放松
-
-**第1周 Day4：休息**
-
-> 💡 以上为AI模拟生成。配置 AI_API_KEY 环境变量后可使用真实AI生成更个性化的计划。`;
+  // 默认值：减脂 / 初级 / 1周 / 4天 / 自重
+  return {
+    title: 'AI 模拟训练计划（减脂入门）',
+    description: '适合初学者的全身性训练计划，每周4天，以自重训练为主，配合有氧。',
+    goal: 'lose_fat',
+    level: 'beginner',
+    duration_weeks: 1,
+    days_per_week: 4,
+    equipment: '自重',
+    syllabus: [
+      {
+        week: 1,
+        days: [
+          {
+            day: 1,
+            title: '全身适应性训练',
+            warmup: '跳绳5分钟 + 动态拉伸（肩部、髋部、踝部绕环）',
+            exercises: [
+              { name: '高脚杯深蹲', sets: 3, reps: '12-15', rest: 60, notes: '保持背部挺直' },
+              { name: '哑铃卧推', sets: 3, reps: '10-12', rest: 60 },
+              { name: '哑铃划船', sets: 3, reps: '10-12', rest: 60 },
+              { name: '哑铃推举', sets: 3, reps: '10-12', rest: 60 },
+              { name: '平板支撑', sets: 3, reps: '30秒', rest: 30 }
+            ],
+            cooldown: '全身静态拉伸5分钟，重点拉伸大腿、胸背、肩部'
+          },
+          {
+            day: 2,
+            title: '休息或轻度有氧',
+            warmup: '',
+            exercises: [],
+            cooldown: '快走30分钟 或 骑行20分钟，保持心率在最大心率的60%-70%'
+          },
+          {
+            day: 3,
+            title: '全身力量训练',
+            warmup: '划船机5分钟 + 动态拉伸',
+            exercises: [
+              { name: '罗马尼亚硬拉', sets: 3, reps: '10-12', rest: 90 },
+              { name: '哑铃飞鸟', sets: 3, reps: '12-15', rest: 60 },
+              { name: '单臂哑铃划船', sets: 3, reps: '10-12', rest: 60 },
+              { name: '侧平举', sets: 3, reps: '15', rest: 45 },
+              { name: '卷腹', sets: 3, reps: '15', rest: 30 }
+            ],
+            cooldown: '泡沫轴放松大腿、背部、肩部'
+          },
+          {
+            day: 4,
+            title: '休息',
+            warmup: '',
+            exercises: [],
+            cooldown: '完全休息日，可进行轻度散步'
+          }
+        ]
+      }
+    ]
+  };
 }
 
 function mockDiet(userMessage) {
@@ -115,6 +150,46 @@ function mockChat(userMessage) {
   return replies[Math.floor(Math.random() * replies.length)];
 }
 
+// ── 动作库匹配 ──
+
+/**
+ * 为 syllabus 中每个 exercise 填充 exercise_id（按名称精确匹配，找不到则用模糊匹配第一个）
+ * 匹配失败的 exercise 保留原样（无 exercise_id），详情页会显示「未关联」标记
+ */
+async function matchExercises(syllabus) {
+  let Exercise;
+  try {
+    Exercise = require('../models/Exercise');
+  } catch (e) {
+    console.warn('[aiService] Exercise model not available, skip matching');
+    return syllabus;
+  }
+
+  if (!Array.isArray(syllabus)) return syllabus;
+
+  for (const week of syllabus) {
+    if (!week || !Array.isArray(week.days)) continue;
+    for (const day of week.days) {
+      if (!day || !Array.isArray(day.exercises)) continue;
+      for (const ex of day.exercises) {
+        if (!ex || !ex.name || ex.exercise_id) continue;
+        try {
+          const matches = await Exercise.search(ex.name, 5);
+          if (matches.length > 0) {
+            // 优先精确匹配，否则用第一个模糊匹配结果
+            const exact = matches.find(m => m.name === ex.name) || matches[0];
+            ex.exercise_id = exact.id;
+          }
+        } catch (e) {
+          console.warn(`[aiService] matchExercises failed for "${ex.name}":`, e.message);
+        }
+      }
+    }
+  }
+
+  return syllabus;
+}
+
 // ── Public API ──
 
 /**
@@ -136,32 +211,105 @@ async function chat(userMessage, context = {}) {
 }
 
 /**
- * AI 生成训练计划
+ * AI 生成训练计划 - 返回结构化 JSON 对象
+ * 输出格式与 training_plans.syllabus schema 一致：
+ * { title, description, goal, level, duration_weeks, days_per_week, equipment, syllabus }
+ * syllabus 内每个 exercise 已填充 exercise_id（若动作库有匹配）
  */
 async function generatePlan(params) {
   const { goal, level, weeks, daysPerWeek, equipment, notes } = params;
-  
-  const systemPrompt = `你是一个专业的健身教练和训练计划设计师。
-请根据用户的需求生成一个${weeks}周的训练计划。
 
-输出格式要求：
-1. 按周组织，每周${daysPerWeek}个训练日
-2. 每个训练日包含：热身、3-6个动作（每个含组数×次数）、拉伸
-3. 动作名称使用中文，器材限于用户指定的器材
-4. 难度适合${level}水平，目标为${goal}
-5. 考虑用户的备注信息
+  const systemPrompt = `你是一位专业的健身教练和训练计划设计师。
+请根据用户的需求生成一个 ${weeks} 周、每周 ${daysPerWeek} 天的训练计划。
 
-请输出纯文本，使用markdown格式，不要JSON。`;
+【输出要求】必须返回严格的 JSON 对象（不要 markdown、不要代码块包裹、不要任何解释文字），结构如下：
+
+{
+  "title": "字符串，计划标题（中文，简短有吸引力）",
+  "description": "字符串，1-2 句话简短描述",
+  "goal": "lose_fat | build_muscle | improve_endurance | shape | strength",
+  "level": "beginner | intermediate | advanced",
+  "duration_weeks": 数字,
+  "days_per_week": 数字,
+  "equipment": "字符串，使用的器材列表（如：哑铃、自重、杠铃）",
+  "syllabus": [
+    {
+      "week": 数字（从1开始）,
+      "days": [
+        {
+          "day": 数字（从1开始）,
+          "title": "字符串，如「全身力量」",
+          "warmup": "字符串，热身描述（5-10分钟）",
+          "exercises": [
+            { "name": "动作中文名", "sets": 数字, "reps": "如 8-12 或 30秒", "rest": 秒数, "notes": "可选，要领提示" }
+          ],
+          "cooldown": "字符串，拉伸/放松描述"
+        }
+      ]
+    }
+  ]
+}
+
+【设计原则】
+1. 难度匹配 ${level} 水平：beginner 用基础动作（深蹲、硬拉、卧推）；intermediate 引入复合动作；advanced 加入进阶变式
+2. 目标为 ${goal}：减脂多复合动作+短休息；增肌多力量训练+8-12次；耐力多循环组；塑形均衡训练
+3. 器材仅限：${equipment || '无特殊限制，可用自重、哑铃、杠铃等常见器材'}
+4. 每个 day 含 4-6 个动作，热身和拉伸是必填字段（休息日可留空）
+5. 休息日 day.exercises 为空数组 []
+6. 动作名称使用中文通用译法（如「杠铃深蹲」「哑铃卧推」「罗马尼亚硬拉」「卷腹」「平板支撑」）
+
+${notes ? `【用户备注】${notes}` : ''}
+
+只输出 JSON，不要其他任何内容。`;
 
   const userMessage = `请为我生成训练计划：
 - 目标：${goal}
 - 难度：${level}
-- 周期：${weeks}周
-- 每周训练：${daysPerWeek}天
+- 周期：${weeks} 周
+- 每周训练：${daysPerWeek} 天
 - 可用器材：${equipment || '无特殊限制'}
 - 备注：${notes || '无'}`;
 
-  return await callLLM(systemPrompt, userMessage, 0.9);
+  // 调用 LLM（mock 模式下 callLLM 直接返回 mockPlan 的结构化对象）
+  const llmOutput = await callLLM(systemPrompt, userMessage, 0.7, 4000);
+
+  // mock 模式：llmOutput 已是结构化对象
+  if (typeof llmOutput === 'object' && llmOutput !== null) {
+    return await matchExercises(llmOutput.syllabus).then(() => llmOutput);
+  }
+
+  // 真实 LLM 模式：解析 JSON 字符串
+  let planObj;
+  try {
+    // 容错：去除可能的 markdown 代码块包裹
+    let jsonStr = llmOutput.trim();
+    if (jsonStr.startsWith('```')) {
+      jsonStr = jsonStr.replace(/^```(?:json)?\s*\n?/, '').replace(/\n?```\s*$/, '');
+    }
+    planObj = JSON.parse(jsonStr);
+  } catch (e) {
+    console.warn('[aiService] LLM 返回非合法 JSON，降级为 mockPlan。原始输出：', llmOutput.slice(0, 200));
+    const fallback = mockPlan(userMessage);
+    return await matchExercises(fallback.syllabus).then(() => fallback);
+  }
+
+  // 基本字段校验：syllabus 必须是数组
+  if (!planObj || !Array.isArray(planObj.syllabus)) {
+    console.warn('[aiService] LLM 返回 JSON 缺少 syllabus，降级为 mockPlan');
+    const fallback = mockPlan(userMessage);
+    return await matchExercises(fallback.syllabus).then(() => fallback);
+  }
+
+  // 用用户请求的参数覆盖 LLM 输出（防止 LLM 自由发挥不一致）
+  planObj.duration_weeks = Number(weeks) || planObj.duration_weeks || 4;
+  planObj.days_per_week = Number(daysPerWeek) || planObj.days_per_week || 4;
+  planObj.goal = goal || planObj.goal;
+  planObj.level = level || planObj.level;
+
+  // 匹配动作库
+  await matchExercises(planObj.syllabus);
+
+  return planObj;
 }
 
 /**
@@ -188,7 +336,7 @@ async function analyzeDiet(foodDescription) {
 async function summarizeArticle(title, content) {
   const systemPrompt = `你是一个专业的健身内容编辑。请将以下文章总结为一句话摘要（50字以内），提取核心观点。`;
   const userMessage = `标题：${title}\n内容：${content.slice(0, 3000)}`;
-  
+
   return await callLLM(systemPrompt, userMessage, 0.3);
 }
 
