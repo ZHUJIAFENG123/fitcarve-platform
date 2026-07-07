@@ -214,28 +214,32 @@ npm run dev
 
 ## 部署指南
 
-### 一键部署到 Railway（推荐）
+### 🇨🇳 Zeabur 部署（推荐，国内平台）
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/your-template)
+[Zeabur](https://zeabur.com) 是国内团队开发的一站式部署平台，原生支持 MySQL + Node.js，中文界面，操作简单。
 
-**手动部署步骤：**
+**部署步骤：**
 
-1. **Fork 或推送** 代码到你的 GitHub 仓库
-2. 打开 [Railway Dashboard](https://railway.app/dashboard) → **New Project** → **Deploy from GitHub repo**
-3. 选择 `fitcarve-platform` 仓库
-4. Railway 会自动检测 `railway.json`，执行构建和部署
-5. 添加 **MySQL** 插件：
-   - 项目页面 → **Plugins** → **Add Plugin** → 选择 **MySQL**
-   - Railway 会自动提供 `MYSQL_URL` 等环境变量
-6. 配置环境变量（Settings → Variables）：
+1. **推送代码** 到 GitHub 仓库 `fitcarve-platform`
+2. 打开 [Zeabur Dashboard](https://zeabur.com/dashboard) → **创建项目**
+3. **添加服务** → **从 GitHub 导入** → 选择 `fitcarve-platform`
+4. 添加 **MySQL** 数据库：
+   - 项目页面 → **添加服务** → **MySQL** → Zeabur 会自动创建数据库并提供连接信息
+5. Zeabur 自动读取 `zeabur.json`，执行构建和部署
+6. 等待首次构建完成（自动安装依赖 → 构建前端 → 启动后端）
+7. **配置环境变量**（服务设置 → 环境变量）：
 
    | 变量 | 说明 |
    |------|------|
    | `NODE_ENV` | 设为 `production` |
+   | `MYSQL_HOST` | Zeabur MySQL 提供的主机地址 |
+   | `MYSQL_USER` | Zeabur MySQL 提供的用户名 |
+   | `MYSQL_PASSWORD` | Zeabur MySQL 提供的密码 |
+   | `MYSQL_DATABASE` | Zeabur MySQL 提供的数据库名 |
    | `JWT_SECRET` | 随机字符串，用于 JWT 加密 |
    | `AI_API_KEY` | （可选）DeepSeek API 密钥 |
 
-7. **初始化数据库**：部署成功后，在 Railway 的 **Shell** 中运行：
+8. **初始化数据库**：在 Zeabur 的 **终端** 中运行：
 
    ```bash
    # 导入表结构
@@ -245,33 +249,59 @@ npm run dev
    cd backend && node migrate.js
 
    # 导入种子数据
-   cd seed && npm install && node index.js
+   cd ../seed && npm install && node index.js
    ```
 
-   或者在本地用 Railway CLI 执行：
+9. 部署完成后，Zeabur 会分配一个 `.zeabur.app` 域名，直接访问即可
 
-   ```bash
-   npm i -g @railway/cli
-   railway run "node backend/seed-all.js"
-   ```
+> 💡 **提示：** Zeabur 免费版提供足够额度运行本项目。服务在闲置时可能休眠，访问后自动唤醒。
 
-8. 部署完成后，访问 `https://fitcarve-platform.up.railway.app` 即可使用
+---
 
-> 💡 **提示：** Railway 免费版提供 $5/月额度，足以运行本项目和 MySQL 数据库。服务在闲置时会休眠，访问后自动唤醒（约 10-20 秒）。
+### 🌍 其他部署方式
 
-### 其他部署方式
+#### Railway（国际平台）
 
-你也可以自行构建并部署到任意 VPS 或云服务器：
+Railway 是国际流行的部署平台，同样支持 MySQL + Node.js：
+
+1. 在 [Railway Dashboard](https://railway.app/dashboard) → **New Project** → **Deploy from GitHub repo**
+2. 选择 `fitcarve-platform` 仓库，Railway 自动读取 `railway.json`
+3. 添加 **MySQL** 插件（Plugins → Add Plugin → MySQL）
+4. 设置 `NODE_ENV=production` 和 `JWT_SECRET`
+5. 初始化数据库方式同 Zeabur 步骤 8
+6. 访问 `https://fitcarve-platform.up.railway.app`
+
+> Railway 免费版提供 $5/月额度，足以运行本项目。
+
+#### 云服务器（VPS）
+
+如果你有云服务器（腾讯云/阿里云等），手动部署也很简单：
 
 ```bash
-# 构建前端
-npm run build
+# 1. 安装 MySQL 8.0+ 和 Node.js 18+
+# 2. 拉取代码
+git clone https://github.com/ZHUJIAFENG123/fitcarve-platform.git
+cd fitcarve-platform
 
-# 启动后端（生产模式）
-cd backend && NODE_ENV=production node server.js
+# 3. 构建前端
+npm ci && npm run build
+
+# 4. 安装后端依赖
+cd backend && npm ci && cd ..
+
+# 5. 导入数据库
+mysql -u root -p < backend/schema.sql
+
+# 6. 运行迁移和种子数据
+cd backend && node migrate.js && node seed-all.js && cd ..
+
+# 7. 启动（建议使用 PM2 守护进程）
+NODE_ENV=production node backend/server.js
+
+# 或使用 PM2
+npm i -g pm2
+NODE_ENV=production pm2 start backend/server.js --name fitcarve
 ```
-
-确保服务器已安装 **MySQL 8.0+** 和 **Node.js 18+**。
 
 ---
 
