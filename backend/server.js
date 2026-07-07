@@ -26,6 +26,7 @@ app.use(limiter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/images', express.static(path.join(__dirname, '..', 'public', 'images')));
 app.use('/exercise-gifs', express.static(path.join(__dirname, '..', 'public', 'exercise-gifs')));
+app.use('/news-images', express.static(path.join(__dirname, '..', 'public', 'news-images')));
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -86,9 +87,20 @@ app.get('/health', async (req, res) => {
   });
 });
 
-app.use((req, res) => {
-  res.status(404).json({ message: '路由不存在' });
-});
+// ── 生产环境：托管前端构建产物 ──
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.join(__dirname, '..', 'dist');
+  app.use(express.static(distPath));
+  // SPA 回退：非 /api 路径返回 index.html
+  app.get('*', (req, res) => {
+    if (req.path.startsWith('/api')) return res.status(404).json({ message: '路由不存在' });
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
+  app.use((req, res) => {
+    res.status(404).json({ message: '路由不存在' });
+  });
+}
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

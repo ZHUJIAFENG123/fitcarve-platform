@@ -212,6 +212,69 @@ npm run dev
 
 ---
 
+## 部署指南
+
+### 一键部署到 Railway（推荐）
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/your-template)
+
+**手动部署步骤：**
+
+1. **Fork 或推送** 代码到你的 GitHub 仓库
+2. 打开 [Railway Dashboard](https://railway.app/dashboard) → **New Project** → **Deploy from GitHub repo**
+3. 选择 `fitcarve-platform` 仓库
+4. Railway 会自动检测 `railway.json`，执行构建和部署
+5. 添加 **MySQL** 插件：
+   - 项目页面 → **Plugins** → **Add Plugin** → 选择 **MySQL**
+   - Railway 会自动提供 `MYSQL_URL` 等环境变量
+6. 配置环境变量（Settings → Variables）：
+
+   | 变量 | 说明 |
+   |------|------|
+   | `NODE_ENV` | 设为 `production` |
+   | `JWT_SECRET` | 随机字符串，用于 JWT 加密 |
+   | `AI_API_KEY` | （可选）DeepSeek API 密钥 |
+
+7. **初始化数据库**：部署成功后，在 Railway 的 **Shell** 中运行：
+
+   ```bash
+   # 导入表结构
+   mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < backend/schema.sql
+
+   # 运行数据库迁移
+   cd backend && node migrate.js
+
+   # 导入种子数据
+   cd seed && npm install && node index.js
+   ```
+
+   或者在本地用 Railway CLI 执行：
+
+   ```bash
+   npm i -g @railway/cli
+   railway run "node backend/seed-all.js"
+   ```
+
+8. 部署完成后，访问 `https://fitcarve-platform.up.railway.app` 即可使用
+
+> 💡 **提示：** Railway 免费版提供 $5/月额度，足以运行本项目和 MySQL 数据库。服务在闲置时会休眠，访问后自动唤醒（约 10-20 秒）。
+
+### 其他部署方式
+
+你也可以自行构建并部署到任意 VPS 或云服务器：
+
+```bash
+# 构建前端
+npm run build
+
+# 启动后端（生产模式）
+cd backend && NODE_ENV=production node server.js
+```
+
+确保服务器已安装 **MySQL 8.0+** 和 **Node.js 18+**。
+
+---
+
 ## 安全说明
 
 - `.env` 文件已在 `.gitignore` 中忽略，不会提交到仓库
