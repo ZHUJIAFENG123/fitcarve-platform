@@ -87,15 +87,26 @@ app.get('/health', async (req, res) => {
   });
 });
 
-// ── 生产环境：托管前端构建产物 ──
+const fs = require('fs');
+
+// ── 生产环境：可选托管前端构建产物 ──
 if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(__dirname, '..', 'dist');
-  app.use(express.static(distPath));
-  // SPA 回退：非 /api 路径返回 index.html
-  app.get('*', (req, res) => {
-    if (req.path.startsWith('/api')) return res.status(404).json({ message: '路由不存在' });
-    res.sendFile(path.join(distPath, 'index.html'));
-  });
+  if (fs.existsSync(distPath)) {
+    console.log('📦 托管前端构建产物 dist/');
+    app.use(express.static(distPath));
+    // SPA 回退：非 /api 路径返回 index.html
+    app.get('*', (req, res) => {
+      if (req.path.startsWith('/api')) return res.status(404).json({ message: '路由不存在' });
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  } else {
+    console.log('🌐 纯 API 模式（前端由 Vercel 等托管）');
+    app.use((req, res) => {
+      if (req.path.startsWith('/api')) return res.status(404).json({ message: '路由不存在' });
+      res.status(200).json({ message: 'FitCarve API is running' });
+    });
+  }
 } else {
   app.use((req, res) => {
     res.status(404).json({ message: '路由不存在' });
