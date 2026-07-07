@@ -97,10 +97,6 @@
 - Inline validation feedback
 - Smooth focus states with green glow
 
-## Register
-
-product
-
 ## Design Principles
 
 1. **Clarity First:** Every element should have a clear purpose

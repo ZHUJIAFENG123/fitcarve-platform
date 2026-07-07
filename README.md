@@ -70,7 +70,6 @@ fitness-frontend/
 │   └── server.js           # 入口文件
 ├── seed/                   # 种子数据
 ├── public/                 # 静态资源（exercise-gifs/images）
-├── docs/                   # 开发文档
 └── PRODUCT.md              # 产品设计规范
 ```
 
@@ -139,7 +138,6 @@ npm run dev
 - [free-exercise-db](https://github.com/yuhonas/free-exercise-db) — 动作数据与 GIF 演示
 - [Open Food Facts API](https://world.openfoodfacts.org/data) — 营养数据查询
 
-详细调研记录见 `docs/` 目录。
 
 ## License
 
