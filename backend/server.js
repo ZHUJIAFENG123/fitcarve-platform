@@ -113,6 +113,11 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+// 健康检查端点（用于部署平台监控）
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: '服务器内部错误' });

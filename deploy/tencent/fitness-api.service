@@ -1,0 +1,19 @@
+[Unit]
+Description=Fitness API Server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/www/fitness-frontend/backend
+Environment=NODE_ENV=production
+EnvironmentFile=/var/www/fitness-frontend/backend/.env
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=fitness-api
+
+[Install]
+WantedBy=multi-user.target
