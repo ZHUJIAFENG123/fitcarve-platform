@@ -1,0 +1,20 @@
+# 忽略不需要打包进镜像的文件
+node_modules
+backend/node_modules
+dist
+.git
+.gitignore
+.env
+.env.*
+.vscode
+.idea
+*.log
+Dockerfile
+.dockerignore
+.deploy/
+.reasonix/
+.workbuddy/
+.uploads/
+backend/uploads/
+开源项目应用/
+fitness_images/
