@@ -1,123 +1,186 @@
-# 炼刻 - Fitness Platform
+# 炼刻 FitCarve — 产品设计规范
 
-## Project Overview
+> **产品名称：** 炼刻 (FitCarve)  
+> **类型：** 全栈健身管理平台  
+> **定位：** 面向健身爱好者的科学训练与饮食管理工具
 
-**Name:** 炼刻 (Lianke / FitCarve)  
-**Type:** Product (Fitness Management Platform)  
-**Industry:** Health & Fitness, SaaS
+---
 
-## Target Audience
+## 品牌定位
 
-- **Primary:** Fitness enthusiasts aged 18-45
-- **Secondary:** Personal trainers, fitness coaches
-- **Tertiary:** Beginners looking for structured workout plans
+### 目标用户
 
-## Brand Personality
+- **核心用户：** 18-45 岁健身爱好者，有一定训练基础，追求科学化训练管理
+- **次级用户：** 私人教练、健身内容创作者，需要工具辅助管理学员/内容
+- **拓展用户：** 健身入门者，寻找结构化训练计划与饮食指导
 
-- **Professional:** Evidence-based training and nutrition guidance
-- **Energetic:** Motivating and action-oriented
-- **Trustworthy:** Scientific approach to fitness
-- **Modern:** Clean, contemporary design language
+### 品牌个性
 
-## Voice & Tone
+| 特质 | 说明 |
+|------|------|
+| **专业** 科学循证 | 基于 ACSM / NSCA 等权威指南的训练与营养建议 |
+| **活力** 行动导向 | 清晰的行动引导，激发用户坚持训练 |
+| **可靠** 数据驱动 | 训练进度可视化，饮食摄入量化追踪 |
+| **现代** 简洁优雅 | 干净的界面语言，沉浸式阅读体验 |
 
-- Clear and direct
-- Encouraging but not pushy
-- Educational without being condescending
-- Action-oriented with clear CTAs
+### 设计原则
 
-## Anti-References (What to Avoid)
+1. **清晰优先** — 每个元素都有明确目的，减少认知负担
+2. **一致性** — 跨页面保持视觉节奏与交互模式统一
+3. **无障碍** — WCAG AA 级别可访问性
+4. **性能** — 快速加载、流畅交互
+5. **响应式** — 适配 375px 移动端到 1440px+ 桌面端
 
-- ❌ Generic "gym bro" aesthetics
-- ❌ Overly aggressive or intimidating imagery
-- ❌ Cluttered dashboards with too much information
-- ❌ Purple/blue gradients (overused in AI-generated designs)
-- ❌ Excessive card nesting
-- ❌ Bounce/elastic animations (feel dated)
-- ❌ Gray text on colored backgrounds
+---
 
-## Color Palette
+## 设计语言
 
-### Primary Colors
-- **Deep Forest Green:** #1B6B3A (primary brand color)
-- **Bright Orange:** #F97316 (CTA, accent, energy)
-- **Dark Background:** #0F1110 (brand sections)
+### 色彩系统
 
-### Supporting Colors
-- **Light Green:** #238B4D, #4ADE80 (gradients, highlights)
-- **Warm Beige:** #FAFAF8, #F5F3EF (backgrounds)
-- **Charcoal:** #1A1A1A (text primary)
-- **Gray:** #5A5A55, #8A8A82 (text secondary/tertiary)
+#### 品牌色
+| 色值 | 用途 |
+|------|------|
+| `#1B6B3A` 深森绿 | 品牌主色，导航、标题 |
+| `#F97316` 亮橙 | CTA 按钮、强调色、活力元素 |
+| `#0F1110` 深黑 | 品牌区背景，深色模块 |
 
-### State Colors
-- Success: #16A34A
-- Warning: #D97706
-- Error: #DC2626
-- Info: #2563EB
+#### 辅助色
+| 色值 | 用途 |
+|------|------|
+| `#238B4D` / `#4ADE80` 浅绿 | 渐变、高亮 |
+| `#FAFAF8` / `#F5F3EF` 暖白 | 背景色 |
+| `#1A1A1A` 炭灰 | 正文主色 |
+| `#5A5A55` / `#8A8A82` 灰 | 次级/辅助文字 |
 
-## Typography
+#### 状态色
+| 场景 | 色值 |
+|------|------|
+| ✅ 成功 | `#16A34A` |
+| ⚠️ 警告 | `#D97706` |
+| ❌ 错误 | `#DC2626` |
+| ℹ️ 信息 | `#2563EB` |
 
-### Font Families
-- **Display:** DM Sans, PingFang SC, Microsoft YaHei
-- **Body:** DM Sans, PingFang SC, Microsoft YaHei
-- **Mono:** JetBrains Mono, Fira Code
+### 字体体系
 
-### Hierarchy
-- Headings: Bold, tight letter-spacing (-0.5px)
-- Body: Regular weight, normal spacing
-- Small text: Lighter weight for metadata
+| 层级 | 字体 |
+|------|------|
+| **展示/标题** | DM Sans, PingFang SC, Microsoft YaHei |
+| **正文** | DM Sans, PingFang SC, Microsoft YaHei |
+| **等宽** | JetBrains Mono, Fira Code |
 
-## Key Components
+### 布局规范
 
-### Navigation
-- Sticky header with logo + menu + search + user actions
-- Logo: LK dumbbell icon (deep green + orange)
-- Brand name: "炼刻" with gradient text effect
+- **圆角：** 12-16px（卡片）、8px（按钮）、6px（输入框）
+- **阴影：** 轻阴影提升层次，hover 状态阴影加深
+- **间距：** 基于 4px 网格系统（4/8/12/16/24/32/48）
+- **输入框：** 高度 48-52px，大触控区域
 
-### Authentication Pages
-- Split-screen layout (brand left, form right)
-- Dark gradient background on brand side
-- Clean white form area with subtle shadows
-- Orange gradient CTA buttons
+---
 
-### Cards
-- Rounded corners (12-16px radius)
-- Subtle shadows
-- White background with light borders
-- Hover states with elevation increase
+## 核心组件
 
-### Buttons
-- Primary: Orange gradient (#F97316 → #EA580C)
-- Secondary: Outlined with green border
-- Tertiary: Text-only links
+### 导航
+- 吸顶导航栏：Logo + 菜单 + 搜索 + 用户操作
+- Logo：哑铃图标（深绿 + 橙色渐变）
+- 品牌名「炼刻」渐变文字效果
 
-### Forms
-- Large input fields (height: 48-52px)
-- Clear labels and placeholders
-- Inline validation feedback
-- Smooth focus states with green glow
+### 认证页面
+- 左右分栏布局（品牌展示区 + 表单区）
+- 品牌侧深色渐变背景
+- 表单区白色背景，轻阴影
+- 橙色渐变 CTA 按钮
 
-## Design Principles
+### 卡片
+- 圆角 12-16px
+- 白色背景 + 浅边框
+- hover 状态提升阴影深度
 
-1. **Clarity First:** Every element should have a clear purpose
-2. **Consistency:** Maintain visual rhythm across all pages
-3. **Accessibility:** WCAG AA compliance minimum
-4. **Performance:** Fast load times, smooth interactions
-5. **Mobile-First:** Responsive from 375px to 1440px+
+### 按钮
+- **主要：** 橙色渐变 `#F97316 → #EA580C`
+- **次要：** 绿色边框描边
+- **三级：** 纯文字链接
 
-## Current Focus Areas
+---
 
-- ✅ Login/Register pages (recently redesigned)
-- 🔄 Dashboard and user profile
-- 📊 Training plan visualization
-- 🍎 Nutrition tracking interface
-- 💬 AI chat assistant integration
+## 页面架构
 
-## Tech Stack
+### 前端路由
 
-- **Frontend:** Vue 3, Vite, TypeScript
-- **UI Framework:** Element Plus
-- **Charts:** ECharts
-- **Styling:** CSS Variables, Scoped Styles
-- **State Management:** Pinia
-- **Routing:** Vue Router
+| 路径 | 页面 | 说明 |
+|------|------|------|
+| `/home` | 首页 | 内容推荐流，资讯聚合 |
+| `/login` / `/register` | 登录 / 注册 | 分栏认证页 |
+| `/profile` | 个人中心 | 身体档案、训练/饮食/学习汇总 |
+| `/news/list` | 资讯列表 | 分类筛选，卡片布局 |
+| `/news/detail/:id` | 资讯详情 | 富文本阅读，评论互动 |
+| `/recommendation` | 个性化推荐 | 基于兴趣的内容推荐 |
+| `/fitness` | 健身看板 | 训练/饮食/进度总览 |
+| `/fitness/training` | 训练计划列表 | 计划浏览与筛选 |
+| `/fitness/training/:id` | 训练计划详情 | 动作组、进度追踪 |
+| `/fitness/exercises` | 动作库 | 800+ 动作，肌群筛选 |
+| `/fitness/exercise/:id` | 动作详情 | GIF 演示、目标肌群 |
+| `/fitness/diet` | 饮食计划 | 饮食方案浏览 |
+| `/fitness/diet/:id` | 饮食详情 | 食谱与营养信息 |
+| `/fitness/diet-log` | 饮食日志 | 每日摄入记录 |
+| `/fitness/nutrition` | 营养搜索 | 食物营养数据查询 |
+| `/fitness/calculator` | 健身计算器 | BMI / TDEE / 宏量营养素 |
+| `/fitness/ai-generator` | AI 生成器 | AI 训练计划生成 |
+| `/creator` | 创作者中心 | 内容发布、管理、数据统计 |
+| `/admin/dashboard` | 管理后台 | 平台数据看板 |
+| `/admin/users` | 用户管理 | 用户列表与状态管理 |
+
+### 后端 API 架构
+
+- 24 个路由模块，按业务领域划分
+- JWT 中间件保护需认证接口
+- Multer 处理文件上传
+- DeepSeek API 集成（AI 计划生成 + 智能问答）
+- Rate limiting + Helmet 安全防护
+
+---
+
+## 数据模型
+
+### 核心实体
+
+- **用户（User）** — 账户、身体档案、健身目标
+- **文章（News）** — 内容管理、分类、标签、循证标签、关联动作/计划
+- **评论（Comment）** — 嵌套回复、点赞
+- **互动（Interaction）** — 点赞、收藏行为记录
+- **训练计划（TrainingPlan）** — 动作分组、进度追踪
+- **动作（Exercise）** — 800+ 动作库，含 GIF、肌群映射
+- **饮食计划（DietPlan）** — 饮食方案
+- **饮食日志（DietLog）** — 每日摄入记录
+- **食物（Food）** — 营养数据
+- **学习路径（LearningPath）** — 结构化课程
+- **教练（Coach）** — 教练信息与训练报名
+- **通知（Notification）** — 消息推送
+- **饮水记录（WaterLog）** — 每日饮水追踪
+
+---
+
+## 技术决策
+
+| 决策 | 选型 | 理由 |
+|------|------|------|
+| 前端框架 | Vue 3 + Composition API | 响应式、组合式逻辑复用 |
+| 构建工具 | Vite 5 | 极速 HMR，ESM 原生支持 |
+| UI 库 | Element Plus | 企业级组件丰富，Vue 3 原生 |
+| 状态管理 | Pinia | 轻量、TypeScript 友好 |
+| 图表 | ECharts + vue-echarts | 丰富的图表类型，大屏可视化 |
+| 后端 | Express | 成熟稳定，中间件生态丰富 |
+| 数据库 | MySQL 8 | 关系型数据，事务支持 |
+| 认证 | JWT + bcryptjs | 无状态认证，安全存储 |
+| AI | DeepSeek API | 中文优化，训练知识专业 |
+
+---
+
+## 设计反模式（避免）
+
+- ❌ 泛「健身房」美学风格
+- ❌ 攻击性或过于激进的视觉元素
+- ❌ 信息过载的复杂仪表盘
+- ❌ 紫/蓝渐变（AI 生成设计过度使用）
+- ❌ 过度卡片嵌套
+- ❌ 弹跳/弹性动画（显过时）
+- ❌ 深色背景上的灰色文字
