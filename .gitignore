@@ -43,6 +43,14 @@ vite.log
 开源项目推荐清单.html
 fitness_images/
 
+# Large reference datasets / generated assets (slim-repo: removed from repo, kept locally)
+free-exercise-db/
+free-exercise-db-main/
+generated-images/
+fitness-redesign/
+# Raw seed dataset (23MB JSON) — only for local re-seeding; DB already has the data
+exercises-dataset/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
