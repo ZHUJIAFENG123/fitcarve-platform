@@ -2,7 +2,7 @@
 
 [![Vue 3](https://img.shields.io/badge/Vue-3.4-4FC08D?logo=vue.js)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite)](https://vitejs.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18-339933?logo=node.js)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-4-000000?logo=express)](https://expressjs.com/)
 [![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql)](https://www.mysql.com/)
@@ -10,29 +10,7 @@
 
 一个集**训练管理、饮食追踪、知识学习、社区互动**于一体的全栈健身管理平台。前端基于 Vue 3 + Vite + TypeScript + Element Plus，后端基于 Node.js + Express + MySQL，集成 AI 训练计划生成与知识图谱可视化。
 
----
-
-## 🚀 快速部署
-
-本项目支持**零成本免费部署**！使用 Vercel（前端）+ Railway（后端+数据库）方案：
-
-### 快速开始
-1. 📖 查看 [部署总结](./DEPLOYMENT-SUMMARY.md) - 了解整体方案
-2. ✅ 参考 [检查清单](./DEPLOYMENT-CHECKLIST.md) - 按步骤执行部署
-3. 📋 阅读 [详细指南](./DEPLOYMENT.md) - 深入配置说明
-
-### 部署架构
-```
-用户 → Vercel (Vue前端) → Railway (Node.js API + MySQL)
-       • 全球CDN加速        • 自动CI/CD
-       • HTTPS             • $5/月免费额度
-```
-
-**特点：**
-- ✅ 完全免费（个人项目）
-- ✅ Git推送自动部署
-- ✅ 自定义域名支持
-- ✅ 实时监控与日志
+> 💡 本项目仓库目前**未托管线上运行实例**。下文「快速开始」即可在本地完整跑起来；「部署」一节提供可选的线上部署参考方案。
 
 ---
 
@@ -59,7 +37,7 @@
 
 ### 🏋️ 训练管理
 - 训练计划创建/编辑/详情，支持自定义动作组合与分组
-- **动作库 800+ 动作**，含 GIF 演示、目标肌群标注、难度分级
+- **动作库 1300+ 动作**，含 GIF 演示、目标肌群标注、难度分级
 - 我的训练计划管理，训练进度追踪
 - **AI 训练计划生成器** — 基于用户目标（增肌/减脂/塑形）自动生成个性化计划
 - 教练模块：教练列表、教练详情、训练报名
@@ -98,6 +76,71 @@
 - 训练日历、饮食追踪、学习进度汇总
 - 收藏夹、我的评论、消息通知中心
 - 个人资料编辑
+
+---
+
+## 快速开始（本地运行）
+
+### 环境要求
+
+- **Node.js** >= 18
+- **MySQL** >= 8.0
+- **Git LFS**（仓库内的动作演示 GIF 通过 Git LFS 管理，clone 前请先安装：[git-lfs.com](https://git-lfs.com)）
+- **npm** >= 9
+
+### 1️⃣ 获取代码
+
+```bash
+git clone https://github.com/ZHUJIAFENG123/fitcarve-platform.git
+cd fitcarve-platform
+git lfs install      # 确保动作 GIF 被正确拉取
+```
+
+### 2️⃣ 安装依赖
+
+```bash
+# 前端依赖
+npm install
+
+# 后端依赖
+cd backend && npm install && cd ..
+```
+
+### 3️⃣ 环境配置
+
+```bash
+# 前端环境变量
+cp .env.example .env.development
+
+# 后端环境变量
+cp backend/.env.example backend/.env
+# 编辑 backend/.env 填入数据库连接、JWT 密钥、AI API Key 等
+```
+
+### 4️⃣ 初始化数据库
+
+```bash
+# 导入建表脚本
+mysql -u root -p < backend/schema.sql
+
+# 运行数据库迁移
+cd backend && node migrate.js && cd ..
+
+# 导入种子数据
+cd seed && npm install && node index.js && cd ..
+```
+
+### 5️⃣ 启动开发服务
+
+```bash
+# 终端 1 — 启动后端（默认 http://localhost:5000）
+cd backend && npm run dev
+
+# 终端 2 — 启动前端（默认 http://localhost:5173）
+npm run dev
+```
+
+打开 http://localhost:5173 即可访问。
 
 ---
 
@@ -141,64 +184,10 @@ fitness-frontend/
 │   └── server.js                 # 服务入口
 ├── seed/                         # 种子数据（exercises, foods, diet_plans, training_plans, news）
 ├── public/                       # 静态资源
-│   ├── exercise-gifs/            #   800+ 动作 GIF 演示
+│   ├── exercise-gifs/            #   1300+ 动作 GIF 演示（Git LFS 管理）
 │   ├── news-images/              #   文章配图（按类别组织）
 │   ├── logo.png / logo.svg       #   品牌 Logo
 └── PRODUCT.md                    # 产品设计规范
-```
-
----
-
-## 快速开始
-
-### 环境要求
-
-- **Node.js** >= 18
-- **MySQL** >= 8.0
-- **npm** >= 9
-
-### 1️⃣ 安装依赖
-
-```bash
-# 前端依赖
-npm install
-
-# 后端依赖
-cd backend && npm install && cd ..
-```
-
-### 2️⃣ 环境配置
-
-```bash
-# 前端环境变量
-cp .env.example .env.development
-
-# 后端环境变量
-cp backend/.env.example backend/.env
-# 编辑 backend/.env 填入数据库连接、JWT 密钥、AI API Key 等
-```
-
-### 3️⃣ 初始化数据库
-
-```bash
-# 导入建表脚本
-mysql -u root -p < backend/schema.sql
-
-# 运行数据库迁移
-cd backend && node migrate.js && cd ..
-
-# 导入种子数据
-cd seed && npm install && node index.js && cd ..
-```
-
-### 4️⃣ 启动开发服务
-
-```bash
-# 终端 1 — 启动后端（默认 http://localhost:5000）
-cd backend && npm run dev
-
-# 终端 2 — 启动前端（默认 http://localhost:5173）
-npm run dev
 ```
 
 ---
@@ -218,7 +207,7 @@ npm run dev
 | `/api/interactions` | 点赞/收藏互动 |
 | `/api/notifications` | 消息通知 |
 | `/api/training` | 训练计划管理 |
-| `/api/exercises` | 动作库（800+） |
+| `/api/exercises` | 动作库（1300+） |
 | `/api/diet` | 饮食计划 |
 | `/api/diet-log` | 饮食日志 |
 | `/api/foods` | 食物数据 |
@@ -236,22 +225,20 @@ npm run dev
 
 ---
 
-## 部署指南
+## 部署（可选参考）
 
-### 🇨🇳 Zeabur 部署（推荐，国内平台）
+本项目已配置好多种部署方案，可自行选择平台托管。以下为参考步骤，部署前请准备好自己的数据库与 API Key。
+
+### 🇨🇳 Zeabur
 
 [Zeabur](https://zeabur.com) 是国内团队开发的一站式部署平台，原生支持 MySQL + Node.js，中文界面，操作简单。
 
-**部署步骤：**
-
-1. **推送代码** 到 GitHub 仓库 `fitcarve-platform`
+1. 将代码推送到 GitHub 仓库 `fitcarve-platform`
 2. 打开 [Zeabur Dashboard](https://zeabur.com/dashboard) → **创建项目**
 3. **添加服务** → **从 GitHub 导入** → 选择 `fitcarve-platform`
-4. 添加 **MySQL** 数据库：
-   - 项目页面 → **添加服务** → **MySQL** → Zeabur 会自动创建数据库并提供连接信息
-5. Zeabur 自动读取 `zeabur.json`，执行构建和部署
-6. 等待首次构建完成（自动安装依赖 → 构建前端 → 启动后端）
-7. **配置环境变量**（服务设置 → 环境变量）：
+4. 添加 **MySQL** 数据库（Zeabur 会自动创建并提供连接信息）
+5. Zeabur 自动读取 `zeabur.json` 执行构建与部署
+6. 配置环境变量：`NODE_ENV=production`、`MYSQL_*`、`JWT_SECRET`、`AI_API_KEY`（可选）
 
    | 变量 | 说明 |
    |------|------|
@@ -263,43 +250,21 @@ npm run dev
    | `JWT_SECRET` | 随机字符串，用于 JWT 加密 |
    | `AI_API_KEY` | （可选）DeepSeek API 密钥 |
 
-8. **初始化数据库**：在 Zeabur 的 **终端** 中运行：
+7. 在 Zeabur 终端初始化数据库：`mysql ... < backend/schema.sql` → `cd backend && node migrate.js` → `cd ../seed && npm install && node index.js`
+8. 部署完成后 Zeabur 会分配 `.zeabur.app` 域名，直接访问即可
 
-   ```bash
-   # 导入表结构
-   mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < backend/schema.sql
+> 💡 Zeabur 免费版提供足够额度运行本项目；服务闲置时可能休眠，访问后自动唤醒。
 
-   # 运行数据库迁移
-   cd backend && node migrate.js
+### 🌍 Railway
 
-   # 导入种子数据
-   cd ../seed && npm install && node index.js
-   ```
+[Railway](https://railway.app) 是国际流行的部署平台，同样支持 MySQL + Node.js：
 
-9. 部署完成后，Zeabur 会分配一个 `.zeabur.app` 域名，直接访问即可
-
-> 💡 **提示：** Zeabur 免费版提供足够额度运行本项目。服务在闲置时可能休眠，访问后自动唤醒。
-
----
-
-### 🌍 其他部署方式
-
-#### Railway（国际平台）
-
-Railway 是国际流行的部署平台，同样支持 MySQL + Node.js：
-
-1. 在 [Railway Dashboard](https://railway.app/dashboard) → **New Project** → **Deploy from GitHub repo**
+1. [Railway Dashboard](https://railway.app/dashboard) → **New Project** → **Deploy from GitHub repo**
 2. 选择 `fitcarve-platform` 仓库，Railway 自动读取 `railway.json`
-3. 添加 **MySQL** 插件（Plugins → Add Plugin → MySQL）
-4. 设置 `NODE_ENV=production` 和 `JWT_SECRET`
-5. 初始化数据库方式同 Zeabur 步骤 8
-6. 访问 `https://fitcarve-platform.up.railway.app`
+3. 添加 **MySQL** 插件，设置 `NODE_ENV=production` 与 `JWT_SECRET`
+4. 初始化数据库方式同上
 
-> Railway 免费版提供 $5/月额度，足以运行本项目。
-
-#### 云服务器（VPS）
-
-如果你有云服务器（腾讯云/阿里云等），手动部署也很简单：
+### ☁️ 云服务器（VPS）
 
 ```bash
 # 1. 安装 MySQL 8.0+ 和 Node.js 18+
@@ -321,11 +286,10 @@ cd backend && node migrate.js && node seed-all.js && cd ..
 
 # 7. 启动（建议使用 PM2 守护进程）
 NODE_ENV=production node backend/server.js
-
-# 或使用 PM2
-npm i -g pm2
-NODE_ENV=production pm2 start backend/server.js --name fitcarve
+# 或：npm i -g pm2 && NODE_ENV=production pm2 start backend/server.js --name fitcarve
 ```
+
+更多平台专属说明见 [`deploy/`](./deploy) 目录（CloudBase / 腾讯云示例）。
 
 ---
 
